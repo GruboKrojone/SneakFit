@@ -7,8 +7,6 @@ using Core.Configuration.JWT;
 using Core.Middlewares.Exceptions;
 using Domain;
 using Microsoft.IdentityModel.Tokens;
-using Core.Middlewares.Exceptions;
-using Domain;
 using Microsoft.OpenApi.Models;
 
 namespace API;
@@ -80,9 +78,6 @@ public class Program
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
             };
         });
-      
-        var azureConfig = new AzureConfig();
-        builder.Services.AddSingleton<IAzureConfig>(azureConfig);
 
         builder.Services.AddCors();
         builder.Services.AddControllers();
