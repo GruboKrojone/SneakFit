@@ -55,6 +55,7 @@ namespace Domain.Migrations
                     b.HasIndex("Email")
                         .IsUnique();
 
+                    b.ToTable("Users", (string)null);
                     b.ToTable("Users");
                 });
 #pragma warning restore 612, 618

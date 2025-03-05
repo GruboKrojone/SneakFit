@@ -1,7 +1,12 @@
+using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Core.Configuration;
 using Core.Configuration.Azure;
+using Core.Configuration.JWT;
+using Core.Middlewares.Exceptions;
+using Domain;
+using Microsoft.IdentityModel.Tokens;
 using Core.Middlewares.Exceptions;
 using Domain;
 using Microsoft.OpenApi.Models;
@@ -13,7 +18,8 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        
+      
+        builder.Services.AddHttpContextAccessor();
         ConfigureDependencyInjection(builder);
         
         builder.Services.AddAuthorization();
@@ -44,7 +50,6 @@ public class Program
                 }
             });
         });
-        builder.Services.AddControllers();
         
         var env = builder.Environment;
         builder.Configuration
@@ -53,9 +58,34 @@ public class Program
             .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
             .AddEnvironmentVariables();
         
+        var authenticationSettings = new AuthenticationSettings();
+        var azureConfig = new AzureConfig();
+        builder.Configuration.GetSection("App:Authentication").Bind(authenticationSettings);
+        builder.Configuration.GetSection("App:Azure").Bind(azureConfig);
+        builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
+        builder.Services.AddSingleton<IAzureConfig>(azureConfig);
+        builder.Services.AddAuthentication(o =>
+        {
+            o.DefaultAuthenticateScheme = "Bearer";
+            o.DefaultScheme = "Bearer";
+            o.DefaultChallengeScheme = "Bearer";
+        }).AddJwtBearer(cfg =>
+        {
+            cfg.RequireHttpsMetadata = false;
+            cfg.SaveToken = true;
+            cfg.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = authenticationSettings.JwtIssuer,
+                ValidAudience = authenticationSettings.JwtIssuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+            };
+        });
+      
         var azureConfig = new AzureConfig();
         builder.Services.AddSingleton<IAzureConfig>(azureConfig);
 
+        builder.Services.AddCors();
+        builder.Services.AddControllers();
         var app = builder.Build();
         
         app.UseMiddleware<ExceptionMiddleware>();
