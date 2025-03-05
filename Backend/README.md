@@ -32,5 +32,3 @@ docker stop sqlserver
 - Ensure Entity Framework tools are installed `dotnet tool install --global dotnet-ef`
 - Update Entity Framework tools `dotnet tool update --global dotnet-ef`
 - In project root catalog run command `dotnet ef migrations add [MIGRATION_NAME] -s API -p Domain  --context SneakFitDbContext`
-=======
-```
