@@ -56,6 +56,7 @@ namespace Domain.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }
