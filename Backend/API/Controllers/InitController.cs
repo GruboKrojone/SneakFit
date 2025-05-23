@@ -15,4 +15,9 @@ public class InitController : ControllerBase
     [Route("restrict")]
     [Authorize(Roles = "Admin")]
     public bool GetRestrict() => true;
+    
+    [HttpGet]
+    [Route("restrict2")]
+    [Authorize(Roles = "Admin")]
+    public bool GetRestrict2() => true;
 }
