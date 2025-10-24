@@ -1,6 +1,6 @@
-using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Core.Authentication;
 using Core.Configuration;
 using Core.Configuration.Azure;
 using Core.Configuration.JWT;
@@ -8,6 +8,7 @@ using Core.Middlewares.Exceptions;
 using Domain;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 namespace API;
 
@@ -18,6 +19,8 @@ public class Program
         var builder = WebApplication.CreateBuilder(args);
       
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<IUserContext, UserContext>();
+
         ConfigureDependencyInjection(builder);
         
         builder.Services.AddAuthorization();
