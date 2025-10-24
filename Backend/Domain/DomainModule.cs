@@ -21,7 +21,8 @@ public class DomainModule(IConfigurationRoot configuration) : Module
         builder.RegisterInstance(configuration).As<IConfigurationRoot>();
         builder.RegisterModule<Users.UsersModule>();
         builder.RegisterModule<Authentication.AuthenticationModule>();
-       
+        builder.RegisterModule<Dishes.DishesModule>();
+
         builder.RegisterType<Core.Database.UnitOfWork>().As<Core.Database.IUnitOfWork>().InstancePerLifetimeScope();
         
         RegisterDatabaseProviders(builder);
