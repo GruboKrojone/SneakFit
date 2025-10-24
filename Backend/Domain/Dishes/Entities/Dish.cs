@@ -16,8 +16,7 @@ sealed class Dish : EntityBase
         int? protein,
         int? carbs,
         int? fat,
-        bool isPublic,
-        int ownerId)
+        bool isPublic)
     {
         Name = name;
         Description = description;
@@ -26,7 +25,6 @@ sealed class Dish : EntityBase
         Carbs = carbs;
         Fat = fat;
         IsPublic = isPublic;
-        OwnerId = ownerId;
     }
 
     [Required, MaxLength(100)]
@@ -42,11 +40,12 @@ sealed class Dish : EntityBase
     public int OwnerId { get; private set; }
     public User Owner { get; private set; }
     public List<Ingredient> Ingredients { get; private set; }
-    // public int? FamilyId { get; private set; }
-    // public Family? FamilyBelongs { get; private set; }
-    //public List<int>? TagsIds { get; private set; }
-    //public List<int>? StepsIds { get; private set; }
-    // public List<Images>? Images { get; private set; }
+
+    public void AssignToUser(int ownerId)
+    {
+        OwnerId = ownerId;
+    }
+
 
     public static void OnModelCreating(ModelBuilder builder)
     {
@@ -57,10 +56,19 @@ sealed class Dish : EntityBase
             .WithMany()
             .HasForeignKey(d => d.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
-
+        
         builder.Entity<Dish>()
             .HasMany(d => d.Ingredients)
-            .WithMany(i => i.Dishes);
-
+            .WithMany(i => i.Dishes)
+            .UsingEntity<Dictionary<string, object>>(
+                "DishIngredient",
+                j => j.HasOne<Ingredient>().WithMany().HasForeignKey("IngredientId").OnDelete(DeleteBehavior.Cascade),
+                j => j.HasOne<Dish>().WithMany().HasForeignKey("DishId").OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.HasKey("DishId", "IngredientId");
+                    j.ToTable("DishIngredients");
+                }
+            );
     }
 }

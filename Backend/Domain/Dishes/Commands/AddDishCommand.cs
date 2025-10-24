@@ -30,9 +30,9 @@ internal class AddDishCommandHandler(
             input.Protein ?? null,
             input.Carbs ?? null,
             input.Fat ?? null,
-            input.IsPublic,
-            userId
+            input.IsPublic
         );
+        dish.AssignToUser(userId);
 
         dishRepository.Add(dish);
         await unitOfWork.SaveChangesAsync(cancellationToken);

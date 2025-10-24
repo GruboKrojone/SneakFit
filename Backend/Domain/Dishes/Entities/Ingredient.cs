@@ -1,4 +1,5 @@
-﻿using Core.Database;
+﻿using System.ComponentModel.DataAnnotations;
+using Core.Database;
 
 namespace Domain.Dishes.Entities;
 
@@ -16,9 +17,11 @@ sealed class Ingredient : EntityBase
     }
 
 
+    [Required, MaxLength(100)]
     public string Name { get; private set; }
+    [MaxLength(500)]
     public string? Description { get; private set; }
-    public List<Dish> Dishes { get; private set; }
+    public List<Dish>? Dishes { get; private set; }
 
 
     public static void OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder builder)
@@ -28,6 +31,6 @@ sealed class Ingredient : EntityBase
         builder.Entity<Ingredient>()
             .Property(i => i.Name)
             .IsRequired()
-            .HasMaxLength(200);
+            .HasMaxLength(100);
     }
 }
