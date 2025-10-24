@@ -1,0 +1,33 @@
+﻿using Core.Database;
+
+namespace Domain.Dishes.Entities;
+
+sealed class Ingredient : EntityBase
+{
+    private Ingredient() { }
+
+    public Ingredient(
+        string name,
+        string? description)
+    {
+        Name = name;
+        Description = description;
+        Dishes = new List<Dish>();
+    }
+
+
+    public string Name { get; private set; }
+    public string? Description { get; private set; }
+    public List<Dish> Dishes { get; private set; }
+
+
+    public static void OnModelCreating(Microsoft.EntityFrameworkCore.ModelBuilder builder)
+    {
+        builder.Entity<Ingredient>().HasKey(x => x.Id);
+
+        builder.Entity<Ingredient>()
+            .Property(i => i.Name)
+            .IsRequired()
+            .HasMaxLength(200);
+    }
+}

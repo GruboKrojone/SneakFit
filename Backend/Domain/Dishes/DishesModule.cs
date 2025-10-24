@@ -10,5 +10,6 @@ internal class DishesModule : Module
         base.Load(builder);
 
         builder.RegisterType<DishRepository>().AsImplementedInterfaces();
+        builder.RegisterType<IngredientRepository>().AsImplementedInterfaces();
     }
 }

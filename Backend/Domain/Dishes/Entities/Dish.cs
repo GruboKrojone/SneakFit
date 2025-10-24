@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Entities;
 
-public class Dish : EntityBase
+sealed class Dish : EntityBase
 {
     private Dish() { }
 
@@ -16,7 +16,6 @@ public class Dish : EntityBase
         int? carbs,
         int? fat,
         bool isPublic,
-        float rates,
         int ownerId)
     {
         Name = name;
@@ -26,7 +25,6 @@ public class Dish : EntityBase
         Carbs = carbs;
         Fat = fat;
         IsPublic = isPublic;
-        Rates = rates;
         OwnerId = ownerId;
     }
 
@@ -40,11 +38,11 @@ public class Dish : EntityBase
     public float Rates { get; private set; } = 0;
     public int OwnerId { get; private set; }
     public User Owner { get; private set; }
+    public List<Ingredient> Ingredients { get; private set; }
     // public int? FamilyId { get; private set; }
     // public Family? FamilyBelongs { get; private set; }
-    public List<int>? IngredientsIds { get; private set; }
-    public List<int>? TagsIds { get; private set; }
-    public List<int>? StepsIds { get; private set; }
+    //public List<int>? TagsIds { get; private set; }
+    //public List<int>? StepsIds { get; private set; }
     // public List<Images>? Images { get; private set; }
 
     public static void OnModelCreating(ModelBuilder builder)
@@ -56,5 +54,10 @@ public class Dish : EntityBase
             .WithMany()
             .HasForeignKey(d => d.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Entity<Dish>()
+            .HasMany(d => d.Ingredients)
+            .WithMany(i => i.Dishes);
+
     }
 }

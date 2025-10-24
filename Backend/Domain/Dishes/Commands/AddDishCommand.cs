@@ -25,13 +25,12 @@ internal class AddDishCommandHandler(
 
         var dish = new Dish(
             input.Name,
-            input.Description,
-            input.Calories,
-            input.Protein,
-            input.Carbs,
-            input.Fat,
+            input.Description ?? null,
+            input.Calories ?? null,
+            input.Protein ?? null,
+            input.Carbs ?? null,
+            input.Fat ?? null,
             input.IsPublic,
-            input.Rates,
             userId
         );
 
