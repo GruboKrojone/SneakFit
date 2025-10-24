@@ -7,6 +7,5 @@ public record AddDishParams(
     int? Protein,
     int? Carbs,
     int? Fat,
-    bool IsPublic,
-    float Rates
+    bool IsPublic
     );

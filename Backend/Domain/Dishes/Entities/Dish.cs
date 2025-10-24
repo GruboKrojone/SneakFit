@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Core.Database;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -28,7 +29,9 @@ sealed class Dish : EntityBase
         OwnerId = ownerId;
     }
 
+    [Required, MaxLength(100)]
     public string Name { get; private set; }
+    [MaxLength(500)]
     public string? Description { get; private set; }
     public int? Calories { get; private set; }
     public int? Protein { get; private set; }
