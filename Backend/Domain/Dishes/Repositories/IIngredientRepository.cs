@@ -5,4 +5,5 @@ namespace Domain.Dishes.Repositories;
 
 interface IIngredientRepository : IEntityRepository<Ingredient>
 {
+//test
 }
