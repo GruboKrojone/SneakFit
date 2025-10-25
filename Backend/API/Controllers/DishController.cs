@@ -1,5 +1,6 @@
 using Domain.Dishes.Commands;
 using Domain.Dishes.Dto;
+using Domain.Dishes.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,4 +14,9 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("add")]
     public async Task<Unit> AddDish(AddDishParams @params, CancellationToken cancellationToken)
         => await mediator.Send(new AddDishCommand(@params), cancellationToken);
+    
+    [HttpGet]
+    [Route("{dishId}")]
+    public async Task<DishDetails> DishDetailsQuery(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new DishDetailsQuery(dishId), cancellationToken);
 }
