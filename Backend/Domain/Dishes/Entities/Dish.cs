@@ -1,10 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using Core.Database;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Entities;
 
-public class Dish : EntityBase
+sealed class Dish : EntityBase
 {
     private Dish() { }
 
@@ -15,9 +16,7 @@ public class Dish : EntityBase
         int? protein,
         int? carbs,
         int? fat,
-        bool isPublic,
-        float rates,
-        int ownerId)
+        bool isPublic)
     {
         Name = name;
         Description = description;
@@ -26,11 +25,11 @@ public class Dish : EntityBase
         Carbs = carbs;
         Fat = fat;
         IsPublic = isPublic;
-        Rates = rates;
-        OwnerId = ownerId;
     }
 
+    [Required, MaxLength(100)]
     public string Name { get; private set; }
+    [MaxLength(500)]
     public string? Description { get; private set; }
     public int? Calories { get; private set; }
     public int? Protein { get; private set; }
@@ -40,12 +39,13 @@ public class Dish : EntityBase
     public float Rates { get; private set; } = 0;
     public int OwnerId { get; private set; }
     public User Owner { get; private set; }
-    // public int? FamilyId { get; private set; }
-    // public Family? FamilyBelongs { get; private set; }
-    public List<int>? IngredientsIds { get; private set; }
-    public List<int>? TagsIds { get; private set; }
-    public List<int>? StepsIds { get; private set; }
-    // public List<Images>? Images { get; private set; }
+    public List<Ingredient> Ingredients { get; private set; }
+
+    public void AssignToUser(int ownerId)
+    {
+        OwnerId = ownerId;
+    }
+
 
     public static void OnModelCreating(ModelBuilder builder)
     {
@@ -56,5 +56,19 @@ public class Dish : EntityBase
             .WithMany()
             .HasForeignKey(d => d.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
+        
+        builder.Entity<Dish>()
+            .HasMany(d => d.Ingredients)
+            .WithMany(i => i.Dishes)
+            .UsingEntity<Dictionary<string, object>>(
+                "DishIngredient",
+                j => j.HasOne<Ingredient>().WithMany().HasForeignKey("IngredientId").OnDelete(DeleteBehavior.Cascade),
+                j => j.HasOne<Dish>().WithMany().HasForeignKey("DishId").OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.HasKey("DishId", "IngredientId");
+                    j.ToTable("DishIngredients");
+                }
+            );
     }
 }

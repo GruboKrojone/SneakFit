@@ -25,15 +25,14 @@ internal class AddDishCommandHandler(
 
         var dish = new Dish(
             input.Name,
-            input.Description,
-            input.Calories,
-            input.Protein,
-            input.Carbs,
-            input.Fat,
-            input.IsPublic,
-            input.Rates,
-            userId
+            input.Description ?? null,
+            input.Calories ?? null,
+            input.Protein ?? null,
+            input.Carbs ?? null,
+            input.Fat ?? null,
+            input.IsPublic
         );
+        dish.AssignToUser(userId);
 
         dishRepository.Add(dish);
         await unitOfWork.SaveChangesAsync(cancellationToken);
