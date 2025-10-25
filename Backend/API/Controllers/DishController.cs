@@ -13,4 +13,9 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("add")]
     public async Task<Unit> AddDish(AddDishParams @params, CancellationToken cancellationToken)
         => await mediator.Send(new AddDishCommand(@params), cancellationToken);
+    
+    [HttpPut]
+    [Route("{dishId}/public")]
+    public async Task<Unit> MakeDishPublic(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new MakeDishPublicCommand(dishId), cancellationToken);
 }

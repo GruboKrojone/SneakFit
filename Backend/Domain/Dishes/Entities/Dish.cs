@@ -36,7 +36,7 @@ sealed class Dish : EntityBase
     public int? Carbs { get; private set; }
     public int? Fat { get; private set; }
     public bool IsPublic { get; private set; }
-    public float Rates { get; private set; } = 0;
+    public float Rates { get; private set; }
     public int OwnerId { get; private set; }
     public User Owner { get; private set; }
     public List<Ingredient> Ingredients { get; private set; }
@@ -44,6 +44,11 @@ sealed class Dish : EntityBase
     public void AssignToUser(int ownerId)
     {
         OwnerId = ownerId;
+    }
+
+    public void MarkAsPublic()
+    {
+        IsPublic = true;
     }
 
 
