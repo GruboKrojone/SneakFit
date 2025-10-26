@@ -6,11 +6,14 @@ namespace Domain;
 
 internal class SneakFitDbContext : DbContext
 {
-    public SneakFitDbContext(DbContextOptions<SneakFitDbContext> options) : base(options) { }
+    public SneakFitDbContext(DbContextOptions<SneakFitDbContext> options) : base(options)
+    {
+    }
 
     public DbSet<User> Users { get; set; }
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
+    public DbSet<Category> Categories { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -18,5 +21,6 @@ internal class SneakFitDbContext : DbContext
         User.OnModelCreating(modelBuilder);
         Dish.OnModelCreating(modelBuilder);
         Ingredient.OnModelCreating(modelBuilder);
+        Category.OnModelCreating(modelBuilder);
     }
 }

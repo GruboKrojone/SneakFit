@@ -9,12 +9,12 @@ internal class UserRepository(
     SneakFitDbContext dbContext
 ) : EntityRepositoryBase<User>(unitOfWork), IUserRepository
 {
-    protected override IQueryable<User> GetQuery()
-        => dbContext.Users.AsQueryable();
-
     public async Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken)
     {
         var user = await dbContext.Users.SingleOrDefaultAsync(u => u.Email == email, cancellationToken);
         return user ?? null;
     }
+
+    protected override IQueryable<User> GetQuery()
+        => dbContext.Users.AsQueryable();
 }

@@ -3,11 +3,11 @@ using MediatR;
 
 namespace Core.CQRS.Behaviors;
 
-public class TransactionPipelineBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork) 
+public class TransactionPipelineBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork)
     : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand<TResponse>
 {
-
-    public async Task<TResponse> Handle(TRequest request,  RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+        CancellationToken cancellationToken)
     {
         using (var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken))
         {
@@ -16,7 +16,7 @@ public class TransactionPipelineBehavior<TRequest, TResponse>(IUnitOfWork unitOf
                 var response = await next();
                 await unitOfWork.SaveChangesAsync(cancellationToken);
                 await transaction.CommitAsync(CancellationToken.None);
-                
+
                 return response;
             }
             catch (Exception)
@@ -25,8 +25,5 @@ public class TransactionPipelineBehavior<TRequest, TResponse>(IUnitOfWork unitOf
                 throw;
             }
         }
-        
-
-        
     }
 }

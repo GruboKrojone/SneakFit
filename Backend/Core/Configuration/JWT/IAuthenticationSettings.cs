@@ -2,7 +2,7 @@ namespace Core.Configuration.JWT;
 
 public interface IAuthenticationSettings
 {
-    string JwtKey { get; }
-    int JwtExpireDays { get; }
-    string JwtIssuer { get; }
+    public string JwtKey { get; }
+    public int JwtExpireDays { get; }
+    public string JwtIssuer { get; }
 }

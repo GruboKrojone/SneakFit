@@ -1,3 +1,5 @@
 namespace Core.Configuration;
 
-public interface IAppConfiguration { }
+public interface IAppConfiguration
+{
+}

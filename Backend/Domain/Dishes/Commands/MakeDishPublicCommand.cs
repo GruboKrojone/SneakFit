@@ -20,9 +20,9 @@ internal class MakeDishPublicCommandHandler(
 
         dish.MarkAsPublic();
         dishRepository.Update(dish);
-        
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
-    }   
+    }
 }

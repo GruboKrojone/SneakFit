@@ -6,9 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Entities;
 
-sealed class Dish : EntityBase
+internal sealed class Dish : EntityBase
 {
-    private Dish() { }
+    private Dish()
+    {
+    }
 
     public Dish(
         string name,
@@ -26,10 +28,10 @@ sealed class Dish : EntityBase
         Fat = fat;
     }
 
-    [Required, MaxLength(100)]
-    public string Name { get; private set; }
-    [MaxLength(500)]
-    public string? Description { get; private set; }
+    [Required] [MaxLength(100)] public string Name { get; private set; }
+
+    [MaxLength(500)] public string? Description { get; private set; }
+
     public int? Calories { get; private set; }
     public int? Protein { get; private set; }
     public int? Carbs { get; private set; }
@@ -38,14 +40,12 @@ sealed class Dish : EntityBase
     public float Rates { get; private set; }
     public int OwnerId { get; private set; }
     public User Owner { get; private set; }
-    public List<Ingredient> Ingredients { get; private set; }
+    public List<Category>? Categories { get; private set; }
+    public List<Ingredient>? Ingredients { get; private set; }
 
-    
-    public void AssignToUser(int ownerId)
-    {
-        OwnerId = ownerId;
-    }
-    
+
+    public void AssignToUser(int ownerId) => OwnerId = ownerId;
+
     public void Update(
         string? name,
         string? description,
@@ -73,10 +73,7 @@ sealed class Dish : EntityBase
             Fat);
     }
 
-    public void MarkAsPublic()
-    {
-        IsPublic = true;
-    }
+    public void MarkAsPublic() => IsPublic = true;
 
 
     public static void OnModelCreating(ModelBuilder builder)
@@ -88,7 +85,7 @@ sealed class Dish : EntityBase
             .WithMany()
             .HasForeignKey(d => d.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder.Entity<Dish>()
             .HasMany(d => d.Ingredients)
             .WithMany(i => i.Dishes)
@@ -101,6 +98,16 @@ sealed class Dish : EntityBase
                     j.HasKey("DishId", "IngredientId");
                     j.ToTable("DishIngredients");
                 }
+            );
+
+        builder.Entity<Dish>()
+            .HasMany(d => d.Categories)
+            .WithMany(c => c.Dishes)
+            .UsingEntity<Dictionary<string, object>>(
+                "DishCategory",
+                j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId").OnDelete(DeleteBehavior.Cascade),
+                j => j.HasOne<Dish>().WithMany().HasForeignKey("DishId").OnDelete(DeleteBehavior.Cascade),
+                j => { j.HasKey("DishId", "CategoryId"); }
             );
     }
 }
