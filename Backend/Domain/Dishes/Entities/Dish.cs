@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using Core.Database;
+using Domain.Dishes.Dto;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,8 +16,7 @@ sealed class Dish : EntityBase
         int? calories,
         int? protein,
         int? carbs,
-        int? fat,
-        bool isPublic)
+        int? fat)
     {
         Name = name;
         Description = description;
@@ -24,7 +24,6 @@ sealed class Dish : EntityBase
         Protein = protein;
         Carbs = carbs;
         Fat = fat;
-        IsPublic = isPublic;
     }
 
     [Required, MaxLength(100)]
@@ -35,15 +34,43 @@ sealed class Dish : EntityBase
     public int? Protein { get; private set; }
     public int? Carbs { get; private set; }
     public int? Fat { get; private set; }
-    public bool IsPublic { get; private set; }
-    public float Rates { get; private set; } = 0;
+    public bool IsPublic { get; private set; } = true;
+    public float Rates { get; private set; }
     public int OwnerId { get; private set; }
     public User Owner { get; private set; }
     public List<Ingredient> Ingredients { get; private set; }
 
+    
     public void AssignToUser(int ownerId)
     {
         OwnerId = ownerId;
+    }
+    
+    public void Update(
+        string? name,
+        string? description,
+        int? calories,
+        int? protein,
+        int? carbs,
+        int? fat)
+    {
+        Name = name;
+        Description = description;
+        Calories = calories;
+        Protein = protein;
+        Carbs = carbs;
+        Fat = fat;
+    }
+
+    public DishDto ToDto()
+    {
+        return new DishDto(
+            Name,
+            Description,
+            Calories,
+            Protein,
+            Carbs,
+            Fat);
     }
 
 
