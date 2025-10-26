@@ -82,7 +82,16 @@ public class Program
             };
         });
 
-        builder.Services.AddCors();
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader();
+            });
+        });
+
         builder.Services.AddControllers();
         var app = builder.Build();
 
@@ -96,6 +105,7 @@ public class Program
         }
 
         app.UseHttpsRedirection();
+        app.UseCors();
         app.UseAuthorization();
         app.MapControllers();
 
