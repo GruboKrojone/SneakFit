@@ -73,6 +73,11 @@ sealed class Dish : EntityBase
             Fat);
     }
 
+    public void MarkAsPublic()
+    {
+        IsPublic = true;
+    }
+
 
     public static void OnModelCreating(ModelBuilder builder)
     {
