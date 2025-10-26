@@ -37,3 +37,5 @@ csharp_preserve_single_line_statements = false
 
 # Puste konstruktory w jednej linii
 csharp_style_expression_bodied_constructors = false:none
+
+dotnet_diagnostic.CA1852.severity = suggestion
