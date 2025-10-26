@@ -2,9 +2,7 @@ using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
 using Domain.Dishes.Dto;
-using Domain.Dishes.Entities;
 using Domain.Dishes.Repositories;
-using MediatR;
 
 namespace Domain.Dishes.Commands;
 
@@ -19,8 +17,8 @@ internal class UpdateDishCommandHandler(
         var input = command.Params;
 
         var dish = await dishRepository.FindAsync(command.DishId, cancellationToken)
-            ?? throw new DomainException($"Dish with name '{input.Name}' not found", 
-                (int)CommonErrorCode.EntityNotFound);
+                   ?? throw new DomainException($"Dish with name '{input.Name}' not found",
+                       (int)CommonErrorCode.EntityNotFound);
 
         dish.Update(
             input.Name,
@@ -35,7 +33,7 @@ internal class UpdateDishCommandHandler(
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var dishDto = dish.ToDto();
-        
+
         return dishDto;
     }
 }

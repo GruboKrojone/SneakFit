@@ -1,5 +1,3 @@
-using Domain.Dishes.Entities;
-
 namespace Domain.Dishes.Dto;
 
 public record DishDetails(

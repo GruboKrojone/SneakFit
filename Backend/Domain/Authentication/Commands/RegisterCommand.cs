@@ -14,17 +14,17 @@ public record RegisterCommand(RegisterParams Input) : ICommand<int>;
 internal class RegisterCommandHandler(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork
-    ) : ICommandHandler<RegisterCommand, int>
+) : ICommandHandler<RegisterCommand, int>
 {
     public async Task<int> Handle(RegisterCommand command, CancellationToken cancellationToken)
     {
         var input = command.Input;
-        
+
         using var hmac = new HMACSHA512();
         var user = new User(
             input.Email,
             hmac.ComputeHash(Encoding.UTF8.GetBytes(input.Password)),
-            passwordSalt: hmac.Key,
+            hmac.Key,
             UserRole.Admin,
             input.Name,
             input.Age
@@ -32,7 +32,7 @@ internal class RegisterCommandHandler(
 
         userRepository.Add(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);
-        
+
         return user.Id;
     }
 }

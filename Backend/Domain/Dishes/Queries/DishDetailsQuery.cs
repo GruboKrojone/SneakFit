@@ -1,3 +1,4 @@
+using Core.Authentication;
 using Core.CQRS;
 using Core.Middlewares;
 using Domain.Dishes.Dto;
@@ -8,12 +9,17 @@ namespace Domain.Dishes.Queries;
 public record DishDetailsQuery(int DishId) : IQuery<DishDetails>;
 
 internal class DishDetailsQueryHandler(
-    IDishRepository dishRepository) : IQueryHandler<DishDetailsQuery, DishDetails>
+    IDishRepository dishRepository,
+    IUserContext userContext) : IQueryHandler<DishDetailsQuery, DishDetails>
 {
     public async Task<DishDetails> Handle(DishDetailsQuery query, CancellationToken cancellationToken)
     {
         var dish = await dishRepository.FindAsync(query.DishId, cancellationToken)
-                   ?? throw new DomainException($"Dish with provided ID: {query.DishId} not found", (int)CommonErrorCode.EntityNotFound);
+                   ?? throw new DomainException($"Dish with provided ID: {query.DishId} not found",
+                       (int)CommonErrorCode.EntityNotFound);
+
+        if (!dish.IsPublic && dish.OwnerId != userContext.UserId)
+            throw new DomainException("You are not authorized to view this dish", (int)CommonErrorCode.Unauthorized);
 
         return new DishDetails(
             dish.Id,

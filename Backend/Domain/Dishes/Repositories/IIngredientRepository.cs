@@ -3,7 +3,6 @@ using Domain.Dishes.Entities;
 
 namespace Domain.Dishes.Repositories;
 
-interface IIngredientRepository : IEntityRepository<Ingredient>
+internal interface IIngredientRepository : IEntityRepository<Ingredient>
 {
-//test
 }

@@ -21,7 +21,7 @@ internal class AddDishCommandHandler(
         var input = command.Params;
 
         var userId = userContext.UserId
-            ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
+                     ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
 
         var dish = new Dish(
             input.Name,

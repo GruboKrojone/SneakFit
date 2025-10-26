@@ -16,7 +16,7 @@ internal class LoginCommandHandler(
 {
     public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
     {
-        var user = (await userRepository.FindByEmailAsync(request.Input.Email, cancellationToken))
+        var user = await userRepository.FindByEmailAsync(request.Input.Email, cancellationToken)
                    ?? throw new DomainException("User or password is incorrect",
                        (int)AuthErrorCode.InvalidData);
 
@@ -26,7 +26,7 @@ internal class LoginCommandHandler(
                 throw new DomainException("User or password is incorrect",
                     (int)AuthErrorCode.InvalidData);
         }
-        
+
         var token = authService.GenerateToken(user.Email, user.Role, user.Id);
 
         return new LoginResponse(

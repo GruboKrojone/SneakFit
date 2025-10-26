@@ -29,12 +29,12 @@ public class AuthService(IConfiguration configuration) : IAuthService
         };
 
         var token = new JwtSecurityToken(
-            issuer: configuration["App:Authentication:JwtIssuer"],
-            audience: configuration["App:Authentication:JwtIssuer"],
-            claims: claims,
+            configuration["App:Authentication:JwtIssuer"],
+            configuration["App:Authentication:JwtIssuer"],
+            claims,
             expires: DateTime.Now.AddDays(
-                int.Parse(configuration["App:Authentication:JwtExpireDays"] 
-                          ?? throw new DomainException("JwtExpireDays not configured", 
+                int.Parse(configuration["App:Authentication:JwtExpireDays"]
+                          ?? throw new DomainException("JwtExpireDays not configured",
                               (int)AuthErrorCode.JwtExpireDaysNotConfigured))),
             signingCredentials: creds);
 
