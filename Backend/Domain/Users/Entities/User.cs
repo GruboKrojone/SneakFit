@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations;
 using Core.Database;
 using Domain.Users.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -25,11 +26,17 @@ internal sealed class User : EntityBase
     }
 
 
-    public string Email { get; private set; } = null!;
-    public byte[] PasswordHash { get; private set; } = null!;
-    public byte[] PasswordSalt { get; private set; } = null!;
+    [EmailAddress]
+    [Required]
+    [MaxLength(100)]
+    public string Email { get; private set; }
+
+    public byte[] PasswordHash { get; private set; }
+    public byte[]? PasswordSalt { get; private set; }
     public UserRole Role { get; private set; }
-    public string Name { get; private set; }
+
+    [MaxLength(100)] public string Name { get; private set; }
+
     public int? Age { get; private set; }
 
 

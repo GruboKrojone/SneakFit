@@ -105,7 +105,6 @@ public class Program
             DomainModule.MigrateDatabase(scope);
         }
 
-
         app.Run();
     }
 
