@@ -9,7 +9,7 @@ using MediatR;
 
 namespace Domain.Dishes.Commands;
 
-public record AddDishCommand(AddDishParams Params) : ICommand<Unit>;
+public record AddDishCommand(DishParams Params) : ICommand<Unit>;
 
 internal class AddDishCommandHandler(
     IDishRepository dishRepository,
@@ -29,8 +29,7 @@ internal class AddDishCommandHandler(
             input.Calories ?? null,
             input.Protein ?? null,
             input.Carbs ?? null,
-            input.Fat ?? null,
-            input.IsPublic
+            input.Fat ?? null
         );
         dish.AssignToUser(userId);
 
