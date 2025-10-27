@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "./LoginPage.css";
+import "./styles/LoginPage.css";
 import loginLogo from "/images/loginLogo.svg";
 import AuthButton from "../components/AuthButton";
 import AuthInput from "../components/AuthInput";

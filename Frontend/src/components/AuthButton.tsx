@@ -1,4 +1,4 @@
-import "./AuthButton.css";
+import "./styles/AuthButton.css";
 
 interface AuthButtonProps {
   name?: string;

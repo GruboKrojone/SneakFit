@@ -1,4 +1,4 @@
-import "./AuthInput.css";
+import "./styles/AuthInput.css";
 
 interface AuthInputProps {
   type: string;
