@@ -1,6 +1,7 @@
 using System.Text;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Core.Authentication;
 using Core.Configuration;
 using Core.Configuration.Azure;
 using Core.Configuration.JWT;
@@ -16,10 +17,12 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-      
+
         builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<IUserContext, UserContext>();
+
         ConfigureDependencyInjection(builder);
-        
+
         builder.Services.AddAuthorization();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen(c =>
@@ -48,14 +51,14 @@ public class Program
                 }
             });
         });
-        
+
         var env = builder.Environment;
         builder.Configuration
-            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-            .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
-            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile("appsettings.json", false, true)
+            .AddJsonFile("appsettings.Local.json", true, true)
+            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
             .AddEnvironmentVariables();
-        
+
         var authenticationSettings = new AuthenticationSettings();
         var azureConfig = new AzureConfig();
         builder.Configuration.GetSection("App:Authentication").Bind(authenticationSettings);
@@ -82,33 +85,29 @@ public class Program
         builder.Services.AddCors();
         builder.Services.AddControllers();
         var app = builder.Build();
-        
+
         app.UseMiddleware<ExceptionMiddleware>();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "SneakFit API v1");
-            });
+            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "SneakFit API v1"); });
         }
 
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
-        
-        
+
+
         using (var scope = app.Services.CreateScope())
         {
             DomainModule.MigrateDatabase(scope);
         }
-        
-        
+
         app.Run();
     }
-    
+
     private static void ConfigureDependencyInjection(WebApplicationBuilder appBuilder)
     {
         appBuilder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -119,5 +118,4 @@ public class Program
                 .As<IAppConfiguration>().SingleInstance();
         });
     }
-
 }

@@ -10,6 +10,6 @@ public record LoginParams
         Password = password;
     }
 
-    [Required, EmailAddress] public string Email { get; }
+    [Required] [EmailAddress] public string Email { get; }
     [Required] public string Password { get; }
-} 
+}

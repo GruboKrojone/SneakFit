@@ -1,10 +1,11 @@
+using System.ComponentModel.DataAnnotations;
 using Core.Database;
-using Microsoft.EntityFrameworkCore;
 using Domain.Users.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Users.Entities;
 
-public class User : EntityBase
+internal sealed class User : EntityBase
 {
     private User() { }
 
@@ -13,7 +14,7 @@ public class User : EntityBase
         byte[] passwordHash,
         byte[] passwordSalt,
         UserRole role,
-        string? name,
+        string name,
         int? age)
     {
         Email = email;
@@ -23,16 +24,22 @@ public class User : EntityBase
         Name = name;
         Age = age;
     }
-    
-    
-    public string Email { get; private set; } = null!;
-    public byte[] PasswordHash { get; private set; } = null!;
-    public byte[] PasswordSalt { get; private set; } = null!;
+
+
+    [EmailAddress]
+    [Required]
+    [MaxLength(100)]
+    public string Email { get; private set; }
+
+    public byte[] PasswordHash { get; private set; }
+    public byte[]? PasswordSalt { get; private set; }
     public UserRole Role { get; private set; }
-    public string? Name { get; private set; }
+
+    [MaxLength(100)] public string Name { get; private set; }
+
     public int? Age { get; private set; }
 
-    
+
     public static void OnModelCreating(ModelBuilder builder)
     {
         builder.Entity<User>().HasKey(x => x.Id);

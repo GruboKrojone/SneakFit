@@ -1,0 +1,41 @@
+root = true
+
+[*.cs]
+# Namespace file-scoped
+csharp_style_namespace_declarations = file_scoped:warning
+
+# Primary constructors
+csharp_style_prefer_primary_constructors = true:suggestion
+
+# Sealed classes (wymaga ręcznego dodania modyfikatora)
+dotnet_style_require_accessibility_modifiers = always:warning
+
+# Usuwanie nieużywanych using
+dotnet_diagnostic.IDE0005.severity = warning
+dotnet_sort_system_directives_first = true
+dotnet_separate_import_directive_groups = false
+
+# Formatowanie
+csharp_new_line_before_open_brace = all
+csharp_indent_case_contents = true
+
+# Lambda expression-bodied members
+csharp_style_expression_bodied_methods = when_on_single_line:suggestion
+csharp_style_expression_bodied_properties = when_on_single_line:suggestion
+csharp_style_expression_bodied_indexers = when_on_single_line:suggestion
+csharp_style_expression_bodied_accessors = when_on_single_line:suggestion
+csharp_style_expression_bodied_lambdas = when_on_single_line:suggestion
+csharp_style_expression_bodied_local_functions = when_on_single_line:suggestion
+
+# Prefer expression body for constructors and operators (optional)
+csharp_style_expression_bodied_constructors = false:none
+csharp_style_expression_bodied_operators = when_on_single_line:suggestion
+
+# Formatowanie pustych bloków
+csharp_preserve_single_line_blocks = true
+csharp_preserve_single_line_statements = false
+
+# Puste konstruktory w jednej linii
+csharp_style_expression_bodied_constructors = false:none
+
+dotnet_diagnostic.CA1852.severity = suggestion

@@ -8,8 +8,9 @@ public interface IEntityRepository<TEntity> where TEntity : EntityBase
 
     public Task<TEntity> FindAsync(int id, CancellationToken cancellationToken);
 
-    public Task<IList<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
-        
+    public Task<IList<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate,
+        CancellationToken cancellationToken);
+
     public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
 
     public Task<IList<TResult>> FindAsync<TResult>(
@@ -25,8 +26,8 @@ public interface IEntityRepository<TEntity> where TEntity : EntityBase
         bool ascending = true);
 
     public void Add(TEntity entity);
-    
+
     public void Update(TEntity entity);
-    
+
     public void Delete(TEntity entity);
 }
