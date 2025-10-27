@@ -12,7 +12,7 @@ export default function AuthButton({
   loading = false,
 }: AuthButtonProps) {
   return (
-    <button type="submit" disabled={disabled || loading}>
+    <button className="auth-button" type="submit" disabled={disabled || loading}>
       {loading ? "Signing in..." : name}
     </button>
   );
