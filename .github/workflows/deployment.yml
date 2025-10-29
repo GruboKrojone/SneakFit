@@ -1,0 +1,84 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["prod", "test", "dev", "SF-*"]
+  pull_request:
+    branches: ["prod", "test", "dev"]
+
+jobs:
+  backend-build:
+    name: Build Backend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Backend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore SneakFIt.sln
+
+      - name: Build Debug
+        run: dotnet build SneakFIt.sln --configuration Debug --no-restore
+
+      - name: Build Release
+        run: dotnet build SneakFIt.sln --configuration Release --no-restore
+
+      - name: Publish API
+        run: dotnet publish API/API.csproj --configuration Release --no-build --output ./publish
+
+      - name: Upload API artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-api-${{ github.sha }}
+          path: Backend/publish
+          retention-days: 30
+
+  frontend-build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: Frontend
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint (optional)
+        run: npm run lint || echo "Lint step failed, continuing..."
+        continue-on-error: true
+
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Upload Frontend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist-${{ github.sha }}
+          path: Frontend/dist
+          retention-days: 30
