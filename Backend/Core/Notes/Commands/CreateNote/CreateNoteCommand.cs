@@ -1,10 +1,5 @@
-﻿using System;
+﻿using MediatR;
 
+namespace SneakFit.Backend.Core.Notes.Commands.CreateNote;
 
-public class CreateNoteCommand
-{
-	public CreateNoteCommand()
-	{
-		public record CreateNoteCommand (string Title, string Content, int UserId) : IRequest<int>
-	}
-}
+public record CreateNoteCommand(string Title, string Content, int UserId) : IRequest<int>;
