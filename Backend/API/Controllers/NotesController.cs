@@ -1,10 +1,10 @@
 ﻿using System.Security.Claims;
 using System.Threading.Tasks;
-using API.Dto;
-using Core.Notes.Commands.CreateNote;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Domain.Notes.Dto;
+using Domain.Notes.Commands.CreateNote;
 
 namespace API.Controllers;
 

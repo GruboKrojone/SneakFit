@@ -24,5 +24,6 @@ internal class SneakFitDbContext : DbContext
         Dish.OnModelCreating(modelBuilder);
         Ingredient.OnModelCreating(modelBuilder);
         Category.OnModelCreating(modelBuilder);
+        Note.OnModelCreating(modelBuilder);
     }
 }
