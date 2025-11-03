@@ -47,25 +47,17 @@ public class DomainModule(IConfigurationRoot configuration) : Module
                 var optionsBuilder = new DbContextOptionsBuilder<SneakFitDbContext>();
                 var connectionString = configuration.GetConnectionString(ConnectionStringName);
 
-                if (string.IsNullOrWhiteSpace(connectionString))
+                if (connectionString != null)
+                    optionsBuilder.UseSqlServer(connectionString);
+                else
                     throw new DomainException("Cannot find connection string for db",
                         (int)CommonErrorCode.InvalidOperation);
-
-                optionsBuilder.UseSqlServer(connectionString,
-                    sqlOptions =>
-                    {
-                        sqlOptions.EnableRetryOnFailure(
-                            5,
-                            TimeSpan.FromSeconds(30),
-                            null
-                        );
-                    });
 
                 return new SneakFitDbContext(optionsBuilder.Options);
             })
             .As<DbContext>()
             .AsSelf()
-            .InstancePerLifetimeScope();
+            .InstancePerDependency();
     }
 
     private static void RegisterMediator(ContainerBuilder builder)
