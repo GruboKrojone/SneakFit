@@ -112,9 +112,32 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
+
       - name: 📦 Run EF Database Migrations (Dev)
         env:
           ConnectionStrings__SneakFitDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
+
         run: |
           dotnet tool install --global dotnet-ef
-          dotnet ef database update -s API -p Domain --context SneakFitDbContext
+
+          max_attempts=3
+          delay=20 # Czas oczekiwania w sekundach między próbami
+
+          for ((i=1; i<=max_attempts; i++)); do
+            echo "Applying migrations (Attempt $i/$max_attempts)..."
+            
+            dotnet ef database update -s API -p Domain --context SneakFitDbContext
+            
+            if [ $? -eq 0 ]; then
+              echo "Migrations applied successfully. ✅"
+              exit 0 # Sukces, zakończ krok pomyślnie
+            fi
+            
+            if [ $i -lt $max_attempts ]; then
+              echo "Attempt $i failed. Retrying in $delay seconds... ⏳"
+              sleep $delay
+            fi
+          done
+
+          echo "Failed to apply migrations after $max_attempts attempts. ❌"
+          exit 1
