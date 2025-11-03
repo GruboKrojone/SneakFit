@@ -95,7 +95,7 @@ class AuthService {
     return this.getToken() !== null;
   }
 
-  static getAuthHeader(): { Authorization: string } | {} {
+  static getAuthHeader(): HeadersInit {
     const token = this.getToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
