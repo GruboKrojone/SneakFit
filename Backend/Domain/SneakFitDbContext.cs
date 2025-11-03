@@ -1,5 +1,6 @@
 using Domain.Dishes.Entities;
 using Domain.Users.Entities;
+using Domain.Notes.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain;
@@ -14,6 +15,7 @@ internal class SneakFitDbContext : DbContext
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
     public DbSet<Category> Categories { get; set; }
+    public DbSet<Note> Notes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -22,5 +24,6 @@ internal class SneakFitDbContext : DbContext
         Dish.OnModelCreating(modelBuilder);
         Ingredient.OnModelCreating(modelBuilder);
         Category.OnModelCreating(modelBuilder);
+        Note.OnModelCreating(modelBuilder);
     }
 }
