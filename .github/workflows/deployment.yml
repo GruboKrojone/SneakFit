@@ -11,6 +11,9 @@ jobs:
     name: Build Backend
     runs-on: ubuntu-latest
 
+    environment:
+      name: Local
+
     services:
       sqlserver:
         image: mcr.microsoft.com/mssql/server:2022-latest
