@@ -10,6 +10,18 @@ jobs:
   backend-build:
     name: Build Backend
     runs-on: ubuntu-latest
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
+        ports:
+          - 1433:1433
+
+        options: --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '${{ secrets.BUILD_SA_PASSWORD }}' -Q 'SELECT 1' || exit 1" --health-interval=10s --health-retries=10 --health-timeout=5s
+
     defaults:
       run:
         working-directory: Backend
@@ -30,6 +42,17 @@ jobs:
       - name: Build Release
         run: dotnet build SneakFIt.sln --configuration Release --no-restore
 
+      - name: 📦 Validate EF Migrations (on local SQL container)
+        env:
+          SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
+        run: |
+          dotnet tool install --global dotnet-ef
+
+          LOCAL_DB_CONN_STRING="Server=localhost,1433;Database=temp_ci_db;User Id=sa;Password=$SA_PASSWORD;TrustServerCertificate=True"
+
+          dotnet ef database update -s API -p Domain --context SneakFitDbContext \
+            --connection "$LOCAL_DB_CONN_STRING"
+
       - name: Publish API
         run: dotnet publish API/API.csproj --configuration Release --no-build --output ./publish
 
@@ -49,22 +72,18 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "npm"
           cache-dependency-path: Frontend/package-lock.json
-
       - name: Install dependencies
         run: npm ci
-
       - name: Build
         run: npm run build
         env:
           NODE_ENV: production
-
       - name: Upload Frontend artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -75,30 +94,23 @@ jobs:
   deploy-dev:
     name: 🚀 Deploy to DEV
     runs-on: ubuntu-latest
-
     if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
     needs: [backend-build, frontend-build]
-
     environment:
       name: Development
-
     defaults:
       run:
         working-directory: Backend
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 8.0.x
-
       - name: 📦 Run EF Database Migrations (Dev)
         env:
           ConnectionStrings__SneakFitDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
-
         run: |
           dotnet tool install --global dotnet-ef
           dotnet ef database update -s API -p Domain --context SneakFitDbContext
