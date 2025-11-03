@@ -16,11 +16,15 @@ jobs:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
           ACCEPT_EULA: "Y"
-          SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
+          MSSQL_SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
         ports:
           - 1433:1433
 
-        options: --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '${{ secrets.BUILD_SA_PASSWORD }}' -Q 'SELECT 1' || exit 1" --health-interval=10s --health-retries=10 --health-timeout=5s
+        options: >-
+          --health-cmd="/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '${{ secrets.BUILD_SA_PASSWORD }}' -Q 'SELECT 1' || exit 1"
+          --health-interval=10s
+          --health-retries=10
+          --health-timeout=5s
 
     defaults:
       run:
