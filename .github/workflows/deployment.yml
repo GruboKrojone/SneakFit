@@ -10,11 +10,9 @@ jobs:
   backend-build:
     name: Build Backend
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: Backend
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,9 +26,6 @@ jobs:
 
       - name: Restore dependencies
         run: dotnet restore SneakFIt.sln
-
-      - name: Build Debug
-        run: dotnet build SneakFIt.sln --configuration Debug --no-restore
 
       - name: Build Release
         run: dotnet build SneakFIt.sln --configuration Release --no-restore
@@ -48,11 +43,9 @@ jobs:
   frontend-build:
     name: Build Frontend
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: Frontend
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -67,10 +60,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Lint (optional)
-        run: npm run lint || echo "Lint step failed, continuing..."
-        continue-on-error: true
-
       - name: Build
         run: npm run build
         env:
@@ -82,3 +71,34 @@ jobs:
           name: frontend-dist-${{ github.sha }}
           path: Frontend/dist
           retention-days: 30
+
+  deploy-dev:
+    name: 🚀 Deploy to DEV
+    runs-on: ubuntu-latest
+
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    needs: [backend-build, frontend-build]
+
+    environment:
+      name: Development
+
+    defaults:
+      run:
+        working-directory: Backend
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: 📦 Run EF Database Migrations (Dev)
+        env:
+          ConnectionStrings__SneakFitDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
+
+        run: |
+          dotnet tool install --global dotnet-ef
+          dotnet ef database update -s API -p Domain --context SneakFitDbContext
