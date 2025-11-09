@@ -8,6 +8,7 @@ export interface Category {
 export interface Dish {
   id: number;
   name: string;
+  description?: string;
   rates: number;
   ownerName: string;
   isPublic: boolean;

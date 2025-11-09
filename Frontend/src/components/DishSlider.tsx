@@ -3,7 +3,6 @@ import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
-import Star from "@mui/icons-material/Star";
 
 import DishesService, { Dish } from "../services/DishesService";
 import "./styles/DishSlider.css";
@@ -172,12 +171,12 @@ export default function DishSlider() {
               <div className="dish-info">
                 <div className="dish-header">
                   <h2 className="dish-name">{dish.name}</h2>
-                  <div className="dish-rating">
-                    <Star sx={{ fontSize: 20, color: "#ffd700" }} />
-                    {dish.rates}
-                  </div>
                 </div>
-                <p className="dish-owner">by {dish.ownerName}</p>
+                {dish.description ? (
+                  <p className="dish-description">{dish.description}</p>
+                ) : (
+                  <p className="dish-description">Brak opisu</p>
+                )}
                 <div className="dish-categories">
                   {dish.categories.map((cat) => (
                     <span key={cat.id} className="category-tag">
