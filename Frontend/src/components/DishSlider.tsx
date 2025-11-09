@@ -1,11 +1,10 @@
 import { useState, useEffect } from "react";
-import {
-  ThumbDown,
-  Favorite,
-  ThumbUp,
-  RestaurantMenu,
-  Star,
-} from "@mui/icons-material";
+import ThumbDown from '@mui/icons-material/ThumbDown'
+import Favorite from '@mui/icons-material/Favorite'
+import ThumbUp from '@mui/icons-material/ThumbUp'
+import RestaurantMenu from '@mui/icons-material/RestaurantMenu'
+import Star from '@mui/icons-material/Star'
+
 import DishesService, { Dish } from "../services/DishesService";
 import "./styles/DishSlider.css";
 
