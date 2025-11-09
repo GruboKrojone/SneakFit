@@ -2,9 +2,9 @@
   position: fixed;
   left: 0;
   top: 0;
-  width: 96px;
+  width: 140px;
   height: 100vh;
-  background: linear-gradient(180deg, #0f172a, #0b1220);
+  background: linear-gradient(180deg, #3B3B3B, #696969);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -67,7 +67,7 @@
   width: 48px;
   height: 48px;
   border: none;
-  background: #ef4444;
+  background: transparent;
   color: white;
   border-radius: 10px;
   cursor: pointer;
@@ -81,9 +81,8 @@
 }
 
 .logout-btn svg {
-  width: 24px;
-  height: 24px;
-  font-size: 24px;
+  width: 34px;
+  height: 34px;
 }
 
 .protected-root {
@@ -91,7 +90,7 @@
 }
 
 .protected-content {
-  margin-left: 96px;
+  margin-left: 140px;
   padding: 20px;
 }
 

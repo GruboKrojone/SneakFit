@@ -72,8 +72,8 @@ export default function DishSlider() {
     return (
       <div className="dish-slider-container">
         <div className="no-more-dishes">
-          <h2>🎉 No more dishes to explore!</h2>
-          <p>Come back later for more delicious options</p>
+          <h2>Niestety skończyły się przepisy</h2>
+          <p>Wróć później po więcej pysznych opcji</p>
         </div>
       </div>
     );
@@ -212,8 +212,8 @@ export default function DishSlider() {
 
       {isComplete && (
         <div className="no-more-dishes visible">
-          <h2>No more dishes to explore!</h2>
-          <p>Come back later for more delicious options</p>
+          <h2>Niestety skończyły się przepisy</h2>
+          <p>Wróć później po więcej pysznych opcji</p>
         </div>
       )}
     </div>
