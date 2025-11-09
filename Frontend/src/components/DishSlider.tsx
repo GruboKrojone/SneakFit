@@ -40,34 +40,25 @@ export default function DishSlider() {
     }
   }, [currentIndex, dishes.length]);
 
+  const handleAnimationEnd = () => {
+    setCurrentIndex(currentIndex + 1);
+    setLastAction(null);
+    setActionCardIndex(null);
+  };
+
   const handlePass = () => {
     setLastAction("pass");
     setActionCardIndex(currentIndex);
-    setTimeout(() => {
-      setCurrentIndex(currentIndex + 1);
-      setLastAction(null);
-      setActionCardIndex(null);
-    }, 500);
   };
 
   const handleLoved = () => {
     setLastAction("loved");
     setActionCardIndex(currentIndex);
-    setTimeout(() => {
-      setCurrentIndex(currentIndex + 1);
-      setLastAction(null);
-      setActionCardIndex(null);
-    }, 500);
   };
 
   const handleSmash = () => {
     setLastAction("smash");
     setActionCardIndex(currentIndex);
-    setTimeout(() => {
-      setCurrentIndex(currentIndex + 1);
-      setLastAction(null);
-      setActionCardIndex(null);
-    }, 500);
   };
 
   if (isLoading) {
@@ -96,6 +87,15 @@ export default function DishSlider() {
     const baseTranslate = isMobile ? 30 : 120;
     const translate =
       offset > 0 ? absOffset * baseTranslate : -absOffset * baseTranslate;
+
+    if (index === actionCardIndex && lastAction) {
+      return {
+        transform: "translateX(0) scale(1)",
+        opacity: 1,
+        filter: "blur(0px)",
+        zIndex: 100,
+      };
+    }
 
     switch (absOffset) {
       case 0:
@@ -139,16 +139,13 @@ export default function DishSlider() {
           return (
             <div
               key={dish.id}
-              className="dish-card"
-              style={
-                {
-                  ...getCardStyle(index),
-                  zIndex:
-                    index === currentIndex && lastAction
-                      ? 100
-                      : (getCardStyle(index).zIndex as number),
-                } as React.CSSProperties
-              }
+              className={`dish-card ${
+                index === actionCardIndex && lastAction
+                  ? `action-${lastAction}`
+                  : ""
+              }`}
+              style={getCardStyle(index) as React.CSSProperties}
+              onAnimationEnd={handleAnimationEnd}
             >
               <div className="dish-image">
                 <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
