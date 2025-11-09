@@ -39,10 +39,14 @@ export default function DishSlider() {
     }
   }, [currentIndex, dishes.length]);
 
-  const handleAnimationEnd = () => {
-    setCurrentIndex(currentIndex + 1);
-    setLastAction(null);
-    setActionCardIndex(null);
+  const handleAnimationEnd = (cardIndex: number) => {
+    return () => {
+      if (cardIndex === currentIndex) {
+        setCurrentIndex(currentIndex + 1);
+        setLastAction(null);
+        setActionCardIndex(null);
+      }
+    };
   };
 
   const handlePass = () => {
@@ -108,15 +112,22 @@ export default function DishSlider() {
         return {
           transform: `translateX(${translate}px) scale(0.8)`,
           opacity: 0.6,
-          filter: "blur(5px)",
+          filter: offset > 0 ? "blur(5px)" : "blur(5px)",
           zIndex: 5,
         };
       case 2:
         return {
           transform: `translateX(${translate}px) scale(0.6)`,
-          opacity: 0.3,
-          filter: "blur(8px)",
+          opacity: offset > 0 ? 0.3 : 0.3,
+          filter: offset > 0 ? "blur(8px)" : "blur(8px)",
           zIndex: 2,
+        };
+      case 3:
+        return {
+          transform: `translateX(${translate}px) scale(0.5)`,
+          opacity: 0,
+          filter: "blur(10px)",
+          zIndex: 1,
         };
       default:
         return {
@@ -128,23 +139,37 @@ export default function DishSlider() {
     }
   };
 
+  const indicesToRender = Array.from(
+    { length: 7 },
+    (_, i) => currentIndex - 3 + i
+  );
+
   return (
     <div className="dish-slider-container">
       <div className={`slider-wrapper ${isComplete ? "hidden" : ""}`}>
-        {dishes.map((dish, index) => {
-          const offset = Math.abs(index - currentIndex);
-          if (offset > 2) return null;
+        {indicesToRender.map((index) => {
+          // Handle negative indices by wrapping around
+          let actualIndex = index;
+          if (index < 0) {
+            actualIndex = dishes.length + index;
+          } else if (index >= dishes.length) {
+            actualIndex = index - dishes.length;
+          }
+
+          if (actualIndex < 0 || actualIndex >= dishes.length) return null;
+
+          const dish = dishes[actualIndex];
 
           return (
             <div
-              key={dish.id}
+              key={`${dish.id}-${index}`}
               className={`dish-card ${
-                index === actionCardIndex && lastAction
+                actualIndex === actionCardIndex && lastAction
                   ? `action-${lastAction}`
                   : ""
               }`}
               style={getCardStyle(index) as React.CSSProperties}
-              onAnimationEnd={handleAnimationEnd}
+              onAnimationEnd={handleAnimationEnd(index)}
             >
               <div className="dish-image">
                 {!dish.mainPictureId || dish.mainPictureId <= 1 ? (
