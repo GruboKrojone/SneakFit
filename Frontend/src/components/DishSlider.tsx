@@ -72,17 +72,6 @@ export default function DishSlider() {
     );
   }
 
-  if (dishes.length === 0) {
-    return (
-      <div className="dish-slider-container">
-        <div className="no-more-dishes">
-          <h2>Niestety skończyły się przepisy</h2>
-          <p>Wróć później po więcej pysznych opcji</p>
-        </div>
-      </div>
-    );
-  }
-
   const getCardStyle = (index: number) => {
     const offset = index - currentIndex;
     const absOffset = Math.abs(offset);
@@ -139,7 +128,7 @@ export default function DishSlider() {
     }
   };
 
-  const indicesToRender = Array.from(
+  const dishesToRender = Array.from(
     { length: 7 },
     (_, i) => currentIndex - 3 + i
   );
@@ -147,8 +136,7 @@ export default function DishSlider() {
   return (
     <div className="dish-slider-container">
       <div className={`slider-wrapper ${isComplete ? "hidden" : ""}`}>
-        {indicesToRender.map((index) => {
-          // Handle negative indices by wrapping around
+        {dishesToRender.map((index) => {
           let actualIndex = index;
           if (index < 0) {
             actualIndex = dishes.length + index;
@@ -236,6 +224,13 @@ export default function DishSlider() {
       </div>
 
       {isComplete && (
+        <div className="no-more-dishes visible">
+          <h2>Niestety skończyły się przepisy</h2>
+          <p>Wróć później po więcej pysznych opcji</p>
+        </div>
+      )}
+
+      {dishes.length < 1 && !isLoading && (
         <div className="no-more-dishes visible">
           <h2>Niestety skończyły się przepisy</h2>
           <p>Wróć później po więcej pysznych opcji</p>

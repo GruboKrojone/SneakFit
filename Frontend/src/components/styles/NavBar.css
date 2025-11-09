@@ -4,7 +4,7 @@
   top: 0;
   width: 140px;
   height: 100vh;
-  background: linear-gradient(180deg, #3B3B3B, #696969);
+  background: linear-gradient(180deg, #3b3b3b, #696969);
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -102,7 +102,7 @@
   .nav-toggle {
     position: fixed;
     top: 20px;
-    right: 20px;
+    left: 20px;
     padding: 7px 10px;
     z-index: 1000;
     border-radius: 10px;

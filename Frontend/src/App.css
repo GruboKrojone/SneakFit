@@ -1,0 +1,13 @@
+.theme-toggle-btn {
+  position: fixed;
+  background: transparent;
+  top: 20px;
+  right: 20px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
