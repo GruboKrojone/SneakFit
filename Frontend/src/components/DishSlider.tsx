@@ -14,7 +14,7 @@ export default function DishSlider() {
   const [isLoading, setIsLoading] = useState(true);
   const [isComplete, setIsComplete] = useState(false);
   const [lastAction, setLastAction] = useState<
-    "pass" | "super" | "like" | null
+    "pass" | "loved" | "smash" | null
   >(null);
   const [actionCardIndex, setActionCardIndex] = useState<number | null>(null);
 
@@ -50,8 +50,8 @@ export default function DishSlider() {
     }, 500);
   };
 
-  const handleLike = () => {
-    setLastAction("like");
+  const handleLoved = () => {
+    setLastAction("loved");
     setActionCardIndex(currentIndex);
     setTimeout(() => {
       setCurrentIndex(currentIndex + 1);
@@ -60,8 +60,8 @@ export default function DishSlider() {
     }, 500);
   };
 
-  const handleSuperLike = () => {
-    setLastAction("super");
+  const handleSmash = () => {
+    setLastAction("smash");
     setActionCardIndex(currentIndex);
     setTimeout(() => {
       setCurrentIndex(currentIndex + 1);
@@ -153,9 +153,9 @@ export default function DishSlider() {
                 <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
                 {index === actionCardIndex && lastAction && (
                   <div className={`action-overlay action-${lastAction}`}>
-                    {lastAction === "pass" && "NOT LIKE"}
-                    {lastAction === "super" && "SUPER LIKE"}
-                    {lastAction === "like" && "LIKE"}
+                    {lastAction === "pass" && "PASS"}
+                    {lastAction === "smash" && "SMASH"}
+                    {lastAction === "loved" && "LOVED"}
                   </div>
                 )}
               </div>
@@ -177,20 +177,20 @@ export default function DishSlider() {
                 </div>
                 <div className="dish-actions">
                   <button
-                    className="action-button btn-unlike"
+                    className="action-button btn-pass"
                     onClick={handlePass}
                   >
                     <ThumbDown sx={{ fontSize: 24 }} />
                   </button>
                   <button
-                    className="action-button btn-super-like"
-                    onClick={handleSuperLike}
+                    className="action-button btn-smash"
+                    onClick={handleSmash}
                   >
                     <Favorite sx={{ fontSize: 24 }} />
                   </button>
                   <button
-                    className="action-button btn-like"
-                    onClick={handleLike}
+                    className="action-button btn-loved  "
+                    onClick={handleLoved}
                   >
                     <ThumbUp sx={{ fontSize: 24 }} />
                   </button>

@@ -231,32 +231,32 @@
   transform: scale(0.95);
 }
 
-.btn-unlike {
+.btn-pass {
   background: #ff6b6b;
   color: white;
 }
 
-.btn-unlike:hover {
+.btn-pass:hover {
   background: #ff5252;
 }
 
-.btn-super-like {
+.btn-smash {
   background: #2196f3;
   color: white;
   transform: scale(1.15);
 }
 
-.btn-super-like:hover {
+.btn-smash:hover {
   background: #1976d2;
   transform: scale(1.25);
 }
 
-.btn-like {
+.btn-loved {
   background: #51cf66;
   color: white;
 }
 
-.btn-like:hover {
+.btn-loved:hover {
   background: #40c057;
 }
 
@@ -379,11 +379,11 @@
     height: 40px;
   }
 
-  .btn-super-like {
+  .btn-super-loved {
     transform: scale(1.1);
   }
 
-  .btn-super-like:hover {
+  .btn-super-loved:hover {
     transform: scale(1.15);
   }
 }
