@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import ThumbDown from '@mui/icons-material/ThumbDown'
-import Favorite from '@mui/icons-material/Favorite'
-import ThumbUp from '@mui/icons-material/ThumbUp'
-import RestaurantMenu from '@mui/icons-material/RestaurantMenu'
-import Star from '@mui/icons-material/Star'
+import ThumbDown from "@mui/icons-material/ThumbDown";
+import Favorite from "@mui/icons-material/Favorite";
+import ThumbUp from "@mui/icons-material/ThumbUp";
+import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
+import Star from "@mui/icons-material/Star";
 
 import DishesService, { Dish } from "../services/DishesService";
 import "./styles/DishSlider.css";
@@ -97,34 +97,35 @@ export default function DishSlider() {
     const translate =
       offset > 0 ? absOffset * baseTranslate : -absOffset * baseTranslate;
 
-    if (absOffset === 0) {
-      return {
-        transform: "translateX(0) scale(1)",
-        opacity: 1,
-        filter: "blur(0px)",
-        zIndex: 10,
-      };
-    } else if (absOffset === 1) {
-      return {
-        transform: `translateX(${translate}px) scale(0.8)`,
-        opacity: 0.6,
-        filter: "blur(5px)",
-        zIndex: 5,
-      };
-    } else if (absOffset === 2) {
-      return {
-        transform: `translateX(${translate}px) scale(0.6)`,
-        opacity: 0.3,
-        filter: "blur(8px)",
-        zIndex: 2,
-      };
-    } else {
-      return {
-        transform: `translateX(${translate}px) scale(0.5)`,
-        opacity: 0,
-        filter: "blur(10px)",
-        zIndex: 1,
-      };
+    switch (absOffset) {
+      case 0:
+        return {
+          transform: "translateX(0) scale(1)",
+          opacity: 1,
+          filter: "blur(0px)",
+          zIndex: 10,
+        };
+      case 1:
+        return {
+          transform: `translateX(${translate}px) scale(0.8)`,
+          opacity: 0.6,
+          filter: "blur(5px)",
+          zIndex: 5,
+        };
+      case 2:
+        return {
+          transform: `translateX(${translate}px) scale(0.6)`,
+          opacity: 0.3,
+          filter: "blur(8px)",
+          zIndex: 2,
+        };
+      default:
+        return {
+          transform: `translateX(${translate}px) scale(0.5)`,
+          opacity: 0,
+          filter: "blur(10px)",
+          zIndex: 1,
+        };
     }
   };
 
