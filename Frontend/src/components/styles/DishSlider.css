@@ -105,13 +105,13 @@
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.action-super {
+.action-smash {
   background: rgba(33, 150, 243, 0.4);
   color: white;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
-.action-like {
+.action-loved {
   background: rgba(81, 207, 102, 0.4);
   color: white;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
@@ -379,11 +379,11 @@
     height: 40px;
   }
 
-  .btn-super-loved {
+  .btn-smash {
     transform: scale(1.1);
   }
 
-  .btn-super-loved:hover {
+  .btn-smash:hover {
     transform: scale(1.15);
   }
 }

@@ -25,7 +25,7 @@ export default function DishSlider() {
         setDishes(loadedDishes);
       } catch (error) {
         console.error("Failed to load dishes:", error);
-        setDishes(DishesService.getSampleDishes());
+        setDishes(await DishesService.getAllDishes());
       } finally {
         setIsLoading(false);
       }
