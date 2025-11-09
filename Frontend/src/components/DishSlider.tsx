@@ -148,7 +148,19 @@ export default function DishSlider() {
               onAnimationEnd={handleAnimationEnd}
             >
               <div className="dish-image">
-                <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
+                {!dish.mainPictureId || dish.mainPictureId <= 1 ? (
+                  <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
+                ) : (
+                  <img
+                    //src={``}
+                    alt={dish.name}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                )}
                 {index === actionCardIndex && lastAction && (
                   <div className={`action-overlay action-${lastAction}`}>
                     {lastAction === "pass" && "PASS"}
