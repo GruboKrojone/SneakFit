@@ -35,7 +35,9 @@
   overflow: hidden;
   cursor: grab;
   user-select: none;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), filter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0s;
+  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+    filter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0s;
   inset: 0;
   margin: auto;
   will-change: transform, opacity, filter;
@@ -106,13 +108,13 @@
 }
 
 .action-smash {
-  background: rgba(33, 150, 243, 0.4);
+  background: rgba(81, 207, 102, 0.4);
   color: #ffffff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
 .action-loved {
-  background: rgba(81, 207, 102, 0.4);
+  background: rgba(33, 150, 243, 0.4);
   color: #ffffff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
@@ -290,7 +292,7 @@
 }
 
 .no-more-dishes.visible {
-  animation: fadeInCompletion 0.8s cubic-bezier(0.4, 0.0, 0.2, 1) 0.3s forwards;
+  animation: fadeInCompletion 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
   pointer-events: auto;
 }
 
@@ -412,7 +414,3 @@
     transform: scale(1.15);
   }
 }
-
-
-
-

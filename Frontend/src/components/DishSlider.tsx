@@ -206,13 +206,13 @@ export default function DishSlider() {
                   </button>
                   <button
                     className="action-button btn-smash"
-                    onClick={handleSmash}
+                    onClick={handleLoved}
                   >
                     <Favorite sx={{ fontSize: 24 }} />
                   </button>
                   <button
                     className="action-button btn-loved  "
-                    onClick={handleLoved}
+                    onClick={handleSmash}
                   >
                     <ThumbUp sx={{ fontSize: 24 }} />
                   </button>
