@@ -40,6 +40,9 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef --version 8.* || dotnet tool update --global dotnet-ef --version 8.*
+
       - name: Restore dependencies
         run: dotnet restore SneakFIt.sln
 
@@ -50,8 +53,6 @@ jobs:
         env:
           SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
         run: |
-          dotnet tool install --global dotnet-ef
-
           LOCAL_DB_CONN_STRING="Server=localhost,1433;Database=temp_ci_db;User Id=sa;Password=$SA_PASSWORD;TrustServerCertificate=True"
 
           dotnet ef database update -s API -p Domain --context SneakFitDbContext \
@@ -113,15 +114,16 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Install EF Core tools
+        run: dotnet tool install --global dotnet-ef --version 8.* || dotnet tool update --global dotnet-ef --version 8.*
+
       - name: 📦 Run EF Database Migrations (Dev)
         env:
           ConnectionStrings__SneakFitDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
 
         run: |
-          dotnet tool install --global dotnet-ef
-
           max_attempts=3
-          delay=20 # Czas oczekiwania w sekundach między próbami
+          delay=20
 
           for ((i=1; i<=max_attempts; i++)); do
             echo "Applying migrations (Attempt $i/$max_attempts)..."
@@ -130,7 +132,7 @@ jobs:
             
             if [ $? -eq 0 ]; then
               echo "Migrations applied successfully. ✅"
-              exit 0 # Sukces, zakończ krok pomyślnie
+              exit 0
             fi
             
             if [ $i -lt $max_attempts ]; then
