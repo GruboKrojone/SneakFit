@@ -1,0 +1,143 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["prod", "test", "dev", "SF-*"]
+  pull_request:
+    branches: ["prod", "test", "dev"]
+
+permissions:
+  contents: read
+
+jobs:
+  backend-build:
+    name: Build Backend
+    runs-on: ubuntu-latest
+
+    environment:
+      name: Local
+
+    services:
+      sqlserver:
+        image: mcr.microsoft.com/mssql/server:2022-latest
+        env:
+          ACCEPT_EULA: "Y"
+          MSSQL_SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
+        ports:
+          - 1433:1433
+
+    defaults:
+      run:
+        working-directory: Backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore SneakFIt.sln
+
+      - name: Build Release
+        run: dotnet build SneakFIt.sln --configuration Release --no-restore
+
+      - name: 📦 Validate EF Migrations (on local SQL container)
+        env:
+          SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
+        run: |
+          dotnet tool install --global dotnet-ef
+
+          LOCAL_DB_CONN_STRING="Server=localhost,1433;Database=temp_ci_db;User Id=sa;Password=$SA_PASSWORD;TrustServerCertificate=True"
+
+          dotnet ef database update -s API -p Domain --context SneakFitDbContext \
+            --connection "$LOCAL_DB_CONN_STRING"
+
+      - name: Publish API
+        run: dotnet publish API/API.csproj --configuration Release --no-build --output ./publish
+
+      - name: Upload API artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-api-${{ github.sha }}
+          path: Backend/publish
+          retention-days: 30
+
+  frontend-build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Frontend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: Frontend/package-lock.json
+      - name: Install dependencies
+        run: npm ci
+      - name: Build
+        run: npm run build
+        env:
+          NODE_ENV: production
+      - name: Upload Frontend artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist-${{ github.sha }}
+          path: Frontend/dist
+          retention-days: 30
+
+  deploy-dev:
+    name: 🚀 Deploy to DEV
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    needs: [backend-build, frontend-build]
+    environment:
+      name: Development
+    defaults:
+      run:
+        working-directory: Backend
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: 📦 Run EF Database Migrations (Dev)
+        env:
+          ConnectionStrings__SneakFitDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
+
+        run: |
+          dotnet tool install --global dotnet-ef
+
+          max_attempts=3
+          delay=20 # Czas oczekiwania w sekundach między próbami
+
+          for ((i=1; i<=max_attempts; i++)); do
+            echo "Applying migrations (Attempt $i/$max_attempts)..."
+            
+            dotnet ef database update -s API -p Domain --context SneakFitDbContext
+            
+            if [ $? -eq 0 ]; then
+              echo "Migrations applied successfully. ✅"
+              exit 0 # Sukces, zakończ krok pomyślnie
+            fi
+            
+            if [ $i -lt $max_attempts ]; then
+              echo "Attempt $i failed. Retrying in $delay seconds... ⏳"
+              sleep $delay
+            fi
+          done
+
+          echo "Failed to apply migrations after $max_attempts attempts. ❌"
+          exit 1
