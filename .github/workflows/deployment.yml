@@ -58,7 +58,8 @@ jobs:
           LOCAL_DB_CONN_STRING="Server=localhost,1433;Database=temp_ci_db;User Id=sa;Password=$SA_PASSWORD;TrustServerCertificate=True"
 
           dotnet ef database update -s API -p Domain --context SneakFitDbContext \
-            --connection "$LOCAL_DB_CONN_STRING"
+            --connection "$LOCAL_DB_CONN_STRING" \
+            --no-build
 
       - name: Publish API
         run: dotnet publish API/API.csproj --configuration Release --no-build --output ./publish
@@ -121,10 +122,9 @@ jobs:
           dotnet nuget locals all --clear
           dotnet tool install --global dotnet-ef --version 8.0.* || dotnet tool update --global dotnet-ef --version 8.0.*
 
-      - name: 📦 Run EF Database Migrations
+      - name: 📦 Run EF Database Migrations (Dev)
         env:
-          ConnectionStrings__SneakFitDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
-
+          AZURE_SQL_CONNECTION_STRING_DEV: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
         run: |
           max_attempts=3
           delay=20
@@ -132,7 +132,9 @@ jobs:
           for ((i=1; i<=max_attempts; i++)); do
             echo "Applying migrations (Attempt $i/$max_attempts)..."
             
-            dotnet ef database update -s API -p Domain --context SneakFitDbContext
+            dotnet ef database update -s API -p Domain --context SneakFitDbContext \
+              --connection "$AZURE_SQL_CONNECTION_STRING_DEV" \
+              --no-build
             
             if [ $? -eq 0 ]; then
               echo "Migrations applied successfully. ✅"
