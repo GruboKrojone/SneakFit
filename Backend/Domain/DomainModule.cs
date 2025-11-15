@@ -10,11 +10,13 @@ using MediatR.Extensions.Autofac.DependencyInjection.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Module = Autofac.Module;
 
 namespace Domain;
 
-public class DomainModule(IConfigurationRoot configuration) : Module
+public class DomainModule(
+    IConfigurationRoot configuration) : Module
 {
     private const string ConnectionStringName = nameof(SneakFitDbContext);
 
@@ -33,31 +35,42 @@ public class DomainModule(IConfigurationRoot configuration) : Module
         RegisterMediator(builder);
     }
 
-    public static void MigrateDatabase(IServiceScope scope)
+    public static void MigrateDatabase(ILifetimeScope scope, IServiceProvider serviceProvider)
     {
-        var dbContext = scope.ServiceProvider.GetRequiredService<SneakFitDbContext>();
-        dbContext.Database.Migrate();
+        var logger = serviceProvider.GetRequiredService<ILogger<DomainModule>>();
+
+        try
+        {
+            logger.LogInformation("Starting database migration...");
+            var dbContext = scope.Resolve<SneakFitDbContext>();
+            dbContext.Database.Migrate();
+            logger.LogInformation("Database migration completed successfully.");
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Database migration failed: {ErrorMessage}", ex.Message);
+            throw;
+        }
     }
 
     private void RegisterDatabaseProviders(ContainerBuilder builder)
     {
+        var connectionString = configuration.GetConnectionString(ConnectionStringName);
+
+        if (string.IsNullOrEmpty(connectionString))
+            throw new DomainException("Cannot find connection string for db",
+                (int)CommonErrorCode.InvalidOperation);
+
         builder
-            .Register(_ =>
+            .Register(c =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<SneakFitDbContext>();
-                var connectionString = configuration.GetConnectionString(ConnectionStringName);
-
-                if (connectionString != null)
-                    optionsBuilder.UseSqlServer(connectionString);
-                else
-                    throw new DomainException("Cannot find connection string for db",
-                        (int)CommonErrorCode.InvalidOperation);
-
+                optionsBuilder.UseSqlServer(connectionString);
                 return new SneakFitDbContext(optionsBuilder.Options);
             })
-            .As<DbContext>()
             .AsSelf()
-            .InstancePerDependency();
+            .As<DbContext>()
+            .InstancePerLifetimeScope();
     }
 
     private static void RegisterMediator(ContainerBuilder builder)

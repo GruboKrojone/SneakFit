@@ -11,15 +11,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(SneakFitDbContext))]
-    [Migration("20251103173300_InitMigration")]
-    partial class InitMigration
+    [Migration("20251115111346_FavouriteDishes")]
+    partial class FavouriteDishes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.10")
+                .HasAnnotation("ProductVersion", "9.0.11")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -52,6 +52,21 @@ namespace Domain.Migrations
                     b.HasIndex("IngredientId");
 
                     b.ToTable("DishIngredients", (string)null);
+                });
+
+            modelBuilder.Entity("DishUser", b =>
+                {
+                    b.Property<int>("FavoriteDishesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FavoritedByUsersId")
+                        .HasColumnType("int");
+
+                    b.HasKey("FavoriteDishesId", "FavoritedByUsersId");
+
+                    b.HasIndex("FavoritedByUsersId");
+
+                    b.ToTable("UserFavouriteDishes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Dishes.Entities.Category", b =>
@@ -203,6 +218,21 @@ namespace Domain.Migrations
                     b.HasOne("Domain.Dishes.Entities.Ingredient", null)
                         .WithMany()
                         .HasForeignKey("IngredientId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("DishUser", b =>
+                {
+                    b.HasOne("Domain.Dishes.Entities.Dish", null)
+                        .WithMany()
+                        .HasForeignKey("FavoriteDishesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Users.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("FavoritedByUsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
