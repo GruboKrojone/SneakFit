@@ -57,6 +57,8 @@ jobs:
         run: |
           LOCAL_DB_CONN_STRING="Server=localhost,1433;Database=temp_ci_db;User Id=sa;Password=$SA_PASSWORD;TrustServerCertificate=True"
 
+          export ConnectionStrings__SneakFitDbContext="$LOCAL_DB_CONN_STRING"
+
           dotnet ef database update -s API -p Domain --context SneakFitDbContext \
             --connection "$LOCAL_DB_CONN_STRING" \
             --configuration Release
