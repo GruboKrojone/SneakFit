@@ -40,8 +40,10 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef || dotnet tool update --global dotnet-ef
+      - name: Clear NuGet cache and install EF Core tools
+        run: |
+          dotnet nuget locals all --clear
+          dotnet tool install --global dotnet-ef --version 8.0.* || dotnet tool update --global dotnet-ef --version 8.0.*
 
       - name: Restore dependencies
         run: dotnet restore SneakFIt.sln
@@ -114,10 +116,12 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
-      - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef || dotnet tool update --global dotnet-ef
+      - name: Clear NuGet cache and install EF Core tools
+        run: |
+          dotnet nuget locals all --clear
+          dotnet tool install --global dotnet-ef --version 8.0.* || dotnet tool update --global dotnet-ef --version 8.0.*
 
-      - name: 📦 Run EF Database Migrations (Dev)
+      - name: 📦 Run EF Database Migrations
         env:
           ConnectionStrings__SneakFitDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
 
