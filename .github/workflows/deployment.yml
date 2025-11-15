@@ -41,7 +41,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef --version 8.* || dotnet tool update --global dotnet-ef --version 8.*
+        run: dotnet tool install --global dotnet-ef || dotnet tool update --global dotnet-ef
 
       - name: Restore dependencies
         run: dotnet restore SneakFIt.sln
@@ -115,7 +115,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Install EF Core tools
-        run: dotnet tool install --global dotnet-ef --version 8.* || dotnet tool update --global dotnet-ef --version 8.*
+        run: dotnet tool install --global dotnet-ef || dotnet tool update --global dotnet-ef
 
       - name: 📦 Run EF Database Migrations (Dev)
         env:
