@@ -59,7 +59,7 @@ jobs:
 
           dotnet ef database update -s API -p Domain --context SneakFitDbContext \
             --connection "$LOCAL_DB_CONN_STRING" \
-            --no-build
+            --configuration Release
 
       - name: Publish API
         run: dotnet publish API/API.csproj --configuration Release --no-build --output ./publish
@@ -134,7 +134,7 @@ jobs:
             
             dotnet ef database update -s API -p Domain --context SneakFitDbContext \
               --connection "$AZURE_SQL_CONNECTION_STRING_DEV" \
-              --no-build
+              --configuration Release
             
             if [ $? -eq 0 ]; then
               echo "Migrations applied successfully. ✅"
