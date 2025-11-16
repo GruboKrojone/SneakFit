@@ -4,6 +4,7 @@ import "./styles/LoginPage.css";
 import loginLogo from "/images/loginLogo.svg";
 import AuthButton from "../components/AuthButton";
 import AuthInput from "../components/AuthInput";
+import darkMode from "../../public/images/dark-mode.svg";
 import AuthService from "../services/AuthService";
 
 interface LoginCredentials {
@@ -48,6 +49,9 @@ export default function LoginPage() {
 
   return (
     <>
+      <div id="view-mode">
+        <img src={darkMode} alt="Dark mode toggle" />
+      </div>
       <div id="login-area">
         <div id="form-core">
           <div className="logo-container">
