@@ -1,0 +1,151 @@
+.nav-bar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 140px;
+  height: 100vh;
+  background: linear-gradient(180deg, #3b3b3b, #696969);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px;
+  box-sizing: border-box;
+  gap: 12px;
+  border-radius: 0 20px 20px 0;
+  z-index: 999;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 8px 0 0 0;
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-list li {
+  margin: 6px 0;
+}
+
+.nav-list a {
+  color: #cbd5e1;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-list a:hover {
+  color: #fff;
+}
+
+.nav-list a.active {
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+  color: #fff;
+}
+
+.nav-list a svg {
+  width: 30px;
+  height: 30px;
+  font-size: 30px;
+}
+
+.nav-footer {
+  margin-top: auto;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.logout-btn {
+  width: 48px;
+  height: 48px;
+  border: none;
+  background: transparent;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 48px;
+  min-height: 48px;
+  overflow: hidden;
+}
+
+.logout-btn svg {
+  width: 34px;
+  height: 34px;
+}
+
+.protected-root {
+  display: block;
+}
+
+.protected-content {
+  margin-left: 140px;
+  padding: 20px;
+}
+
+.nav-toggle {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    padding: 7px 10px;
+    z-index: 1000;
+    border-radius: 10px;
+    background: linear-gradient(to bottom, #6e6e6e, #333333);
+    border: none;
+    color: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    flex-direction: column;
+    align-items: center;
+    background: linear-gradient(180deg, #0f172a, #0b1220);
+    transform: translateY(100%);
+    transition: transform 0.6s ease-in-out;
+    border-radius: 20px 20px 0 0;
+    z-index: 999;
+    overflow-y: auto;
+    top: auto;
+  }
+
+  .nav-bar.open {
+    transform: translateY(0);
+  }
+
+  .logout-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .protected-content {
+    margin-left: 0;
+    padding-top: 12px;
+  }
+}
