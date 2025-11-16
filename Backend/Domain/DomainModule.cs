@@ -65,7 +65,13 @@ public class DomainModule(
             .Register(c =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<SneakFitDbContext>();
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(
+                    connectionString,
+                    sqlOptions => sqlOptions.EnableRetryOnFailure(
+                        maxRetryCount: 5,
+                        maxRetryDelay: TimeSpan.FromSeconds(30),
+                        errorNumbersToAdd: null));
+
                 return new SneakFitDbContext(optionsBuilder.Options);
             })
             .AsSelf()
