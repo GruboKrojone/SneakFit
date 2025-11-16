@@ -15,6 +15,7 @@ function App() {
         <BedtimeOutlined sx={{ fontSize: 40 }} />
       </button>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/home"
@@ -48,10 +49,6 @@ function App() {
             </ProtectedLayout>
           }
         />
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/home" element={<HomePage />} />
-        <Route path="/" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

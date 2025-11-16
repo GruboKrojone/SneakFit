@@ -37,7 +37,6 @@ class DishesService {
       }
 
       const data = await response.json();
-      console.log("Fetched dishes:", data);
       return data;
     } catch (error) {
       console.error("Error fetching dishes:", error);
@@ -86,7 +85,8 @@ class DishesService {
       return await response.json();
     } catch (error) {
       console.error("Error creating dish:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
       throw new Error(`Failed to create dish: ${errorMessage}`);
     }
   }
@@ -110,7 +110,8 @@ class DishesService {
       return await response.json();
     } catch (error) {
       console.error("Error updating dish:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
       throw new Error(`Failed to update dish ${dishId}: ${errorMessage}`);
     }
   }
@@ -131,8 +132,11 @@ class DishesService {
       }
     } catch (error) {
       console.error("Error updating dish visibility:", error);
-      const errorMessage = error instanceof Error ? error.message : "Unknown error occurred";
-      throw new Error(`Failed to update dish ${dishId} visibility: ${errorMessage}`);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      throw new Error(
+        `Failed to update dish ${dishId} visibility: ${errorMessage}`
+      );
     }
   }
 }
