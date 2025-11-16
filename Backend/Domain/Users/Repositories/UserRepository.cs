@@ -16,5 +16,6 @@ internal class UserRepository(
     }
 
     protected override IQueryable<User> GetQuery()
-        => dbContext.Users.AsQueryable();
+        => dbContext.Users.AsQueryable()
+            .Include(u => u.FavoriteDishes);
 }
