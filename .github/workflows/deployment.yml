@@ -134,6 +134,8 @@ jobs:
           for ((i=1; i<=max_attempts; i++)); do
             echo "Applying migrations (Attempt $i/$max_attempts)..."
             
+            export ConnectionStrings__SneakFitDbContext="$AZURE_SQL_CONNECTION_STRING_DEV"
+            
             dotnet ef database update -s API -p Domain --context SneakFitDbContext \
               --connection "$AZURE_SQL_CONNECTION_STRING_DEV" \
               --configuration Release
