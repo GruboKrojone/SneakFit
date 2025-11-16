@@ -42,7 +42,7 @@ internal sealed class Dish : EntityBase
     public User Owner { get; private set; }
     public List<Category>? Categories { get; private set; }
     public List<Ingredient>? Ingredients { get; private set; }
-
+    public ICollection<User> FavoritedByUsers { get; set; } = new List<User>();
 
     public void AssignToUser(int ownerId) => OwnerId = ownerId;
 
@@ -63,18 +63,15 @@ internal sealed class Dish : EntityBase
     }
 
     public DishDto ToDto()
-    {
-        return new DishDto(
+        => new DishDto(
             Name,
             Description,
             Calories,
             Protein,
             Carbs,
             Fat);
-    }
 
     public void MarkAsPublic() => IsPublic = true;
-
 
     public static void OnModelCreating(ModelBuilder builder)
     {

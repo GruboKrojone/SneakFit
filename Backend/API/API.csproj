@@ -7,20 +7,24 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Autofac" Version="8.2.*"/>
-        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.*"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*"/>
-        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.*"/>
+        <PackageReference Include="Autofac" Version="8.2.*" />
+        <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.*" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.*" />
+        <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.*" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.*">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.*"/>
+        <PackageReference Include="Serilog" Version="4.3.0" />
+        <PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+        <PackageReference Include="Serilog.Settings.Configuration" Version="9.0.0" />
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.*" />
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Core\Core.csproj"/>
-        <ProjectReference Include="..\Domain\Domain.csproj"/>
+        <ProjectReference Include="..\Core\Core.csproj" />
+        <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>

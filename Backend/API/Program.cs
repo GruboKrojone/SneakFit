@@ -9,6 +9,7 @@ using Core.Middlewares.Exceptions;
 using Domain;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 
 namespace API;
 
@@ -16,106 +17,124 @@ public class Program
 {
     public static void Main(string[] args)
     {
-        var builder = WebApplication.CreateBuilder(args);
+        Console.Clear();
 
-        builder.Services.AddHttpContextAccessor();
-        builder.Services.AddScoped<IUserContext, UserContext>();
+        Log.Logger = new LoggerConfiguration()
+            .MinimumLevel.Information()
+            .WriteTo.Console()
+            .CreateBootstrapLogger();
 
-        ConfigureDependencyInjection(builder);
-
-        builder.Services.AddAuthorization();
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen(c =>
+        try
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "SneakFit API", Version = "v1" });
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            Log.Information("Starting web application");
+
+            var builder = WebApplication.CreateBuilder(args);
+
+            var env = builder.Environment;
+            builder.Configuration
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables();
+
+            builder.Host.UseSerilog((context, services, configuration) => configuration
+                .ReadFrom.Configuration(context.Configuration)
+                .Enrich.FromLogContext());
+
+            builder.Services.AddHttpContextAccessor();
+            builder.Services.AddScoped<IUserContext, UserContext>();
+
+            ConfigureDependencyInjection(builder);
+
+            var authenticationSettings = new AuthenticationSettings();
+            var azureConfig = new AzureConfig();
+            builder.Configuration.GetSection("App:Authentication").Bind(authenticationSettings);
+            builder.Configuration.GetSection("App:Azure").Bind(azureConfig);
+            builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
+            builder.Services.AddSingleton<IAzureConfig>(azureConfig);
+
+            builder.Services.AddAuthentication(options =>
             {
-                In = ParameterLocation.Header,
-                Description = "Please enter JWT with Bearer into field",
-                Name = "Authorization",
-                Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer"
-            });
-            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                options.DefaultAuthenticateScheme = "Bearer";
+                options.DefaultScheme = "Bearer";
+                options.DefaultChallengeScheme = "Bearer";
+            }).AddJwtBearer(cfg =>
             {
+                cfg.RequireHttpsMetadata = false;
+                cfg.SaveToken = true;
+                cfg.TokenValidationParameters = new TokenValidationParameters
                 {
-                    new OpenApiSecurityScheme
+                    ValidIssuer = authenticationSettings.JwtIssuer,
+                    ValidAudience = authenticationSettings.JwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+                };
+            });
+
+            builder.Services.AddAuthorization();
+            builder.Services.AddCors();
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SneakFit API", Version = "v1" });
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Please enter JWT with Bearer into field",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
                     {
-                        Reference = new OpenApiReference
+                        new OpenApiSecurityScheme
                         {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    },
-                    Array.Empty<string>()
-                }
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
             });
-        });
 
-        var env = builder.Environment;
-        builder.Configuration
-            .AddJsonFile("appsettings.json", false, true)
-            .AddJsonFile("appsettings.Local.json", true, true)
-            .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true, true)
-            .AddEnvironmentVariables();
+            var app = builder.Build();
 
-        var authenticationSettings = new AuthenticationSettings();
-        var azureConfig = new AzureConfig();
-        builder.Configuration.GetSection("App:Authentication").Bind(authenticationSettings);
-        builder.Configuration.GetSection("App:Azure").Bind(azureConfig);
-        builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
-        builder.Services.AddSingleton<IAzureConfig>(azureConfig);
-        builder.Services.AddAuthentication(o =>
-        {
-            o.DefaultAuthenticateScheme = "Bearer";
-            o.DefaultScheme = "Bearer";
-            o.DefaultChallengeScheme = "Bearer";
-        }).AddJwtBearer(cfg =>
-        {
-            cfg.RequireHttpsMetadata = false;
-            cfg.SaveToken = true;
-            cfg.TokenValidationParameters = new TokenValidationParameters
+            app.UseSerilogRequestLogging();
+            app.UseMiddleware<ExceptionMiddleware>();
+
+            if (app.Environment.IsDevelopment())
             {
-                ValidIssuer = authenticationSettings.JwtIssuer,
-                ValidAudience = authenticationSettings.JwtIssuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
-            };
-        });
+                app.UseSwagger();
+                app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "SneakFit API v1"); });
+            }
 
-        builder.Services.AddCors(options =>
-        {
-            options.AddDefaultPolicy(policy =>
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapControllers();
+
+            var autofacContainer = app.Services.GetAutofacRoot();
+            using (var scope = autofacContainer.BeginLifetimeScope())
             {
-                policy.AllowAnyOrigin()
-                    .AllowAnyMethod()
-                    .AllowAnyHeader();
-            });
-        });
+                DomainModule.MigrateDatabase(scope, app.Services);
+            }
 
-        builder.Services.AddControllers();
-        var app = builder.Build();
-
-        app.UseMiddleware<ExceptionMiddleware>();
-
-        // Configure the HTTP request pipeline.
-        if (app.Environment.IsDevelopment())
-        {
-            app.UseSwagger();
-            app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "SneakFit API v1"); });
+            Log.Information("Application started successfully");
+            app.Run();
         }
-
-        app.UseHttpsRedirection();
-        app.UseCors();
-        app.UseAuthorization();
-        app.MapControllers();
-
-
-        using (var scope = app.Services.CreateScope())
+        catch (Exception ex)
         {
-            DomainModule.MigrateDatabase(scope);
+            Log.Fatal(ex, "Application terminated unexpectedly");
+            throw;
         }
-
-        app.Run();
+        finally
+        {
+            Log.CloseAndFlush();
+        }
     }
 
     private static void ConfigureDependencyInjection(WebApplicationBuilder appBuilder)
