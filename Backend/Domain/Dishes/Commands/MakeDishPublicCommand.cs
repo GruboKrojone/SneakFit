@@ -8,7 +8,7 @@ namespace Domain.Dishes.Commands;
 
 public record MakeDishPublicCommand(int DishId) : ICommand<Unit>;
 
-internal class MakeDishPublicCommandHandler(
+sealed class MakeDishPublicCommandHandler(
     IDishRepository dishRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<MakeDishPublicCommand, Unit>
 {

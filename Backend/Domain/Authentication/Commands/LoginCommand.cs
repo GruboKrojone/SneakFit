@@ -9,7 +9,7 @@ namespace Domain.Authentication.Commands;
 
 public record LoginCommand(LoginParams Input) : ICommand<LoginResponse>;
 
-internal class LoginCommandHandler(
+sealed class LoginCommandHandler(
     IUserRepository userRepository,
     IAuthService authService
 ) : ICommandHandler<LoginCommand, LoginResponse>

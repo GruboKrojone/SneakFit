@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Users.Repositories;
 
-internal class UserRepository(
+sealed class UserRepository(
     IUnitOfWork unitOfWork,
     SneakFitDbContext dbContext
 ) : EntityRepositoryBase<User>(unitOfWork), IUserRepository

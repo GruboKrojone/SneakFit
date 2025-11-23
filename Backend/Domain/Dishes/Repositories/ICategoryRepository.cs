@@ -3,6 +3,6 @@ using Domain.Dishes.Entities;
 
 namespace Domain.Dishes.Repositories;
 
-internal interface ICategoryRepository : IEntityRepository<Category>
+interface ICategoryRepository : IEntityRepository<Category>
 {
 }
