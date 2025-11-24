@@ -5,7 +5,7 @@ using Core.Middlewares;
 using Domain.Dishes.Repositories;
 using Domain.Users.Repositories;
 using MediatR;
-using Microsoft.Extensions.Logging;
+using Serilog;
 
 namespace Domain.Dishes.Commands;
 
@@ -16,11 +16,14 @@ sealed class MarkDishAsFavouriteCommandHandler(
     IUserRepository userRepository,
     IUserContext userContext,
     IUnitOfWork unitOfWork,
-    ILogger<MarkDishAsFavouriteCommandHandler> logger) : ICommandHandler<MarkDishFavouriteCommand, Unit>
+    ILogger logger) : ICommandHandler<MarkDishFavouriteCommand, Unit>
 {
     public async Task<Unit> Handle(MarkDishFavouriteCommand command, CancellationToken cancellationToken)
     {
-        var user = await userRepository.FindAsync(userContext.UserId.Value, cancellationToken)
+        var userId = userContext.UserId
+            ?? throw new DomainException("User is not authenticated", (int)CommonErrorCode.Unauthorized);
+
+        var user = await userRepository.FindAsync(userId, cancellationToken)
             ?? throw new DomainException("User not found", (int)CommonErrorCode.EntityNotFound);
 
         var dish = await dishRepository.FindAsync(command.Id, cancellationToken)
@@ -28,15 +31,15 @@ sealed class MarkDishAsFavouriteCommandHandler(
 
         if (user.FavoriteDishes.Any(d => d.Id == command.Id))
         {
-            logger.LogWarning("Dish {DishId} is already a favorite for user {UserId}", command.Id, user.Id);
+            logger.Warning("Dish {DishId} is already a favorite for user {UserId}", command.Id, user.Id);
             return Unit.Value;
         }
 
         user.FavoriteDishes.Add(dish);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        logger.LogInformation("Successfully saved changes. Dish {DishId} marked as favourite for user {UserId}", command.Id, user.Id);
-        logger.LogInformation("New count: {Count} for userId: {UserId}", user.FavoriteDishes.Count, user.Id);
+        logger.Information("Successfully saved changes. Dish {DishId} marked as favourite for user {UserId}", command.Id, user.Id);
+        logger.Information("New count: {Count} for userId: {UserId}", user.FavoriteDishes.Count, user.Id);
 
         return Unit.Value;
     }
