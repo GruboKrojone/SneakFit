@@ -11,7 +11,7 @@ namespace Domain.Authentication.Commands;
 
 public record RegisterCommand(RegisterParams Input) : ICommand<int>;
 
-internal class RegisterCommandHandler(
+sealed class RegisterCommandHandler(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<RegisterCommand, int>

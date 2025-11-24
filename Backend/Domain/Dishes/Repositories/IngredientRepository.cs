@@ -3,7 +3,7 @@ using Domain.Dishes.Entities;
 
 namespace Domain.Dishes.Repositories;
 
-internal class IngredientRepository(
+sealed class IngredientRepository(
     IUnitOfWork unitOfWork,
     SneakFitDbContext dbContext) : EntityRepositoryBase<Ingredient>(unitOfWork), IIngredientRepository
 {

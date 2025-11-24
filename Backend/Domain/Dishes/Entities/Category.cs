@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Entities;
 
-internal sealed class Category : EntityBase
+sealed class Category : EntityBase
 {
     private Category()
     {

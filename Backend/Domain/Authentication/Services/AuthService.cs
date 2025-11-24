@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Domain.Authentication.Services;
 
-public class AuthService(IConfiguration configuration) : IAuthService
+public sealed class AuthService(IConfiguration configuration) : IAuthService
 {
     public string GenerateToken(string email, UserRole role, int userId)
     {

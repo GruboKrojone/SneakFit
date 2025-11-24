@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain;
 
-internal class SneakFitDbContext : DbContext
+class SneakFitDbContext : DbContext
 {
     public SneakFitDbContext(DbContextOptions<SneakFitDbContext> options) : base(options)
     {
