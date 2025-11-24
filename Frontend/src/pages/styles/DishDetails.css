@@ -1,0 +1,287 @@
+.dish-details-container {
+  padding: 20px;
+  color: #ffffff;
+  width: 100%;
+  height: 90vh;
+}
+
+.dish-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.grid-item {
+  border-radius: 15px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* grid 1: images, categories */
+.grid-1 {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.dish-image-box {
+  width: 100%;
+  height: 70%;
+  background-color: #333333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.categories-box {
+  background-color: #d9d9d9;
+  color: #1a1a1a;
+  padding: 12px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.categories-label {
+  display: flex;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.categories-content {
+  font-size: 13px;
+}
+
+/* grid 2: name, description */
+.grid-2 {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.dish-name-box{
+  font-size: 36px;
+  margin: 0;
+  font-weight: bold;
+  color: #ffffff;
+  text-align: center;
+}
+
+.description-box {
+  background-color: #b3b3b3;
+  color: #1a1a1a;
+  padding: 10px;
+  border-radius: 10px;
+  flex: 1;
+  overflow-y: auto;
+  text-align: center;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.description-box p {
+  margin: 8px 0;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.description-box strong {
+  color: #333333;
+}
+
+/* grid 3: ingredients, servings, macros */
+.grid-3 {
+  background-color: transparent;
+  box-shadow: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  padding: 0;
+}
+
+.grid-3-left {
+  display: flex;
+  flex-direction: column;
+}
+
+.grid-3-right {
+  display: flex;
+  flex-direction: column;
+}
+
+.ingredients-box {
+  background-color: #b3b3b3;
+  border-radius: 15px;
+  padding: 20px;
+  flex: 1;
+  color: #1a1a1a;
+}
+
+.section-title {
+  margin: 0 0 10px 0;
+  font-size: 25px;
+  font-weight: bold;
+  color: #1a1a1a;
+}
+
+.ingredients-list {
+  font-size: 13px;
+  line-height: 1.6;
+  color: #333333;
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.ingredients-ul {
+  margin: 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+
+.ingredients-ul li {
+  margin-bottom: 8px;
+}
+
+.servings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  border-radius: 15px;
+  flex: 1;
+}
+
+.servings-box {
+  background-color: #b3b3b3;
+  border-radius: 10px;
+  color: #000000;
+  padding: 15px;
+  display: flex;
+  flex-direction: row;
+  align-items: first baseline;
+  justify-content: space-evenly;
+}
+
+.servings-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  background-color: #ffffff;
+  border-radius: 25px;
+  padding: 4px 10px;
+}
+
+.servings-btn {
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: #505050;
+  color: #b1b1b1;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.servings-btn:hover {
+  background-color: #606060;
+}
+
+.servings-number {
+  font-size: 24px;
+  font-weight: bold;
+  color: #000000;
+  min-width: 40px;
+  text-align: center;
+}
+
+.macros-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+}
+
+.macro-item {
+  background-color: #2d2d2d;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+}
+
+.macro-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #ffffff;
+  margin-bottom: 5px;
+}
+
+.macro-label {
+  font-size: 12px;
+  color: #d0d0d0;
+  text-transform: capitalize;
+}
+
+/* grid 4: buttons */
+.grid-4 {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 15px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn {
+  flex: 1;
+  padding: 15px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-decline {
+  background-color: #ff6b6b;
+  color: #ffffff;
+}
+
+.btn-decline:hover {
+  background-color: #ff5252;
+  transform: scale(1.05);
+}
+
+.btn-accept {
+  background-color: #51cf66;
+  color: #ffffff;
+}
+
+.btn-accept:hover {
+  background-color: #40c057;
+  transform: scale(1.05);
+}
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  width: 100%;
+  color: #ffffff;
+  font-size: 18px;
+}
