@@ -26,13 +26,18 @@
 /* grid 1: images, categories */
 .grid-1 {
   display: flex;
-  flex-direction: column;
   gap: 10px;
 }
 
 .dish-image-box {
-  width: 100%;
-  height: 70%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dish-image-content {
+  width: 300px;
+  height: 300px;
   background-color: #333333;
   display: flex;
   align-items: center;
@@ -100,10 +105,9 @@
 
 /* grid 3: ingredients, servings, macros */
 .grid-3 {
-  background-color: transparent;
   box-shadow: none;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr;
   gap: 20px;
   padding: 0;
 }
@@ -207,24 +211,24 @@
 .macros-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
+  justify-content: center;
+  align-items: center;
 }
 
-.macro-item {
-  background-color: #2d2d2d;
+.kcal-box {
   border-radius: 10px;
-  padding: 12px;
   text-align: center;
+  margin-right: 2px;
 }
 
-.macro-value {
+.kcal-value {
   font-size: 20px;
   font-weight: bold;
   color: #ffffff;
   margin-bottom: 5px;
 }
 
-.macro-label {
+.kcal-label {
   font-size: 12px;
   color: #d0d0d0;
   text-transform: capitalize;
@@ -234,20 +238,18 @@
 .grid-4 {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   gap: 15px;
 }
 
 .action-buttons {
   display: flex;
-  gap: 15px;
+  gap: 30px;
   width: 100%;
   justify-content: center;
 }
 
 .btn {
-  flex: 1;
-  padding: 15px 20px;
   border: none;
   border-radius: 10px;
   font-size: 16px;
@@ -257,22 +259,30 @@
 }
 
 .btn-decline {
-  background-color: #ff6b6b;
+  background-color: transparent;
   color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-decline:hover {
-  background-color: #ff5252;
+  background-color: transparent;
   transform: scale(1.05);
 }
 
 .btn-accept {
-  background-color: #51cf66;
+  background-color: transparent;
   color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .btn-accept:hover {
-  background-color: #40c057;
+  background-color: transparent;
   transform: scale(1.05);
 }
 

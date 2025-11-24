@@ -1,11 +1,15 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import DishesService, { Dish } from "../services/DishesService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
+import Undo from "@mui/icons-material/Undo";
+import PlayCircle from "@mui/icons-material/PlayCircle";
+import MacroCircle from "../components/MacroCircle";
 import "./styles/DishDetails.css";
 
 export default function DishDetails() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [dish, setDish] = useState<Dish | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [servings, setServings] = useState(1);
@@ -41,18 +45,13 @@ export default function DishDetails() {
         {/* grid 1: images, categories */}
         <div className="grid-item grid-1">
           <div className="dish-image-box">
-            {!dish.mainPictureId || dish.mainPictureId <= 1 ? (
-              <RestaurantMenu sx={{ fontSize: 100, color: "white" }} />
-            ) : (
-              <img
-                alt={dish.name}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-              />
-            )}
+            <div className="dish-image-content">
+              {!dish.mainImageId || dish.mainImageId <= 1 ? (
+                <RestaurantMenu sx={{ fontSize: 50, color: "white" }} />
+              ) : (
+                <img alt={dish.name} />
+              )}
+            </div>
           </div>
           <div className="categories-box">
             <div className="categories-content">
@@ -114,22 +113,25 @@ export default function DishDetails() {
               </div>
 
               <div className="macros-grid">
-                <div className="macro-item">
-                  <div className="macro-value">{dish.calories ?? 0}</div>
-                  <div className="macro-label">kcal</div>
+                <div className="kcal-box">
+                  <div className="kcal-value">{dish.calories ?? 0}</div>
+                  <div className="kcal-label">kcal</div>
                 </div>
-                <div className="macro-item">
-                  <div className="macro-value">{dish.protein ?? 0}</div>
-                  <div className="macro-label">białko</div>
-                </div>
-                <div className="macro-item">
-                  <div className="macro-value">{dish.carbs ?? 0}</div>
-                  <div className="macro-label">węglowodany</div>
-                </div>
-                <div className="macro-item">
-                  <div className="macro-value">{dish.fat ?? 0}</div>
-                  <div className="macro-label">tłuszcze</div>
-                </div>
+                <MacroCircle
+                  value={dish.protein ?? 0}
+                  label="białko"
+                  maxValue={100}
+                />
+                <MacroCircle
+                  value={dish.carbs ?? 0}
+                  label="węglowodany"
+                  maxValue={100}
+                />
+                <MacroCircle
+                  value={dish.fat ?? 0}
+                  label="tłuszcze"
+                  maxValue={100}
+                />
               </div>
             </div>
           </div>
@@ -138,8 +140,14 @@ export default function DishDetails() {
         {/* grid 4: buttons */}
         <div className="grid-item grid-4">
           <div className="action-buttons">
-            <button className="btn btn-decline">Nie dziś</button>
-            <button className="btn btn-accept">Zaczynamy</button>
+            <button className="btn btn-decline" onClick={() => navigate(-1)}>
+              <Undo sx={{ fontSize: 64, marginRight: 1 }} />
+              Nie dziś
+            </button>
+            <button className="btn btn-accept">
+              <PlayCircle sx={{ fontSize: 164, marginRight: 1 }} />
+              Zaczynamy
+            </button>
           </div>
         </div>
       </div>

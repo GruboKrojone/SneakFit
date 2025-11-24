@@ -19,9 +19,9 @@ export interface Dish {
   ownerName: string;
   isPublic: boolean;
   categories: Category[];
-  mainPictureId: number;
-  secondaryPictureId: number | null;
-  thirdPictureId: number | null;
+  mainImageId: number;
+  secondaryImageId: number | null;
+  thirdImageId: number | null;
   calories?: number;
   protein?: number;
   carbs?: number;

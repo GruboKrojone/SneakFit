@@ -167,7 +167,7 @@ export default function DishSlider() {
               onAnimationEnd={handleAnimationEnd(index)}
             >
               <div className="dish-image">
-                {!dish.mainPictureId || dish.mainPictureId <= 1 ? (
+                {!dish.mainImageId || dish.mainImageId <= 1 ? (
                   <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
                 ) : (
                   <img
@@ -219,7 +219,7 @@ export default function DishSlider() {
                     title="Loved"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleSmash();
+                      handleLoved();
                     }}
                   >
                     <Favorite sx={{ fontSize: 24 }} />
@@ -229,7 +229,7 @@ export default function DishSlider() {
                     title="Smash"
                     onClick={(e) => {
                       e.stopPropagation();
-                      handleLoved();
+                      handleSmash();
                     }}
                   >
                     <ThumbUp sx={{ fontSize: 24 }} />
