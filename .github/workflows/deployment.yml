@@ -51,6 +51,18 @@ jobs:
       - name: Build Release
         run: dotnet build SneakFIt.sln --configuration Release --no-restore
 
+      - name: 🧪 Run Unit Tests
+        run: dotnet test SneakFIt.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+
+      - name: 📊 Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Backend Test Results
+          path: "**/test-results.trx"
+          reporter: dotnet-trx
+          working-directory: Backend
+
       - name: 📦 Validate EF Migrations (on local SQL container)
         env:
           SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
