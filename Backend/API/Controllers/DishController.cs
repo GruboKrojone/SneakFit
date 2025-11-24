@@ -38,7 +38,7 @@ public class DishController(IMediator mediator) : ControllerBase
     [HttpPost]
     [Route("{id}/favourite")]
     public async Task<Unit> MarkDishAsFavourite(int id, CancellationToken cancellationToken)
-        => await mediator.Send(new MarkDishAsFavouriteCommand(id), cancellationToken);
+        => await mediator.Send(new MarkDishFavouriteCommand(id), cancellationToken);
 
     [HttpDelete]
     [Route("{id}/delete")]
