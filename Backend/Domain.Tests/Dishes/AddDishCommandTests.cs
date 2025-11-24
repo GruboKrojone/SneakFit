@@ -26,6 +26,7 @@ public class AddDishCommandTests
         _handler = new AddDishCommandHandler(_dishRepository.Object, _userContext.Object, _unitOfWork.Object);
     }
 
+
     [Fact]
     public async Task ValidCommand_ShouldAddDishAndReturnUnit()
     {
