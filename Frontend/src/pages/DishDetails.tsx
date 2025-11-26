@@ -4,6 +4,8 @@ import DishesService, { Dish } from "../services/DishesService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import Undo from "@mui/icons-material/Undo";
 import PlayCircle from "@mui/icons-material/PlayCircle";
+import ChevronLeft from "@mui/icons-material/ChevronLeft";
+import ChevronRight from "@mui/icons-material/ChevronRight";
 import MacroCircle from "../components/MacroCircle";
 import "./styles/DishDetails.css";
 
@@ -13,6 +15,44 @@ export default function DishDetails() {
   const [dish, setDish] = useState<Dish | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [servings, setServings] = useState(1);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const totalImages = 5;
+
+  const getImageStyle = (index: number) => {
+    let offset = index - currentImageIndex;
+
+    if (offset > totalImages / 2) {
+      offset -= totalImages;
+    } else if (offset < -totalImages / 2) {
+      offset += totalImages;
+    }
+
+    const absOffset = Math.abs(offset);
+    const isCenter = offset === 0;
+    const direction = offset > 0 ? 1 : -1;
+
+    let scale = 0.6;
+    let opacity = 0;
+    let zIndex = 1;
+    let translateX = direction * absOffset * 60;
+
+    if (isCenter) {
+      scale = 0.9;
+      opacity = 1;
+      zIndex = 10;
+      translateX = 0;
+    } else if (absOffset === 1) {
+      scale = 0.7;
+      opacity = 0.5;
+      zIndex = 5;
+    } else if (absOffset === 2) {
+      scale = 0.5;
+      opacity = 0.25;
+      zIndex = 3;
+    }
+
+    return { scale, opacity, zIndex, translateX };
+  };
 
   useEffect(() => {
     const load = async () => {
@@ -42,15 +82,76 @@ export default function DishDetails() {
   return (
     <div className="dish-details-container">
       <div className="dish-grid">
-        {/* grid 1: images, categories */}
+        
         <div className="grid-item grid-1">
           <div className="dish-image-box">
-            <div className="dish-image-content">
-              {!dish.mainImageId || dish.mainImageId <= 1 ? (
-                <RestaurantMenu sx={{ fontSize: 50, color: "white" }} />
-              ) : (
-                <img alt={dish.name} />
-              )}
+            <div className="carousel-container">
+              <button
+                className="carousel-arrow carousel-arrow-left"
+                onClick={() =>
+                  setCurrentImageIndex((prev) =>
+                    prev === 0 ? totalImages - 1 : prev - 1
+                  )
+                }
+                aria-label="Previous image"
+              >
+                <ChevronLeft sx={{ fontSize: 40, color: "white" }} />
+              </button>
+
+              <div className="center-mode-slider">
+                <div className="center-mode-container">
+                  {Array.from({ length: totalImages }).map((_, index) => {
+                    const { scale, opacity, zIndex, translateX } =
+                      getImageStyle(index);
+
+                    return (
+                      <div
+                        key={index}
+                        className="center-mode-item"
+                        style={{
+                          transform: `translateX(${translateX}px) scale(${scale})`,
+                          opacity: opacity,
+                          zIndex: zIndex,
+                          transition:
+                            "all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
+                        }}
+                      >
+                        {!dish.mainImageId || dish.mainImageId <= 1 ? (
+                          <RestaurantMenu
+                            sx={{ fontSize: 50, color: "white" }}
+                          />
+                        ) : (
+                          <img alt={`${dish.name} view ${index + 1}`} />
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <button
+                className="carousel-arrow carousel-arrow-right"
+                onClick={() =>
+                  setCurrentImageIndex((prev) =>
+                    prev === totalImages - 1 ? 0 : prev + 1
+                  )
+                }
+                aria-label="Next image"
+              >
+                <ChevronRight sx={{ fontSize: 40, color: "white" }} />
+              </button>
+            </div>
+
+            <div className="carousel-indicators" style={{ display: "none" }}>
+              {Array.from({ length: totalImages }).map((_, index) => (
+                <div
+                  key={index}
+                  className={`indicator ${
+                    index === currentImageIndex ? "active" : ""
+                  }`}
+                  onClick={() => setCurrentImageIndex(index)}
+                />
+              ))}
             </div>
           </div>
           <div className="categories-box">
@@ -62,7 +163,6 @@ export default function DishDetails() {
           </div>
         </div>
 
-        {/* grid 2: name, description */}
         <div className="grid-item grid-2">
           <h1 className="dish-name-box">{dish.name}</h1>
           <div className="description-box">
@@ -70,7 +170,6 @@ export default function DishDetails() {
           </div>
         </div>
 
-        {/* grid 3: ingredients, servings, macros */}
         <div className="grid-item grid-3">
           <div className="grid-3-left">
             <div className="ingredients-box">
@@ -137,7 +236,6 @@ export default function DishDetails() {
           </div>
         </div>
 
-        {/* grid 4: buttons */}
         <div className="grid-item grid-4">
           <div className="action-buttons">
             <button className="btn btn-decline" onClick={() => navigate(-1)}>

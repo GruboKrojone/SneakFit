@@ -23,7 +23,6 @@
   flex-direction: column;
 }
 
-/* grid 1: images, categories */
 .grid-1 {
   display: flex;
   gap: 10px;
@@ -33,6 +32,44 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 15px;
+}
+
+.carousel-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+}
+
+.carousel-arrow {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  z-index: 20;
+  position: relative;
+}
+
+.carousel-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.carousel-arrow-left {
+  order: -1;
+}
+
+.carousel-arrow-right {
+  order: 3;
 }
 
 .dish-image-content {
@@ -45,6 +82,67 @@
   color: #ffffff;
   border-radius: 12px;
   overflow: hidden;
+  flex-shrink: 0;
+}
+
+.carousel-indicators {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.indicator {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.indicator.active {
+  background-color: #ffffff;
+  width: 12px;
+  height: 12px;
+}
+
+.center-mode-slider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.center-mode-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  flex-shrink: 0;
+  perspective: 1200px;
+}
+
+.center-mode-item {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #333333;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 50%;
+  margin-left: -50%;
+  will-change: transform, opacity, z-index;
+}
+
+.center-mode-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .categories-box {
@@ -66,7 +164,6 @@
   font-size: 13px;
 }
 
-/* grid 2: name, description */
 .grid-2 {
   display: flex;
   flex-direction: column;
@@ -103,7 +200,6 @@
   color: #333333;
 }
 
-/* grid 3: ingredients, servings, macros */
 .grid-3 {
   box-shadow: none;
   display: grid;
@@ -234,7 +330,6 @@
   text-transform: capitalize;
 }
 
-/* grid 4: buttons */
 .grid-4 {
   display: flex;
   flex-direction: column;
