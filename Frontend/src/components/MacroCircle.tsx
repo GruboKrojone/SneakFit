@@ -20,7 +20,7 @@ export default function MacroCircle({
 
   const percentage = Math.min((animatedValue / maxValue) * 100, 100);
   const circumference = 2 * Math.PI * 45;
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const strokeDashoffset = circumference - (percentage / 500) * circumference;
 
   return (
     <div className="macro-item macro-circle-item">
