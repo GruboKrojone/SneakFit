@@ -6,9 +6,7 @@ namespace Domain.Dishes.Entities;
 
 sealed class Ingredient : EntityBase
 {
-    private Ingredient()
-    {
-    }
+    private Ingredient() { }
 
     public Ingredient(
         string name,
@@ -21,9 +19,7 @@ sealed class Ingredient : EntityBase
 
 
     [Required][MaxLength(100)] public string Name { get; private set; }
-
     [MaxLength(500)] public string? Description { get; private set; }
-
     public List<Dish>? Dishes { get; private set; }
 
 
