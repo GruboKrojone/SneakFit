@@ -18,28 +18,28 @@ sealed class UpdateDishCommandHandler(
 {
     public async Task<DishDto> Handle(UpdateDishCommand command, CancellationToken cancellationToken)
     {
-        var userId = userContext.UserId ??
-            throw new DomainException("Log in please!", (int)CommonErrorCode.Unauthorized);
+        var userId = userContext.UserId ?? throw new DomainException("Log in please!",
+            (int)CommonErrorCode.Unauthorized);
         var input = command.Params;
 
         var dish = await dishRepository.FindAsync(command.DishId, cancellationToken)
                    ?? throw new DomainException($"Dish with name '{input.Name}' not found",
                        (int)CommonErrorCode.EntityNotFound);
 
-        if (userRepository.IsOperationAllowed(userId, dish.Id))
-        {
-            dish.Update(
-                input.Name,
-                input.Description ?? dish.Description,
-                input.Calories ?? dish.Calories,
-                input.Protein ?? dish.Protein,
-                input.Carbs ?? dish.Carbs,
-                input.Fat ?? dish.Fat
-            );
+        if (!userRepository.IsOperationAllowed(userId, dish.Id))
+            throw new DomainException("User is not allowed to update this dish",
+                (int)CommonErrorCode.Unauthorized);
 
-            dishRepository.Update(dish);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }
+        dish.Update(
+            input.Name,
+            input.Description ?? dish.Description,
+            input.Calories ?? dish.Calories,
+            input.Protein ?? dish.Protein,
+            input.Carbs ?? dish.Carbs,
+            input.Fat ?? dish.Fat);
+
+        dishRepository.Update(dish);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var dishDto = dish.ToDto();
         return dishDto;

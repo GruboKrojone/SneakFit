@@ -12,9 +12,9 @@ public record DeleteDishCommand(int DishId) : ICommand<Unit>;
 
 sealed class DeleteDishCommandHandler(
     IDishRepository dishRepository,
-    IUnitOfWork unitOfWork,
+    IUserRepository userRepository,
     IUserContext userContext,
-    IUserRepository userRepository) : ICommandHandler<DeleteDishCommand, Unit>
+    IUnitOfWork unitOfWork) : ICommandHandler<DeleteDishCommand, Unit>
 {
     public async Task<Unit> Handle(DeleteDishCommand command, CancellationToken cancellationToken)
     {
@@ -24,12 +24,11 @@ sealed class DeleteDishCommandHandler(
         var dishId = command.DishId;
         var dish = await dishRepository.FindAsync(dishId, cancellationToken);
 
-        if (userRepository.IsOperationAllowed(userId, dishId))
-        {
-            dishRepository.Delete(dish);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            return await Task.FromResult(Unit.Value);
-        }
+        if (!userRepository.IsOperationAllowed(userId, dishId))
+            throw new InvalidOperationException("User is not allowed to delete that recipe!");
+
+        dishRepository.Delete(dish);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return await Task.FromResult(Unit.Value);
     }

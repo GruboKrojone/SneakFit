@@ -4,16 +4,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain;
 
-class SneakFitDbContext : DbContext
+sealed class SneakFitDbContext : DbContext
 {
     public SneakFitDbContext(DbContextOptions<SneakFitDbContext> options) : base(options)
     {
     }
 
+
     public DbSet<User> Users { get; set; }
     public DbSet<Dish> Dishes { get; set; }
     public DbSet<Ingredient> Ingredients { get; set; }
     public DbSet<Category> Categories { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

@@ -14,8 +14,10 @@ sealed class Category : EntityBase
         Name = name;
     }
 
+
     public string Name { get; private set; }
     public List<Dish>? Dishes { get; private set; }
+
 
     public static void OnModelCreating(ModelBuilder builder)
     {
