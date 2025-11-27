@@ -76,7 +76,7 @@ export default function DishSlider() {
     const offset = index - currentIndex;
     const absOffset = Math.abs(offset);
     const isMobile = window.innerWidth <= 768;
-    const baseTranslate = isMobile ? 30 : 120;
+    const baseTranslate = isMobile ? 50 : 200;
     const translate =
       offset > 0 ? absOffset * baseTranslate : -absOffset * baseTranslate;
 

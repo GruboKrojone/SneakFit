@@ -6,17 +6,15 @@ import DishesPage from "./pages/DishesPage";
 import ProfilePage from "./pages/ProfilePage";
 import ShoppingList from "./pages/ShoppingList";
 import ProtectedLayout from "./components/ProtectedLayout";
-import BedtimeOutlined from "@mui/icons-material/BedtimeOutlined";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
     <BrowserRouter>
-      <button className="theme-toggle-btn" onClick={() => {}}>
-        <BedtimeOutlined sx={{ fontSize: 40 }} />
-      </button>
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route
           path="/home"
           element={
