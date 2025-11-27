@@ -27,10 +27,8 @@ sealed class DeleteDishCommandHandler(
         if (!userRepository.IsOperationAllowed(userId, dishId))
             throw new InvalidOperationException("User is not allowed to delete that recipe!");
 
-            dishRepository.Delete(dish);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-            return await Task.FromResult(Unit.Value);
-        }
+        dishRepository.Delete(dish);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return await Task.FromResult(Unit.Value);
     }

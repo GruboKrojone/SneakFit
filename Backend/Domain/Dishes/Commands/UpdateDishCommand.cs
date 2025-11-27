@@ -38,9 +38,8 @@ sealed class UpdateDishCommandHandler(
             input.Carbs ?? dish.Carbs,
             input.Fat ?? dish.Fat);
 
-            dishRepository.Update(dish);
-            await unitOfWork.SaveChangesAsync(cancellationToken);
-        }
+        dishRepository.Update(dish);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var dishDto = dish.ToDto();
         return dishDto;
