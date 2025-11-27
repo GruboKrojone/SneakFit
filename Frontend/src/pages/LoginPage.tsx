@@ -50,13 +50,6 @@ export default function LoginPage() {
           <div className="logo-container">
             <img src={loginLogo} alt="SneakFit Logo" />
           </div>
-
-          {errorMsg && (
-            <div className="error-message">
-              <p>{errorMsg}</p>
-            </div>
-          )}
-
           <form onSubmit={performLogin}>
             <AuthInput
               type="email"
@@ -86,7 +79,11 @@ export default function LoginPage() {
               />
             </div>
           </form>
-
+          {errorMsg && (
+            <div className="error-message">
+              <p>{errorMsg}</p>
+            </div>
+          )}
           <a href="/forgot-password">Forgot password?</a>
         </div>
       </div>
