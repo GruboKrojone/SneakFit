@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Users.Entities;
 
-internal sealed class User : EntityBase
+sealed class User : EntityBase
 {
     private User() { }
 

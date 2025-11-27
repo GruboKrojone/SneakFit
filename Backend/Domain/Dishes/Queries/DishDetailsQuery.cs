@@ -8,7 +8,7 @@ namespace Domain.Dishes.Queries;
 
 public record DishDetailsQuery(int DishId) : IQuery<DishDetails>;
 
-internal class DishDetailsQueryHandler(
+sealed class DishDetailsQueryHandler(
     IDishRepository dishRepository,
     IUserContext userContext) : IQueryHandler<DishDetailsQuery, DishDetails>
 {

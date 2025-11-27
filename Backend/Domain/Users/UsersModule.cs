@@ -3,7 +3,7 @@ using Domain.Users.Repositories;
 
 namespace Domain.Users;
 
-internal class UsersModule : Module
+sealed class UsersModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {

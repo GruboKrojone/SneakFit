@@ -3,7 +3,7 @@ using Domain.Authentication.Services;
 
 namespace Domain.Authentication;
 
-public class AuthenticationModule : Module
+public sealed class AuthenticationModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {

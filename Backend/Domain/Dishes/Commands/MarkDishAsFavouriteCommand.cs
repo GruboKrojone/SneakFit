@@ -11,7 +11,7 @@ namespace Domain.Dishes.Commands;
 
 public record MarkDishAsFavouriteCommand(int Id) : ICommand<Unit>;
 
-internal sealed class MarkDishAsFavouriteCommandHandler(
+sealed class MarkDishAsFavouriteCommandHandler(
     IDishRepository dishRepository,
     IUserRepository userRepository,
     IUserContext userContext,
