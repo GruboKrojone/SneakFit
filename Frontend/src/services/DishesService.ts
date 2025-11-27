@@ -16,6 +16,7 @@ export interface Dish {
   name: string;
   description?: string;
   rates: number;
+  ownerId: number;
   ownerName: string;
   isPublic: boolean;
   categories: Category[];
