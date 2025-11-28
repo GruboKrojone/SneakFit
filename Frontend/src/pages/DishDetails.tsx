@@ -6,6 +6,7 @@ import Undo from "@mui/icons-material/Undo";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
+import EditSquare from "@mui/icons-material/EditSquare";
 import MacroCircle from "../components/MacroCircle";
 import "./styles/DishDetails.css";
 
@@ -82,7 +83,6 @@ export default function DishDetails() {
   return (
     <div className="dish-details-container">
       <div className="dish-grid">
-        
         <div className="grid-item grid-1">
           <div className="dish-image-box">
             <div className="carousel-container">
@@ -95,7 +95,7 @@ export default function DishDetails() {
                 }
                 aria-label="Previous image"
               >
-                <ChevronLeft sx={{ fontSize: 40, color: "white" }} />
+                <ChevronLeft className="carousel-arrow-icon" />
               </button>
 
               <div className="center-mode-slider">
@@ -103,6 +103,7 @@ export default function DishDetails() {
                   {Array.from({ length: totalImages }).map((_, index) => {
                     const { scale, opacity, zIndex, translateX } =
                       getImageStyle(index);
+                    const isCenter = index === currentImageIndex;
 
                     return (
                       <div
@@ -112,16 +113,17 @@ export default function DishDetails() {
                           transform: `translateX(${translateX}px) scale(${scale})`,
                           opacity: opacity,
                           zIndex: zIndex,
-                          transition:
-                            "all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                         }}
                       >
                         {!dish.mainImageId || dish.mainImageId <= 1 ? (
-                          <RestaurantMenu
-                            sx={{ fontSize: 50, color: "white" }}
-                          />
+                          <RestaurantMenu className="carousel-placeholder-icon" />
                         ) : (
                           <img alt={`${dish.name} view ${index + 1}`} />
+                        )}
+                        {isCenter && (
+                          <div className="edit-icon-overlay">
+                            <EditSquare className="edit-icon-overlay-icon" />
+                          </div>
                         )}
                       </div>
                     );
@@ -138,7 +140,7 @@ export default function DishDetails() {
                 }
                 aria-label="Next image"
               >
-                <ChevronRight sx={{ fontSize: 40, color: "white" }} />
+                <ChevronRight className="carousel-arrow-icon" />
               </button>
             </div>
 
@@ -164,9 +166,19 @@ export default function DishDetails() {
         </div>
 
         <div className="grid-item grid-2">
-          <h1 className="dish-name-box">{dish.name}</h1>
-          <div className="description-box">
-            <p>{dish.description ?? "Brak opisu"}</p>
+          <div className="dish-name-container">
+            <h1 className="dish-name-box">{dish.name}</h1>
+            <div className="edit-icon">
+              <EditSquare sx={{ fontSize: 24, color: "white" }} />
+            </div>
+          </div>
+          <div className="description-container">
+            <div className="description-box">
+              <p>{dish.description ?? "Brak opisu"}</p>
+            </div>
+            <div className="edit-icon description-icon">
+              <EditSquare sx={{ fontSize: 24, color: "white" }} />
+            </div>
           </div>
         </div>
 
@@ -197,14 +209,14 @@ export default function DishDetails() {
                 <div className="servings-controls">
                   <button
                     className="servings-btn"
-                    onClick={() => setServings(Math.max(1, servings - 1))}
+                    onClick={() => setServings(Math.max(0.5, servings - 0.5))}
                   >
                     −
                   </button>
                   <span className="servings-number">{servings}</span>
                   <button
                     className="servings-btn"
-                    onClick={() => setServings(servings + 1)}
+                    onClick={() => setServings(servings + 0.5)}
                   >
                     +
                   </button>
@@ -232,6 +244,7 @@ export default function DishDetails() {
                   maxValue={100}
                 />
               </div>
+              <div className="comments-box">Komentarze</div>
             </div>
           </div>
         </div>
