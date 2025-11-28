@@ -3,7 +3,7 @@ using Domain.Dishes.Repositories;
 
 namespace Domain.Dishes;
 
-internal class DishesModule : Module
+sealed class DishesModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {

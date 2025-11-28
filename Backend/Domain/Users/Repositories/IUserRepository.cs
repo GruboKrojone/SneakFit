@@ -3,7 +3,9 @@ using Domain.Users.Entities;
 
 namespace Domain.Users.Repositories;
 
-internal interface IUserRepository : IEntityRepository<User>
+interface IUserRepository : IEntityRepository<User>
 {
     public Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken);
+
+    public bool IsOperationAllowed(int userId, int? dishId);
 }

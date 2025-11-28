@@ -2,29 +2,41 @@
   position: fixed;
   left: 0;
   top: 0;
-  width: 140px;
+  width: 6vw;
   height: 100vh;
   background: linear-gradient(180deg, #3b3b3b, #696969);
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 12px;
+  padding: 0 2rem;
   box-sizing: border-box;
-  gap: 12px;
   border-radius: 0 20px 20px 0;
   z-index: 999;
+}
+
+.nav-profile-icon {
+  margin-top: 3vh;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.nav-profile-icon svg {
+  width: 4rem;
+  height: 4rem;
 }
 
 .nav-list {
   list-style: none;
   padding: 0;
-  margin: 8px 0 0 0;
-  flex: 1 1 auto;
+  margin: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  width: 100%;
+  gap: 2rem;
 }
 
 .nav-list li {
@@ -58,9 +70,12 @@
 
 .nav-footer {
   margin-top: auto;
+  margin-bottom: 3vh;
   width: 100%;
   display: flex;
   justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
 }
 
 .logout-btn {
@@ -86,11 +101,9 @@
 }
 
 .protected-root {
+  width: 100vw;
+  height: 100vh;
   display: block;
-}
-
-.protected-content {
-  margin-left: 140px;
 }
 
 .nav-toggle {
@@ -141,10 +154,5 @@
   .logout-btn {
     width: 40px;
     height: 40px;
-  }
-
-  .protected-content {
-    margin-left: 0;
-    padding-top: 12px;
   }
 }

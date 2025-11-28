@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./styles/LoginPage.css";
-import loginLogo from "/images/loginLogo.svg";
+import loginLogo from "/images/loginLogo.png";
 import AuthButton from "../components/AuthButton";
 import AuthInput from "../components/AuthInput";
-import darkMode from "../../public/images/dark-mode.svg";
-import AuthService from "../services/AuthService";
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
+import AuthService, { LoginCredentials } from "../services/AuthService";
+import ThemeButton from "../components/ThemeButton";
 
 export default function LoginPage() {
   const [credentials, setCredentials] = useState<LoginCredentials>({
@@ -49,21 +44,12 @@ export default function LoginPage() {
 
   return (
     <>
-      <div id="view-mode">
-        <img src={darkMode} alt="Dark mode toggle" />
-      </div>
+      <ThemeButton />
       <div id="login-area">
-        <div id="form-core">
+        <div id="login-form-core">
           <div className="logo-container">
             <img src={loginLogo} alt="SneakFit Logo" />
           </div>
-
-          {errorMsg && (
-            <div className="error-message">
-              <p>{errorMsg}</p>
-            </div>
-          )}
-
           <form onSubmit={performLogin}>
             <AuthInput
               type="email"
@@ -78,12 +64,26 @@ export default function LoginPage() {
               onChange={(e) => updateField("password", e.target.value)}
             />
 
-            <div id="buttons">
-              <AuthButton name="Register" />
-              <AuthButton name="Sign In" loading={loading} disabled={loading} />
+            <div className="buttons">
+              <AuthButton
+                name="Register"
+                type="button"
+                onClick={() => navigateTo("/register")}
+              />
+              <AuthButton
+                id="log"
+                name="Sign In"
+                type="submit"
+                loading={loading}
+                disabled={loading}
+              />
             </div>
           </form>
-
+          {errorMsg && (
+            <div className="error-message">
+              <p>{errorMsg}</p>
+            </div>
+          )}
           <a href="/forgot-password">Forgot password?</a>
         </div>
       </div>

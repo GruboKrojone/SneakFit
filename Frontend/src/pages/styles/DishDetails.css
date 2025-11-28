@@ -1,5 +1,5 @@
 .dish-details-container {
-  padding: 20px;
+  padding: 1.25rem;
   color: #f5f5f5;
   width: 100%;
   height: 90vh;
@@ -9,36 +9,34 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 20px;
+  gap: 1.875rem;
   width: 100%;
   height: 100%;
-  max-width: 1200px;
+  max-width: 75rem;
   margin: 0 auto;
 }
 
 .grid-item {
-  border-radius: 15px;
-  padding: 20px;
   display: flex;
   flex-direction: column;
 }
 
 .grid-1 {
   display: flex;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .dish-image-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 1rem;
 }
 
 .carousel-container {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 1rem;
   width: 100%;
   justify-content: center;
 }
@@ -47,8 +45,8 @@
   background-color: #000000;
   border: none;
   border-radius: 50%;
-  width: 50px;
-  height: 50px;
+  width: 3.125rem;
+  height: 3.125rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,28 +76,28 @@
 }
 
 .dish-image-content {
-  width: 300px;
-  height: 300px;
+  width: 18.75rem;
+  height: 18.75rem;
   background-color: #333333;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #f5f5f5;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   overflow: hidden;
   flex-shrink: 0;
 }
 
 .carousel-indicators {
   display: flex;
-  gap: 8px;
+  gap: 0.5rem;
   justify-content: center;
   align-items: center;
 }
 
 .indicator {
-  width: 10px;
-  height: 10px;
+  width: 0.625rem;
+  height: 0.625rem;
   border-radius: 50%;
   background-color: rgba(255, 255, 255, 0.4);
   cursor: pointer;
@@ -108,8 +106,8 @@
 
 .indicator.active {
   background-color: #f5f5f5;
-  width: 12px;
-  height: 12px;
+  width: 0.75rem;
+  height: 0.75rem;
 }
 
 .center-mode-slider {
@@ -122,10 +120,10 @@
 
 .center-mode-container {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 18.75rem;
+  height: 18.75rem;
   flex-shrink: 0;
-  perspective: 1200px;
+  perspective: 75rem;
 }
 
 .center-mode-item {
@@ -133,7 +131,7 @@
   width: 100%;
   height: 100%;
   background-color: #333333;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -142,6 +140,24 @@
   left: 50%;
   margin-left: -50%;
   will-change: transform, opacity, z-index;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.center-mode-item:hover .edit-icon-overlay {
+  opacity: 1;
+}
+
+.edit-icon-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .edit-icon-overlay-icon {
@@ -167,33 +183,33 @@
 .categories-box {
   background-color: #d9d9d9;
   color: #1a1a1a;
-  padding: 12px;
-  border-radius: 20px;
+  padding: 0.75rem;
+  border-radius: 1.25rem;
   text-align: center;
 }
 
 .categories-label {
   display: flex;
   font-weight: bold;
-  font-size: 14px;
-  margin-bottom: 8px;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
 }
 
 .categories-content {
-  font-size: 13px;
+  font-size: 0.9rem;
 }
 
 .grid-2 {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 0.9375rem;
 }
 
 .dish-name-box{
-  font-size: 36px;
+  font-size: 2.25rem;
   margin: 0;
   font-weight: bold;
-  color: #f5f5f5;
+  color: #d0d0d0;
   text-align: center;
 }
 
@@ -227,18 +243,44 @@
 .description-box {
   background-color: #b3b3b3;
   color: #1a1a1a;
-  padding: 10px;
-  border-radius: 10px;
+  padding: 0.625rem 1.25rem;
+  border-radius: 0.625rem;
   flex: 1;
   overflow-y: auto;
   text-align: center;
   word-wrap: break-word;
   word-break: break-word;
+  max-height: 18.75rem;
+}
+
+.description-container {
+  display: flex;
+  flex: 1;
+  gap: 0.5rem;
+  position: relative;
+}
+
+.description-icon {
+  opacity: 0;
+  transition: opacity ease 0.3s;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding-top: 0.3rem;
+  position: absolute;
+  top: 0;
+  right: 0.2rem;
+}
+
+.description-container:hover .description-icon {
+  opacity: 1;
 }
 
 .description-box p {
-  margin: 8px 0;
-  font-size: 14px;
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
   line-height: 1.5;
 }
 
@@ -250,7 +292,7 @@
   box-shadow: none;
   display: grid;
   grid-template-columns: 1.5fr 1fr;
-  gap: 20px;
+  gap: 1.25rem;
   padding: 0;
 }
 
@@ -266,74 +308,74 @@
 
 .ingredients-box {
   background-color: #b3b3b3;
-  border-radius: 15px;
-  padding: 20px;
+  border-radius: 1rem;
+  padding: 1.25rem;
   flex: 1;
   color: #1a1a1a;
 }
 
 .section-title {
-  margin: 0 0 10px 0;
-  font-size: 25px;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #1a1a1a;
 }
 
 .ingredients-list {
-  font-size: 13px;
+  font-size: 0.9rem;
   line-height: 1.6;
   color: #333333;
   max-height: 100%;
   overflow-y: auto;
+  margin-top: 0.75rem;
 }
 
 .ingredients-ul {
   margin: 0;
-  padding-left: 20px;
+  padding-left: 1.25rem;
   list-style-type: disc;
 }
 
 .ingredients-ul li {
-  margin-bottom: 8px;
+  margin-bottom: 0.5rem;
 }
 
 .servings-section {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  border-radius: 15px;
+  gap: 1rem;
+  border-radius: 1rem;
   flex: 1;
 }
 
 .servings-box {
   background-color: #b3b3b3;
-  border-radius: 10px;
+  border-radius: 0.625rem;
   color: #000000;
-  padding: 15px;
+  padding: 1rem;
   display: flex;
   flex-direction: row;
-  align-items: first baseline;
+  align-items: center;
   justify-content: space-evenly;
+  flex:1;
 }
 
 .servings-controls {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 10px;
-  background-color: #f5f5f5;
-  border-radius: 25px;
-  padding: 4px 10px;
+  padding: 0.25rem 0.625rem;
+  background-color: #d0d0d0;
+  border-radius: 1.5625rem;
 }
 
 .servings-btn {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem;
+  height: 2.5rem;
   border: none;
   background-color: #505050;
   color: #b1b1b1;
   border-radius: 50%;
-  font-size: 18px;
+  font-size: 1.125rem;
   cursor: pointer;
   transition: background-color 0.2s;
 }
@@ -343,10 +385,10 @@
 }
 
 .servings-number {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
   color: #000000;
-  min-width: 40px;
+  min-width: 2.5rem;
   text-align: center;
 }
 
@@ -355,45 +397,58 @@
   grid-template-columns: repeat(4, 1fr);
   justify-content: center;
   align-items: center;
+  flex: 3;
 }
 
 .kcal-box {
-  border-radius: 10px;
+  border-radius: 0.625rem;
   text-align: center;
-  margin-right: 2px;
+  margin-right: 0.125rem;
 }
 
 .kcal-value {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: bold;
-  color: #f5f5f5;
-  margin-bottom: 5px;
+  color: #d0d0d0;
+  margin-bottom: 0.3125rem;
 }
 
 .kcal-label {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #d0d0d0;
   text-transform: capitalize;
+}
+
+.comments-box {
+  background-color: #b3b3b3;
+  color: #696969;
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-size: 1.8rem;
 }
 
 .grid-4 {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 15px;
+  gap: 0.9375rem;
 }
 
 .action-buttons {
   display: flex;
-  gap: 30px;
+  gap: 1.875rem;
   width: 100%;
   justify-content: center;
 }
 
 .btn {
   border: none;
-  border-radius: 10px;
-  font-size: 16px;
+  border-radius: 0.625rem;
+  font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -401,7 +456,7 @@
 
 .btn-decline {
   background-color: transparent;
-  color: #f5f5f5;
+  color: #d0d0d0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -415,7 +470,7 @@
 
 .btn-accept {
   background-color: transparent;
-  color: #f5f5f5;
+  color: #d0d0d0;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -433,6 +488,6 @@
   justify-content: center;
   height: 90vh;
   width: 100%;
-  color: #f5f5f5;
-  font-size: 18px;
+  color: #d0d0d0;
+  font-size: 1.125rem;
 }

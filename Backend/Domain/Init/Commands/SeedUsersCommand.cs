@@ -11,7 +11,7 @@ namespace Domain.Init.Commands;
 
 public record SeedUsersCommand : ICommand<Unit>;
 
-internal sealed class AddInitUsersCommandHandler(
+sealed class AddInitUsersCommandHandler(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<SeedUsersCommand, Unit>
 {

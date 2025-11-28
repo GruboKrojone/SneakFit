@@ -8,7 +8,7 @@ namespace Domain.Dishes.Queries;
 
 public record GetDishesQuery : IQuery<IEnumerable<DishCutDto>>;
 
-internal sealed class GetDishesQueryHandler(
+sealed class GetDishesQueryHandler(
     IDishRepository dishRepository,
     IUserContext userContext) : IQueryHandler<GetDishesQuery, IEnumerable<DishCutDto>>
 {

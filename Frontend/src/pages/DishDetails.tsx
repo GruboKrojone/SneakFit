@@ -168,7 +168,7 @@ export default function DishDetails() {
         <div className="grid-item grid-2">
           <div className="dish-name-container">
             <h1 className="dish-name-box">{dish.name}</h1>
-            <div className="edit-icon">
+            <div className="dish-name-icon">
               <EditSquare sx={{ fontSize: 24, color: "white" }} />
             </div>
           </div>
@@ -176,7 +176,7 @@ export default function DishDetails() {
             <div className="description-box">
               <p>{dish.description ?? "Brak opisu"}</p>
             </div>
-            <div className="edit-icon description-icon">
+            <div className="description-icon">
               <EditSquare sx={{ fontSize: 24, color: "white" }} />
             </div>
           </div>
