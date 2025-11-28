@@ -1,21 +1,28 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import AuthService from "../services/AuthService";
-import NavBar from "./NavBar";
-import "./styles/NavBar.css";
+import { ReactNode, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function ProtectedLayout({ children }: React.PropsWithChildren) {
-  if (!AuthService.isAuthenticated()) {
-    return <Navigate to="/login" replace />;
-  }
+import "./styles/ProtectedLayout.css";
+import NavBar from "./NavBar";
+
+interface ProtectedLayoutProps {
+  children: ReactNode;
+}
+
+export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
+  const navigate = useNavigate();
+  const { locale } = useParams<{ locale: string }>();
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (!token) {
+      navigate(`/${locale}/login`);
+    }
+  }, [navigate, locale]);
 
   return (
-    <>
+    <div className="protected-layout">
       <NavBar />
       <div className="protected-content">{children}</div>
-    </>
-    // <div className="protected-root">
-
-    // </div>
+    </div>
   );
 }
