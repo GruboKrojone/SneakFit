@@ -11,5 +11,10 @@
   "login_page_email_holder": "Adres e-mail",
   "login_page_password_holder": "Hasło",
   "login_page_login_button": "Zaloguj się",
-  "login_page_forgot_password": "Zapomniałeś hasła?"
+  "login_page_forgot_password": "Zapomniałeś hasła?",
+
+  "home_page_welcome_message": "Co dziś ugotujemy?",
+
+  "dishes_page_loading": "Ładowanie przepisów...",
+  "dishes_page_title": "Przepisy"
 }
