@@ -1,8 +1,8 @@
 .theme-toggle-btn {
   position: fixed;
   background: transparent;
-  top: 20px;
-  right: 20px;
+  top: 2rem;
+  right: 2rem;
   border: none;
   cursor: pointer;
   display: flex;
@@ -10,4 +10,3 @@
   justify-content: center;
   z-index: 1000;
 }
-

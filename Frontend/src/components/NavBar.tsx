@@ -7,8 +7,6 @@ import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import RestaurantMenuOutlinedIcon from "@mui/icons-material/RestaurantMenuOutlined";
 import ShoppingBagOutlinedIcon from "@mui/icons-material/ShoppingBagOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
-import MenuIcon from "@mui/icons-material/Menu";
-import CloseIcon from "@mui/icons-material/Close";
 
 export default function NavBar() {
   const navigate = useNavigate();
@@ -19,26 +17,19 @@ export default function NavBar() {
     navigate("/login");
   };
 
-  const toggleNav = () => {
-    setIsOpen(!isOpen);
-  };
-
   const closeNav = () => {
     setIsOpen(false);
   };
 
   return (
     <>
-      <button className="nav-toggle" onClick={toggleNav}>
-        {isOpen ? <CloseIcon /> : <MenuIcon />}
-      </button>
       <nav className={`nav-bar ${isOpen ? "open" : ""}`}>
+        <div className="nav-profile-icon">
+          <NavLink to="/profile">
+            <AccountCircleRoundedIcon id="profile-icon" />
+          </NavLink>
+        </div>
         <ul className="nav-list">
-          <li onClick={closeNav}>
-            <NavLink to="/profile">
-              <AccountCircleRoundedIcon />
-            </NavLink>
-          </li>
           <li onClick={closeNav}>
             <NavLink to="/home">
               <HomeOutlinedIcon />

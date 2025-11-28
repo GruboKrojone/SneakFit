@@ -10,9 +10,12 @@ export default function ProtectedLayout({ children }: React.PropsWithChildren) {
   }
 
   return (
-    <div className="protected-root">
+    <>
       <NavBar />
       <div className="protected-content">{children}</div>
-    </div>
+    </>
+    // <div className="protected-root">
+
+    // </div>
   );
 }
