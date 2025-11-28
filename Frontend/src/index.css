@@ -4,6 +4,10 @@
   box-sizing: border-box;
 }
 
+html {
+  overscroll-behavior: none;
+}
+
 body {
   background: linear-gradient(to bottom, #383838, #505050);
   margin: 0;
