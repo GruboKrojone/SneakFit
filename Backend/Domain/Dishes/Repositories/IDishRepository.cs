@@ -4,7 +4,7 @@ using Domain.Dishes.Entities;
 
 namespace Domain.Dishes.Repositories;
 
-internal interface IDishRepository : IEntityRepository<Dish>
+interface IDishRepository : IEntityRepository<Dish>
 {
     public bool IsUserAllowedToAccess(Dish dish, IUserContext userContext);
 }

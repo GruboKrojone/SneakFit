@@ -5,7 +5,7 @@
 namespace Domain.Migrations
 {
     /// <inheritdoc />
-    public partial class InitMigration : Migration
+    public partial class FavouriteDishes : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -130,6 +130,30 @@ namespace Domain.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "UserFavouriteDishes",
+                columns: table => new
+                {
+                    FavoriteDishesId = table.Column<int>(type: "int", nullable: false),
+                    FavoritedByUsersId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserFavouriteDishes", x => new { x.FavoriteDishesId, x.FavoritedByUsersId });
+                    table.ForeignKey(
+                        name: "FK_UserFavouriteDishes_Dishes_FavoriteDishesId",
+                        column: x => x.FavoriteDishesId,
+                        principalTable: "Dishes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserFavouriteDishes_Users_FavoritedByUsersId",
+                        column: x => x.FavoritedByUsersId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_DishCategory_CategoryId",
                 table: "DishCategory",
@@ -144,6 +168,11 @@ namespace Domain.Migrations
                 name: "IX_DishIngredients_IngredientId",
                 table: "DishIngredients",
                 column: "IngredientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserFavouriteDishes_FavoritedByUsersId",
+                table: "UserFavouriteDishes",
+                column: "FavoritedByUsersId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
@@ -162,13 +191,16 @@ namespace Domain.Migrations
                 name: "DishIngredients");
 
             migrationBuilder.DropTable(
+                name: "UserFavouriteDishes");
+
+            migrationBuilder.DropTable(
                 name: "Categories");
 
             migrationBuilder.DropTable(
-                name: "Dishes");
+                name: "Ingredients");
 
             migrationBuilder.DropTable(
-                name: "Ingredients");
+                name: "Dishes");
 
             migrationBuilder.DropTable(
                 name: "Users");

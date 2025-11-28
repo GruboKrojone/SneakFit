@@ -1,0 +1,20 @@
+{
+  "register_page_title": "Rejestracja",
+  "register_page_email_holder": "Adres e-mail",
+  "register_page_name_holder": "Nazwa użytkownika",
+  "register_page_password_holder": "Hasło",
+  "register_page_confirm_password_holder": "Potwierdź hasło",
+  "register_page_register_button": "Zarejestruj się",
+  "register_page_clear_button": "Wyczyść",
+
+  "login_page_title": "SneakFit",
+  "login_page_email_holder": "Adres e-mail",
+  "login_page_password_holder": "Hasło",
+  "login_page_login_button": "Zaloguj się",
+  "login_page_forgot_password": "Zapomniałeś hasła?",
+
+  "home_page_welcome_message": "Co dziś ugotujemy?",
+
+  "dishes_page_loading": "Ładowanie przepisów...",
+  "dishes_page_title": "Przepisy"
+}

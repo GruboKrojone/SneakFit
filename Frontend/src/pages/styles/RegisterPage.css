@@ -1,0 +1,97 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 80vw;
+  height: 80vh;
+  background: linear-gradient(
+    180deg,
+    rgba(107, 107, 107, 0.8),
+    rgba(26, 26, 26, 0.8)
+  );
+  border-radius: 3rem;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: 2rem;
+}
+
+#left,
+#middle,
+#right {
+  width: 33vw;
+}
+
+#left {
+  width: 5vw;
+}
+
+#middle {
+  width: 60vw;
+  text-align: center;
+
+  h1 {
+    font-size: 5rem;
+    margin-top: 5rem;
+    margin-bottom: 5rem;
+    font-size: 5rem;
+    background: linear-gradient(180deg, #9f9f9f, #999999);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+#register-form-core {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+#buttons {
+  margin: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+
+  #register {
+    width: 15rem;
+  }
+  #reset {
+    width: 5rem;
+  }
+}
+
+#buttons :hover {
+  transform: scale(1.05);
+  background-color: #777777;
+  transition: transform 0.2s;
+}
+
+.error-message {
+  color: #e60000;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.5rem;
+  width: 40rem;
+  height: 5rem;
+}
+
+#right {
+  width: 5vw;
+  display: flex;
+  justify-content: end;
+  #close-button {
+    cursor: pointer;
+    color: #353535;
+    font-size: 5rem;
+  }
+
+  #close-button :hover {
+    color: #747474;
+    font-size: 3rem;
+  }
+}

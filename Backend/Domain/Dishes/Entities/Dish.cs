@@ -6,11 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Entities;
 
-internal sealed class Dish : EntityBase
+sealed class Dish : EntityBase
 {
-    private Dish()
-    {
-    }
+    private Dish() { }
 
     public Dish(
         string name,
@@ -28,10 +26,9 @@ internal sealed class Dish : EntityBase
         Fat = fat;
     }
 
-    [Required] [MaxLength(100)] public string Name { get; private set; }
 
+    [Required][MaxLength(100)] public string Name { get; private set; }
     [MaxLength(500)] public string? Description { get; private set; }
-
     public int? Calories { get; private set; }
     public int? Protein { get; private set; }
     public int? Carbs { get; private set; }
@@ -42,6 +39,7 @@ internal sealed class Dish : EntityBase
     public User Owner { get; private set; }
     public List<Category>? Categories { get; private set; }
     public List<Ingredient>? Ingredients { get; private set; }
+    public ICollection<User> FavoritedByUsers { get; set; } = new List<User>();
 
 
     public void AssignToUser(int ownerId) => OwnerId = ownerId;
@@ -63,18 +61,15 @@ internal sealed class Dish : EntityBase
     }
 
     public DishDto ToDto()
-    {
-        return new DishDto(
+        => new DishDto(
             Name,
             Description,
             Calories,
             Protein,
             Carbs,
             Fat);
-    }
 
     public void MarkAsPublic() => IsPublic = true;
-
 
     public static void OnModelCreating(ModelBuilder builder)
     {

@@ -4,11 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Entities;
 
-internal sealed class Ingredient : EntityBase
+sealed class Ingredient : EntityBase
 {
-    private Ingredient()
-    {
-    }
+    private Ingredient() { }
 
     public Ingredient(
         string name,
@@ -20,10 +18,8 @@ internal sealed class Ingredient : EntityBase
     }
 
 
-    [Required] [MaxLength(100)] public string Name { get; private set; }
-
+    [Required][MaxLength(100)] public string Name { get; private set; }
     [MaxLength(500)] public string? Description { get; private set; }
-
     public List<Dish>? Dishes { get; private set; }
 
 
