@@ -36,8 +36,14 @@ sealed class User : EntityBase
     public UserRole Role { get; private set; }
     [MaxLength(100)] public string Name { get; private set; }
     public int? Age { get; private set; }
+    public Lang Lang { get; private set; } = Lang.EN;
     public ICollection<Dish> FavoriteDishes { get; set; } = new List<Dish>();
 
+
+    public void SetApplicationLang(Lang lang)
+    {
+        Lang = lang;
+    }
 
     public static void OnModelCreating(ModelBuilder builder)
     {

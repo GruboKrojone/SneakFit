@@ -1,14 +1,17 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
 import AuthService, { RegisterCredentials } from "../services/AuthService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./styles/RegisterPage.css";
 import Close from "@mui/icons-material/Close";
 import ThemeButton from "../components/ThemeButton";
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
   const navigateTo = useNavigate();
+  const { locale } = useParams<{ locale: string }>();
   const [credentials, setCredentials] = useState<RegisterCredentials>({
     email: "",
     password: "",
@@ -41,7 +44,7 @@ export default function RegisterPage() {
       const response = await AuthService.register(credentials);
 
       if (response != null) {
-        navigateTo("/login");
+        navigateTo(`/${locale}/login`);
       }
     } catch (error) {
       setErrorMsg(
@@ -58,39 +61,43 @@ export default function RegisterPage() {
       <div className="container">
         <div id="left"></div>
         <div id="middle">
-          <h1>Register</h1>
+          <h1>{t("register_page_title")}</h1>
           <div id="register-form-core">
             <form onSubmit={performRegister}>
               <AuthInput
                 type="email"
-                placeholder="Email"
+                placeholder={t("register_page_title")}
                 value={credentials.email}
                 onChange={(e) => updateField("email", e.target.value)}
               />
               <AuthInput
                 type="text"
-                placeholder="Name"
+                placeholder={t("register_page_name_holder")}
                 value={credentials.name}
                 onChange={(e) => updateField("name", e.target.value)}
               />
               <AuthInput
                 type="password"
-                placeholder="Password"
+                placeholder={t("register_page_password_holder")}
                 value={credentials.password}
                 onChange={(e) => updateField("password", e.target.value)}
               />
               <AuthInput
                 type="password"
-                placeholder="Confirm Password"
+                placeholder={t("register_page_confirm_password_holder")}
                 value={credentials.password2}
                 onChange={(e) => updateField("password2", e.target.value)}
               />
 
               <div id="buttons">
-                <AuthButton id="register" name="Register" type="submit" />
+                <AuthButton
+                  id="register"
+                  name={t("register_page_register_button")}
+                  type="submit"
+                />
                 <AuthButton
                   id="reset"
-                  name="Reset"
+                  name={t("register_page_clear_button")}
                   type="button"
                   onClick={handleReset}
                 />
@@ -104,7 +111,10 @@ export default function RegisterPage() {
           </div>
         </div>
         <div id="right">
-          <Close id="close-button" onClick={() => navigateTo("/")} />
+          <Close
+            id="close-button"
+            onClick={() => navigateTo(`/${locale}/login`)}
+          />
         </div>
       </div>
     </>

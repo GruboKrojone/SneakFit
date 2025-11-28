@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import DishesService, { Dish } from "../services/DishesService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import "./styles/DishesPage.css";
+import { useTranslation } from "react-i18next";
 
 export default function DishesPage() {
+  const { t } = useTranslation();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -28,10 +30,10 @@ export default function DishesPage() {
   return (
     <div className="dishes-page">
       {loading ? (
-        <p>Ładowanie przepisów...</p>
+        <p>{t("dishes_page_loading")}</p>
       ) : (
         <div className="dishes-container">
-          <h1 className="dishes-title">Przepisy użytkowników</h1>
+          <h1 className="dishes-title">{t("dishes_page_title")}</h1>
           <div className="dishes-grid">
             {dishes.map((dish) => (
               <div className="dishes-box" key={dish.id}>
