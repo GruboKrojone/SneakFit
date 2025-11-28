@@ -1,14 +1,17 @@
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import AuthInput from "../components/AuthInput";
 import AuthButton from "../components/AuthButton";
 import AuthService, { RegisterCredentials } from "../services/AuthService";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./styles/RegisterPage.css";
 import Close from "@mui/icons-material/Close";
 import ThemeButton from "../components/ThemeButton";
 
 export default function RegisterPage() {
+  const { t } = useTranslation();
   const navigateTo = useNavigate();
+  const { locale } = useParams<{ locale: string }>();
   const [credentials, setCredentials] = useState<RegisterCredentials>({
     email: "",
     password: "",
@@ -41,7 +44,7 @@ export default function RegisterPage() {
       const response = await AuthService.register(credentials);
 
       if (response != null) {
-        navigateTo("/login");
+        navigateTo(`/${locale}/login`);
       }
     } catch (error) {
       setErrorMsg(
@@ -58,7 +61,7 @@ export default function RegisterPage() {
       <div className="container">
         <div id="left"></div>
         <div id="middle">
-          <h1>Register</h1>
+          <h1>{t("register_page_title")}</h1>
           <div id="register-form-core">
             <form onSubmit={performRegister}>
               <AuthInput
@@ -104,7 +107,10 @@ export default function RegisterPage() {
           </div>
         </div>
         <div id="right">
-          <Close id="close-button" onClick={() => navigateTo("/")} />
+          <Close
+            id="close-button"
+            onClick={() => navigateTo(`/${locale}/login`)}
+          />
         </div>
       </div>
     </>

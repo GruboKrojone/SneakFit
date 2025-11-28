@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./styles/LoginPage.css";
 import loginLogo from "/images/loginLogo.png";
 import AuthButton from "../components/AuthButton";
@@ -8,6 +8,7 @@ import AuthService, { LoginCredentials } from "../services/AuthService";
 import ThemeButton from "../components/ThemeButton";
 
 export default function LoginPage() {
+  const { locale } = useParams<{ locale: string }>();
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: "",
     password: "",
@@ -29,7 +30,7 @@ export default function LoginPage() {
       const accessToken = await AuthService.login(credentials);
 
       if (accessToken != null) {
-        navigateTo("/home");
+        navigateTo(`/${locale}/home`);
       }
     } catch (error) {
       setErrorMsg(
@@ -68,7 +69,7 @@ export default function LoginPage() {
               <AuthButton
                 name="Register"
                 type="button"
-                onClick={() => navigateTo("/register")}
+                onClick={() => navigateTo(`/${locale}/register`)}
               />
               <AuthButton
                 id="log"

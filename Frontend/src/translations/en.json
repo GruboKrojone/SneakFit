@@ -1,0 +1,9 @@
+{
+  "register_page_title": "Register",
+  "register_page_email_holder": "Email",
+  "register_page_name_holder": "Name",
+  "register_page_password_holder": "Password",
+  "register_page_confirm_password_holder": "Confirm Password",
+  "register_page_register_button": "Register",
+  "register_page_clear_button": "Clear"
+}

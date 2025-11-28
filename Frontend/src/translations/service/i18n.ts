@@ -1,26 +1,40 @@
 import i18n from "i18next";
-import pl from "../pl.json";
-import en from "../en.json";
+import { initReactI18next } from "react-i18next";
+import {
+  getLocaleFromPath,
+  isDevMode,
+  DEV_MODE,
+} from "./TranslationService.ts";
 
-i18n.init({
-  lng: "en", // default lang
+import enTranslations from "../en.json";
+import plTranslations from "../pl.json";
 
-  supportedLngs: ["en", "pl", "de", "es"],
-  defaultNS: "translation",
+const currentLocale = getLocaleFromPath();
+const devModeActive = isDevMode();
 
-  resources: {
-    en: {
-      translation: en,
-    },
-    pl: {
-      translation: pl,
-    },
-  },
+i18n.use(initReactI18next).init({
+  resources: devModeActive
+    ? {
+        dev: { translation: {} },
+      }
+    : {
+        en: { translation: enTranslations },
+        pl: { translation: plTranslations },
+      },
+  lng: devModeActive ? DEV_MODE : currentLocale,
+  fallbackLng: devModeActive ? false : "en",
 
-  fallbackLng: "en",
+  returnNull: false,
+  returnEmptyString: false,
+
   interpolation: {
     escapeValue: false,
   },
+
+  ...(devModeActive && {
+    parseMissingKeyHandler: (key: string) => `[${key}]`,
+    saveMissing: true,
+  }),
 });
 
 export default i18n;
