@@ -95,7 +95,7 @@ export default function DishDetails() {
                 }
                 aria-label="Previous image"
               >
-                <ChevronLeft sx={{ fontSize: 40, color: "white" }} />
+                <ChevronLeft className="carousel-arrow-icon" />
               </button>
 
               <div className="center-mode-slider">
@@ -113,20 +113,16 @@ export default function DishDetails() {
                           transform: `translateX(${translateX}px) scale(${scale})`,
                           opacity: opacity,
                           zIndex: zIndex,
-                          transition:
-                            "all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)",
                         }}
                       >
                         {!dish.mainImageId || dish.mainImageId <= 1 ? (
-                          <RestaurantMenu
-                            sx={{ fontSize: 50, color: "white" }}
-                          />
+                          <RestaurantMenu className="carousel-placeholder-icon" />
                         ) : (
                           <img alt={`${dish.name} view ${index + 1}`} />
                         )}
                         {isCenter && (
                           <div className="edit-icon-overlay">
-                            <EditSquare sx={{ fontSize: 50, color: "white" }} />
+                            <EditSquare className="edit-icon-overlay-icon" />
                           </div>
                         )}
                       </div>
@@ -144,7 +140,7 @@ export default function DishDetails() {
                 }
                 aria-label="Next image"
               >
-                <ChevronRight sx={{ fontSize: 40, color: "white" }} />
+                <ChevronRight className="carousel-arrow-icon" />
               </button>
             </div>
 
