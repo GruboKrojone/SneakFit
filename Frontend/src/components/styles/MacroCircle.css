@@ -1,0 +1,52 @@
+.macro-item {
+  border-radius: 10px;
+  text-align: center;
+}
+
+.macro-item.macro-circle-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.macro-circle-container {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.macro-circle-container svg {
+  width: 100%;
+  height: 100%;
+}
+
+.macro-circle-text {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.macro-circle-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #d0d0d0;
+}
+
+.macro-circle-unit {
+  font-size: 12px;
+  color: #d0d0d0;
+  margin-top: 2px;
+}
+
+.macro-label {
+  font-size: 12px;
+  color: #d0d0d0;
+  text-transform: capitalize;
+}

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
 import ThumbUp from "@mui/icons-material/ThumbUp";
@@ -16,6 +17,7 @@ export default function DishSlider() {
     "pass" | "loved" | "smash" | null
   >(null);
   const [actionCardIndex, setActionCardIndex] = useState<number | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const loadDishes = async () => {
@@ -147,6 +149,7 @@ export default function DishSlider() {
           if (actualIndex < 0 || actualIndex >= dishes.length) return null;
 
           const dish = dishes[actualIndex];
+          const offset = index - currentIndex;
 
           return (
             <div
@@ -155,16 +158,19 @@ export default function DishSlider() {
                 actualIndex === actionCardIndex && lastAction
                   ? `action-${lastAction}`
                   : ""
-              }`}
+              } ${offset === 0 ? "front-card" : ""}`}
+              title={offset === 0 ? "Szczególy dania" : ""}
               style={getCardStyle(index) as React.CSSProperties}
+              onClick={
+                offset === 0 ? () => navigate(`/dish/${dish.id}`) : undefined
+              }
               onAnimationEnd={handleAnimationEnd(index)}
             >
               <div className="dish-image">
-                {!dish.mainPictureId || dish.mainPictureId <= 1 ? (
+                {!dish.mainImageId || dish.mainImageId <= 1 ? (
                   <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
                 ) : (
                   <img
-                    //src={``}
                     alt={dish.name}
                     style={{
                       width: "100%",
@@ -200,19 +206,31 @@ export default function DishSlider() {
                 <div className="dish-actions">
                   <button
                     className="action-button btn-pass"
-                    onClick={handlePass}
+                    title="Pass"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePass();
+                    }}
                   >
                     <ThumbDown sx={{ fontSize: 24 }} />
                   </button>
                   <button
                     className="action-button btn-smash"
-                    onClick={handleLoved}
+                    title="Loved"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleLoved();
+                    }}
                   >
                     <Favorite sx={{ fontSize: 24 }} />
                   </button>
                   <button
-                    className="action-button btn-loved  "
-                    onClick={handleSmash}
+                    className="action-button btn-loved"
+                    title="Smash"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSmash();
+                    }}
                   >
                     <ThumbUp sx={{ fontSize: 24 }} />
                   </button>

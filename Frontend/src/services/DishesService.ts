@@ -5,17 +5,29 @@ export interface Category {
   name: string;
 }
 
+export interface Ingredient {
+  id: number;
+  name: string;
+  quantity: string;
+}
+
 export interface Dish {
   id: number;
   name: string;
   description?: string;
   rates: number;
+  ownerId: number;
   ownerName: string;
   isPublic: boolean;
   categories: Category[];
-  mainPictureId: number;
-  secondaryPictureId: number | null;
-  thirdPictureId: number | null;
+  mainImageId: number;
+  secondaryImageId: number | null;
+  thirdImageId: number | null;
+  calories?: number;
+  protein?: number;
+  carbs?: number;
+  fat?: number;
+  ingredients?: Ingredient[];
 }
 
 class DishesService {
