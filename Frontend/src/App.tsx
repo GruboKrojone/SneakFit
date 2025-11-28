@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import DishesPage from "./pages/DishesPage";
+import DishDetails from "./pages/DishDetails";
 import ProfilePage from "./pages/ProfilePage";
 import ShoppingList from "./pages/ShoppingList";
 import ProtectedLayout from "./components/ProtectedLayout";
@@ -28,6 +29,14 @@ function App() {
           element={
             <ProtectedLayout>
               <DishesPage />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/dish/:id"
+          element={
+            <ProtectedLayout>
+              <DishDetails />
             </ProtectedLayout>
           }
         />
