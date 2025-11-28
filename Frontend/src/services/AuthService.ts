@@ -1,13 +1,14 @@
-interface LoginCredentials {
+export interface LoginCredentials {
   email: string;
   password: string;
 }
 
-interface RegisterCredentials {
+export interface RegisterCredentials {
   email: string;
   password: string;
+  password2: string;
   name: string;
-  age: number;
+  age: number | undefined;
 }
 
 interface AuthResponse {
@@ -44,7 +45,6 @@ class AuthService {
 
       return data.accessToken;
     } catch (error) {
-      console.error("Login error:", error);
       throw error;
     }
   }
@@ -64,13 +64,18 @@ class AuthService {
         throw new Error("Registration failed");
       }
 
-      const data: AuthResponse = await response.json();
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data: AuthResponse = await response.json();
 
-      this.setToken(data.accessToken);
+        if (data.accessToken) {
+          this.setToken(data.accessToken);
+          return data.accessToken;
+        }
+      }
 
-      return data.accessToken;
+      return "";
     } catch (error) {
-      console.error("Registration error:", error);
       throw error;
     }
   }
@@ -78,9 +83,7 @@ class AuthService {
   static setToken(token: string): void {
     try {
       localStorage.setItem(this.TOKEN_KEY, token);
-    } catch (error) {
-      console.error("Error saving token to localStorage:", error);
-    }
+    } catch (error) {}
   }
 
   static getToken(): string | null {
