@@ -30,6 +30,12 @@ sealed class RegisterCommandHandler(
             input.Age
         );
 
+        if (input.Lang is not null)
+        {
+            Lang lang = (Lang)input.Lang;
+            user.SetApplicationLang(lang);
+        }
+
         userRepository.Add(user);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
