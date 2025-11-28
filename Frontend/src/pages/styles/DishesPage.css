@@ -1,9 +1,9 @@
 .dishes-page {
   display: flex;
-    flex-direction: column;
-    align-items: center;
-    height: 100vh;
-    width: 100%;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  width: 100%;
 }
 
 .dishes-title {
@@ -14,9 +14,8 @@
 }
 
 .dishes-container {
-  overflow: auto;
   flex: 1;
-  width: 100%; 
+  width: 100%;
   padding: 20px 40px;
 }
 

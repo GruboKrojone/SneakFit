@@ -66,34 +66,38 @@ export default function RegisterPage() {
             <form onSubmit={performRegister}>
               <AuthInput
                 type="email"
-                placeholder="Email"
+                placeholder={t("register_page_title")}
                 value={credentials.email}
                 onChange={(e) => updateField("email", e.target.value)}
               />
               <AuthInput
                 type="text"
-                placeholder="Name"
+                placeholder={t("register_page_name_holder")}
                 value={credentials.name}
                 onChange={(e) => updateField("name", e.target.value)}
               />
               <AuthInput
                 type="password"
-                placeholder="Password"
+                placeholder={t("register_page_password_holder")}
                 value={credentials.password}
                 onChange={(e) => updateField("password", e.target.value)}
               />
               <AuthInput
                 type="password"
-                placeholder="Confirm Password"
+                placeholder={t("register_page_confirm_password_holder")}
                 value={credentials.password2}
                 onChange={(e) => updateField("password2", e.target.value)}
               />
 
               <div id="buttons">
-                <AuthButton id="register" name="Register" type="submit" />
+                <AuthButton
+                  id="register"
+                  name={t("register_page_register_button")}
+                  type="submit"
+                />
                 <AuthButton
                   id="reset"
-                  name="Reset"
+                  name={t("register_page_clear_button")}
                   type="button"
                   onClick={handleReset}
                 />

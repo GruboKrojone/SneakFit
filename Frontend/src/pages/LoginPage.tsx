@@ -6,8 +6,10 @@ import AuthButton from "../components/AuthButton";
 import AuthInput from "../components/AuthInput";
 import AuthService, { LoginCredentials } from "../services/AuthService";
 import ThemeButton from "../components/ThemeButton";
+import { useTranslation } from "react-i18next";
 
 export default function LoginPage() {
+  const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const [credentials, setCredentials] = useState<LoginCredentials>({
     email: "",
@@ -51,29 +53,30 @@ export default function LoginPage() {
           <div className="logo-container">
             <img src={loginLogo} alt="SneakFit Logo" />
           </div>
+          <h1>{t("login_page_title")}</h1>
           <form onSubmit={performLogin}>
             <AuthInput
               type="email"
-              placeholder="Email"
+              placeholder={t("login_page_email_holder")}
               value={credentials.email}
               onChange={(e) => updateField("email", e.target.value)}
             />
             <AuthInput
               type="password"
-              placeholder="Password"
+              placeholder={t("login_page_password_holder")}
               value={credentials.password}
               onChange={(e) => updateField("password", e.target.value)}
             />
 
             <div className="buttons">
               <AuthButton
-                name="Register"
+                name={t("register_page_register_button")}
                 type="button"
                 onClick={() => navigateTo(`/${locale}/register`)}
               />
               <AuthButton
                 id="log"
-                name="Sign In"
+                name={t("login_page_login_button")}
                 type="submit"
                 loading={loading}
                 disabled={loading}
@@ -85,7 +88,9 @@ export default function LoginPage() {
               <p>{errorMsg}</p>
             </div>
           )}
-          <a href="/forgot-password">Forgot password?</a>
+          <a href={`/${locale}/forgot-password`}>
+            {t("login_page_forgot_password")}
+          </a>
         </div>
       </div>
     </>

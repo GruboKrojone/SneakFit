@@ -5,5 +5,11 @@
   "register_page_password_holder": "Password",
   "register_page_confirm_password_holder": "Confirm Password",
   "register_page_register_button": "Register",
-  "register_page_clear_button": "Clear"
+  "register_page_clear_button": "Clear",
+
+  "login_page_title": "SneakFit",
+  "login_page_email_holder": "Email",
+  "login_page_password_holder": "Password",
+  "login_page_login_button": "Login",
+  "login_page_forgot_password": "Forgot password?"
 }

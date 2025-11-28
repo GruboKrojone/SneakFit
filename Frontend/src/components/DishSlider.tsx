@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
 import ThumbUp from "@mui/icons-material/ThumbUp";
@@ -9,6 +9,7 @@ import DishesService, { Dish } from "../services/DishesService";
 import "./styles/DishSlider.css";
 
 export default function DishSlider() {
+  const { locale } = useParams<{ locale: string }>();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -162,7 +163,9 @@ export default function DishSlider() {
               title={offset === 0 ? "Szczególy dania" : ""}
               style={getCardStyle(index) as React.CSSProperties}
               onClick={
-                offset === 0 ? () => navigate(`/dish/${dish.id}`) : undefined
+                offset === 0
+                  ? () => navigate(`/${locale}/dish/${dish.id}`)
+                  : undefined
               }
               onAnimationEnd={handleAnimationEnd(index)}
             >
