@@ -1,13 +1,13 @@
 input {
-  width: 95%;
-  height: 6vh;
+  width: 50dvw;
+  height: 6dvh;
   border-radius: 3rem;
   text-align: center;
   margin: 0.5rem;
   background-color: #a3a3a3;
   color: #ffffff;
   border: none;
-  font-size: large;
+  font-size: min(2.5dvw, 2.5dvh);
 }
 
 input::placeholder {
