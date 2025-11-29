@@ -15,18 +15,6 @@
     margin-left: 6dvw;
 }
 
-
-.page-title {
-    background: linear-gradient(180deg, #9f9f9f, #999999);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 40px;
-    text-align: center;
-}
-
 .page-content {
     width: 100%;
     max-width: 1400px;

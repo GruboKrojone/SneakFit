@@ -14,19 +14,20 @@
 }
 
 .dishes-container {
-  flex: 1;
-  padding: 1.25rem 2.5rem;
-  width: 100dvw;
+  width: 94dvw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-color: #666666 #2e2e2e;
 }
 
 .dishes-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2.5rem;
   justify-content: center;
-  align-items: stretch;
-  padding: 1.25rem;
-  width: 100dvw;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5dvw;
+  padding: 4dvw;
+  padding-top: 0;
+  width: 94dvw;
 }
 
 .dishes-box {

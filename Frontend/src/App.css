@@ -20,3 +20,24 @@
 button {
   font-size: min(2.5dvw, 2.5dvh);
 }
+
+.page-title {
+  font-weight: bold;
+  font-size: 2.5rem;
+  color: #d0d0d0;
+  height: 5dvh;
+  width: 94dvw;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(180deg, #9f9f9f, #999999);
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  margin-top: 1.5dvh;
+  margin-bottom: 1.5dvh;
+}
+
+.page-footer {
+  width: 94dvw;
+  height: 13dvh;
+}

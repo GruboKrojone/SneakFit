@@ -7,11 +7,11 @@ export default function HomePage() {
 
   return (
     <>
-      <h1 className="home-title">{t("home_page_welcome_message")}</h1>
+      <div className="page-title">{t("home_page_welcome_message")}</div>
       <div className="dish-slider-container">
         <DishSlider />
       </div>
-      <div className="home-footer"></div>
+      <div className="page-footer"></div>
     </>
   );
 }
