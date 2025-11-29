@@ -37,6 +37,15 @@ button {
   margin-bottom: 1.5dvh;
 }
 
+.page-subtitle {
+  height: 5dvh;
+  width: 80dvw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5dvh;
+}
+
 .page-footer {
   width: 94dvw;
   height: 13dvh;

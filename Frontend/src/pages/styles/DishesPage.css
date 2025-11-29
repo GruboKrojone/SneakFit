@@ -36,7 +36,6 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  min-height: 13.75rem;
   align-items: center;
   box-shadow: 0 0.625rem 1.25rem rgba(0, 0, 0, 0.5);
 }
@@ -80,7 +79,7 @@
 }
 
 .dishes-name {
-  font-size: 1.6rem;
+  font-size: min(1.8dvw);
   color: #d0d0d0;
   text-align: center;
 }
@@ -91,4 +90,22 @@
   text-align: center;
   padding: 0.5rem 1rem;
   border-radius: 1.25rem;
+}
+
+#auto-awesome-icon {
+  color: #ddb41e;
+  width: min(4dvw, 4dvh);
+  height: min(4dvw, 4dvh);
+}
+
+#add-box-icon {
+  color: #868686;
+  width: min(4dvw, 4dvh);
+  height: min(4dvw, 4dvh);
+}
+
+#filter-alt-icon {
+  color: #868686;
+  width: min(4dvw, 4dvh);
+  height: min(4dvw, 4dvh);
 }
