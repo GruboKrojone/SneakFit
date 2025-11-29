@@ -83,7 +83,7 @@
   #close-button {
     cursor: pointer;
     color: #353535;
-    font-size: min(10dvw, 10dvh);
+    font-size: min(6dvw, 6dvh);
   }
 
   #close-button :hover {
