@@ -12,8 +12,6 @@ export default function DishSlider() {
   const { locale } = useParams<{ locale: string }>();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isComplete, setIsComplete] = useState(false);
   const [lastAction, setLastAction] = useState<
     "pass" | "loved" | "smash" | null
   >(null);
@@ -28,19 +26,11 @@ export default function DishSlider() {
       } catch (error) {
         console.error("Failed to load dishes:", error);
         setDishes(await DishesService.getAllDishes());
-      } finally {
-        setIsLoading(false);
       }
     };
 
     loadDishes();
   }, []);
-
-  useEffect(() => {
-    if (currentIndex >= dishes.length && dishes.length > 0) {
-      setIsComplete(true);
-    }
-  }, [currentIndex, dishes.length]);
 
   const handleAnimationEnd = (cardIndex: number) => {
     return () => {
@@ -66,14 +56,6 @@ export default function DishSlider() {
     setLastAction("smash");
     setActionCardIndex(currentIndex);
   };
-
-  if (isLoading) {
-    return (
-      <div className="dish-slider-container">
-        <p style={{ color: "white", fontSize: "20px" }}>Loading dishes...</p>
-      </div>
-    );
-  }
 
   const getCardStyle = (index: number) => {
     const offset = index - currentIndex;
@@ -137,8 +119,8 @@ export default function DishSlider() {
   );
 
   return (
-    <div className="dish-slider-container">
-      <div className={`slider-wrapper ${isComplete ? "hidden" : ""}`}>
+    <>
+      <div className={"slider-wrapper"}>
         {dishesToRender.map((index) => {
           let actualIndex = index;
           if (index < 0) {
@@ -243,20 +225,6 @@ export default function DishSlider() {
           );
         })}
       </div>
-
-      {isComplete && (
-        <div className="no-more-dishes visible">
-          <h2>Niestety skończyły się przepisy</h2>
-          <p>Wróć później po więcej pysznych opcji</p>
-        </div>
-      )}
-
-      {dishes.length < 1 && !isLoading && (
-        <div className="no-more-dishes visible">
-          <h2>Niestety skończyły się przepisy</h2>
-          <p>Wróć później po więcej pysznych opcji</p>
-        </div>
-      )}
-    </div>
+    </>
   );
 }

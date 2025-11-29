@@ -89,7 +89,7 @@ export default function RegisterPage() {
                 onChange={(e) => updateField("password2", e.target.value)}
               />
 
-              <div id="buttons">
+              <div className="buttons" id="register-buttons">
                 <AuthButton
                   id="register"
                   name={t("register_page_register_button")}
@@ -109,6 +109,7 @@ export default function RegisterPage() {
               </div>
             )}
           </div>
+          <div id="spacer" />
         </div>
         <div id="right">
           <Close

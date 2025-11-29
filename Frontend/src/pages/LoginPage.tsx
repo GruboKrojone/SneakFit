@@ -48,7 +48,7 @@ export default function LoginPage() {
   return (
     <>
       <ThemeButton />
-      <div id="login-area">
+      <div className="container">
         <div id="login-form-core">
           <div className="logo-container">
             <img src={loginLogo} alt="SneakFit Logo" />
@@ -88,9 +88,11 @@ export default function LoginPage() {
               <p>{errorMsg}</p>
             </div>
           )}
-          <a href={`/${locale}/forgot-password`}>
-            {t("login_page_forgot_password")}
-          </a>
+          <div id="spacer">
+            <a href={`/${locale}/forgot-password`}>
+              {t("login_page_forgot_password")}
+            </a>
+          </div>
         </div>
       </div>
     </>

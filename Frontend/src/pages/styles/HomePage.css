@@ -1,0 +1,27 @@
+.home-title {
+    font-weight: bold;
+    color: #d0d0d0;
+    height: 10dvh;
+    width: 94dvw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.dish-slider-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100dvw;
+    height: 80dvh;
+    box-sizing: border-box;
+    margin: 0 auto;
+
+}
+
+.home-footer {
+    width: 94dvw;
+    height: 10dvh;
+}

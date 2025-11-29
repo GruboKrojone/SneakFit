@@ -9,4 +9,14 @@
   align-items: center;
   justify-content: center;
   z-index: 1000;
+
+  svg {
+    width: min(5dvw, 5dvw);
+    height: min(5dvh, 5dvh);
+    color: #979797;
+  }
+}
+
+button {
+  font-size: min(2.5dvw, 2.5dvh);
 }
