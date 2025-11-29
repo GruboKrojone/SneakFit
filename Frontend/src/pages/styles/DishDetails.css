@@ -1,19 +1,21 @@
-.dish-details-container {
-  padding: 1.25rem;
-  color: #f5f5f5;
+.dish-details-content {
   width: 100%;
-  height: 90vh;
+  height: 100dvh;
+  margin: 0 auto;
+  padding: 2dvh 2dvw;
+  transform-origin: center top;
+  display: flex;
+  flex-direction: column;
 }
 
 .dish-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
-  gap: 1.875rem;
-  width: 100%;
-  height: 100%;
-  max-width: 75rem;
+  gap: 2dvh;
   margin: 0 auto;
+  height: 100%;
+  width: 100%;
 }
 
 .grid-item {
@@ -23,7 +25,8 @@
 
 .grid-1 {
   display: flex;
-  gap: 0.625rem;
+  justify-content: center;
+  gap: 2dvh;
 }
 
 .dish-image-box {
@@ -45,8 +48,8 @@
   background-color: #000000;
   border: none;
   border-radius: 50%;
-  width: 3.125rem;
-  height: 3.125rem;
+  width: 3dvw;
+  height: 3dvw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +66,7 @@
 }
 
 .carousel-arrow-icon {
-  font-size: 3rem;
+  font-size: 3dvh;
   color: #ffffff;
 }
 
@@ -111,7 +114,7 @@
 }
 
 .center-mode-slider {
-  width: 100%;
+  height: 35dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -120,17 +123,17 @@
 
 .center-mode-container {
   position: relative;
-  width: 18.75rem;
-  height: 18.75rem;
+  width: 30dvw;
+  height: 30dvh;
   flex-shrink: 0;
   perspective: 75rem;
 }
 
 .center-mode-item {
   position: absolute;
-  width: 100%;
-  height: 100%;
-  background-color: #333333;
+  width: 30dvw;
+  height: 30dvh;
+  background-color: #1b1b1b;
   border-radius: 0.75rem;
   overflow: hidden;
   display: flex;
@@ -202,11 +205,12 @@
 .grid-2 {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 0.9375rem;
 }
 
-.dish-name-box{
-  font-size: 2.25rem;
+.dish-name-box {
+  font-size: max(2dvw, 2dvh);
   margin: 0;
   font-weight: bold;
   color: #d0d0d0;
@@ -240,6 +244,7 @@
 .dish-name-container:hover .edit-icon {
   opacity: 1;
 }
+
 .description-box {
   background-color: #b3b3b3;
   color: #1a1a1a;
@@ -250,14 +255,12 @@
   text-align: center;
   word-wrap: break-word;
   word-break: break-word;
-  max-height: 18.75rem;
 }
 
 .description-container {
   display: flex;
-  flex: 1;
+  height: 30dvh;
   gap: 0.5rem;
-  position: relative;
 }
 
 .description-icon {
@@ -270,8 +273,7 @@
   flex-shrink: 0;
   padding-top: 0.3rem;
   position: absolute;
-  top: 0;
-  right: 0.2rem;
+  right: 3dvw;
 }
 
 .description-container:hover .description-icon {
@@ -356,7 +358,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-evenly;
-  flex:1;
+  flex: 1;
 }
 
 .servings-controls {
@@ -397,13 +399,13 @@
   grid-template-columns: repeat(4, 1fr);
   justify-content: center;
   align-items: center;
-  flex: 3;
+  height: 15dvh;
 }
 
 .kcal-box {
   border-radius: 0.625rem;
   text-align: center;
-  margin-right: 0.125rem;
+  margin-right: 1dvw;
 }
 
 .kcal-value {
@@ -433,22 +435,20 @@
 
 .grid-4 {
   display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: 0.9375rem;
+  align-items: center;
+  justify-content: center;
 }
 
 .action-buttons {
   display: flex;
   gap: 1.875rem;
-  width: 100%;
   justify-content: center;
 }
 
 .btn {
   border: none;
   border-radius: 0.625rem;
-  font-size: 1rem;
+  font-size: 2rem;
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -461,11 +461,14 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 1.5rem;
+  gap: 1rem;
 }
 
 .btn-decline:hover {
   background-color: transparent;
-  transform: scale(1.05);
+  transform: scale(1.25);
+  color: #ffffff;
 }
 
 .btn-accept {
@@ -475,19 +478,22 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  padding: 1.5rem;
+  gap: 1rem;
 }
 
 .btn-accept:hover {
   background-color: transparent;
-  transform: scale(1.05);
+  transform: scale(1.25);
+  color: #ffffff;
 }
 
 .loading-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 90vh;
-  width: 100%;
+  height: 90dvh;
+  width: 100dvw;
   color: #d0d0d0;
   font-size: 1.125rem;
 }

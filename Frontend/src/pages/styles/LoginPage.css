@@ -1,38 +1,17 @@
-#login-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 70vw;
-  height: 75vh;
-  background: linear-gradient(
-    180deg,
-    rgba(107, 107, 107, 0.8),
-    rgba(26, 26, 26, 0.8)
-  );
-  border-radius: 3rem;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  overflow: hidden;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
 #login-form-core {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-evenly;
-  width: 100%;
+  width: 50dvw;
   height: 100%;
-  max-width: 600px;
   overflow: hidden;
   box-sizing: border-box;
 }
 
 .logo-container img {
-  width: 15rem;
-  height: 15rem;
+  width: min(30dvw, 30dvh);
+  height: min(30dvw, 30dvh);
   background: transparent !important;
   border-radius: 3rem;
 }
@@ -47,14 +26,6 @@ h1 {
   font-weight: bold;
 }
 
-.buttons {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  margin-top: 2vh;
-  margin-bottom: 2vh;
-}
-
 #view-mode {
   display: flex;
   justify-content: end;
@@ -63,9 +34,24 @@ h1 {
 }
 
 form {
-  width: 80%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70dvw;
 }
 
-a {
-  color: #a7a7a7;
+.buttons {
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+  width: min(40dvw, 40dvh);
+  margin-top: 2dvh;
+  margin-bottom: 2dvh;
+}
+
+#spacer {
+  a {
+    color: #a7a7a7;
+    font-size: min(2dvw, 2dvh);
+  }
 }

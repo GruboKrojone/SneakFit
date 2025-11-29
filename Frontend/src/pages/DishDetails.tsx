@@ -35,7 +35,7 @@ export default function DishDetails() {
     let scale = 0.6;
     let opacity = 0;
     let zIndex = 1;
-    let translateX = direction * absOffset * 60;
+    let translateX = direction * absOffset * 100;
 
     if (isCenter) {
       scale = 0.9;
@@ -81,7 +81,7 @@ export default function DishDetails() {
     );
 
   return (
-    <div className="dish-details-container">
+    <div className="dish-details-content">
       <div className="dish-grid">
         <div className="grid-item grid-1">
           <div className="dish-image-box">
