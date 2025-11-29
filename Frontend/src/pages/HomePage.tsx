@@ -1,5 +1,6 @@
 import { useTranslation } from "react-i18next";
 import DishSlider from "../components/DishSlider";
+import HistoryIcon from "@mui/icons-material/History";
 import "./styles/HomePage.css";
 
 export default function HomePage() {
@@ -11,7 +12,9 @@ export default function HomePage() {
       <div className="dish-slider-container">
         <DishSlider />
       </div>
-      <div className="page-footer"></div>
+      <div className="page-footer">
+        <HistoryIcon id="history-icon" />
+      </div>
     </>
   );
 }

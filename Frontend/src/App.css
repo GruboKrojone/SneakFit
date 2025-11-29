@@ -44,9 +44,14 @@ button {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 1.5dvh;
+
 }
 
 .page-footer {
   width: 94dvw;
   height: 13dvh;
+  display: flex;
+  align-items: center;
+  justify-content: left;
+  padding-left: 5dvw;
 }

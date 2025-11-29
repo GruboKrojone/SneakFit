@@ -8,3 +8,10 @@
     box-sizing: border-box;
     margin: 0 auto;
 }
+
+#history-icon {
+    width: min(8dvw, 8dvh);
+    height: min(8dvh, 8dvh);
+    color: #979797;
+    cursor: pointer;
+}
