@@ -5,8 +5,8 @@
 
 .dish-card {
   position: absolute;
-  width: 35dvw;
-  height: 60dvh;
+  width: min(40dvw, 35dvw);
+  max-height: 70dvh;
   background: #9c9c9c;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);

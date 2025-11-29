@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
@@ -16,7 +16,9 @@ export default function DishSlider() {
     "pass" | "loved" | "smash" | null
   >(null);
   const [actionCardIndex, setActionCardIndex] = useState<number | null>(null);
+  const [dimensions, setDimensions] = useState({ width: window.innerWidth });
   const navigate = useNavigate();
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadDishes = async () => {
@@ -30,6 +32,15 @@ export default function DishSlider() {
     };
 
     loadDishes();
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setDimensions({ width: window.innerWidth });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
   const handleAnimationEnd = (cardIndex: number) => {
@@ -60,8 +71,16 @@ export default function DishSlider() {
   const getCardStyle = (index: number) => {
     const offset = index - currentIndex;
     const absOffset = Math.abs(offset);
-    const isMobile = window.innerWidth <= 768;
-    const baseTranslate = isMobile ? 50 : 200;
+
+    const containerWidth = sliderRef.current?.offsetWidth || dimensions.width;
+    const isMobile = dimensions.width <= 768;
+    const cardWidth = isMobile
+      ? containerWidth * 0.95
+      : Math.min(containerWidth * 0.9, 400);
+
+    const maxSafeTranslate = (containerWidth - cardWidth) / 2;
+    const baseTranslate = Math.min(isMobile ? 50 : 200, maxSafeTranslate / 3);
+
     const translate =
       offset > 0 ? absOffset * baseTranslate : -absOffset * baseTranslate;
 
