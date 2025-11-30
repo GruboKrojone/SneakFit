@@ -41,78 +41,14 @@ sealed class Program
                 .ReadFrom.Configuration(context.Configuration)
                 .Enrich.FromLogContext());
 
-            builder.Services.AddHttpContextAccessor();
-            builder.Services.AddScoped<IUserContext, UserContext>();
-
             ConfigureDependencyInjection(builder);
 
             var authenticationSettings = new AuthenticationSettings();
             var azureConfig = new AzureConfig();
             builder.Configuration.GetSection("App:Authentication").Bind(authenticationSettings);
             builder.Configuration.GetSection("App:Azure").Bind(azureConfig);
-            builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
-            builder.Services.AddSingleton<IAzureConfig>(azureConfig);
 
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = "Bearer";
-                options.DefaultScheme = "Bearer";
-                options.DefaultChallengeScheme = "Bearer";
-            }).AddJwtBearer(cfg =>
-            {
-                cfg.RequireHttpsMetadata = false;
-                cfg.SaveToken = true;
-                cfg.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidIssuer = authenticationSettings.JwtIssuer,
-                    ValidAudience = authenticationSettings.JwtIssuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
-                };
-            });
-
-            builder.Services.AddAuthorization();
-            builder.Services.AddCors(options =>
-            {
-                options.AddDefaultPolicy(policy =>
-                {
-                    policy.AllowAnyOrigin()
-                          .AllowAnyMethod()
-                          .AllowAnyHeader();
-                });
-            });
-            builder.Services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.Converters.Add(
-                    new System.Text.Json.Serialization.JsonStringEnumConverter());
-            });
-            builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "SneakFit API", Version = "v1" });
-                c.UseInlineDefinitionsForEnums();
-                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                {
-                    In = ParameterLocation.Header,
-                    Description = "Please enter JWT with Bearer into field",
-                    Name = "Authorization",
-                    Type = SecuritySchemeType.ApiKey,
-                    Scheme = "Bearer"
-                });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            }
-                        },
-                        Array.Empty<string>()
-                    }
-                });
-            });
+            ConfigureServices(builder, authenticationSettings, azureConfig);
 
             var app = builder.Build();
 
@@ -149,6 +85,83 @@ sealed class Program
         {
             Log.CloseAndFlush();
         }
+    }
+
+    private static void ConfigureServices(
+        WebApplicationBuilder builder,
+        AuthenticationSettings authenticationSettings,
+        AzureConfig azureConfig)
+    {
+        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddScoped<IUserContext, UserContext>();
+        builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
+        builder.Services.AddSingleton<IAzureConfig>(azureConfig);
+
+        builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = "Bearer";
+            options.DefaultScheme = "Bearer";
+            options.DefaultChallengeScheme = "Bearer";
+        }).AddJwtBearer(cfg =>
+        {
+            cfg.RequireHttpsMetadata = false;
+            cfg.SaveToken = true;
+            cfg.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = authenticationSettings.JwtIssuer,
+                ValidAudience = authenticationSettings.JwtIssuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.JwtKey))
+            };
+        });
+
+        builder.Services.AddAuthorization();
+
+        var allowedOrigins = builder.Configuration.GetSection("App:Cors:AllowedOrigins").Get<string[]>()
+                        ?? ["https://localhost:5173"];
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(policy =>
+            {
+                policy.WithOrigins(allowedOrigins)
+                      .AllowAnyMethod()
+                      .AllowAnyHeader()
+                      .AllowCredentials();
+            });
+        });
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.Converters.Add(
+                new System.Text.Json.Serialization.JsonStringEnumConverter());
+        });
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc("v1", new OpenApiInfo { Title = "SneakFit API", Version = "v1" });
+            c.UseInlineDefinitionsForEnums();
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                In = ParameterLocation.Header,
+                Description = "Please enter JWT with Bearer into field",
+                Name = "Authorization",
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+            c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+        });
     }
 
     private static void ConfigureDependencyInjection(WebApplicationBuilder appBuilder)
