@@ -3,20 +3,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Entities;
 
-sealed class Category : EntityBase
+public sealed class Category(string name) : EntityBase
 {
-    private Category()
-    {
-    }
-
-    public Category(string name)
-    {
-        Name = name;
-    }
-
-
-    public string Name { get; private set; }
-    public List<Dish>? Dishes { get; private set; }
+    public string Name { get; private set; } = name;
+    public ICollection<Dish>? Dishes { get; private set; }
 
 
     public static void OnModelCreating(ModelBuilder builder)

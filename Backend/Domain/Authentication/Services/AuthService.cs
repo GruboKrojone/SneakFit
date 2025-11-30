@@ -1,6 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 using Core.Middlewares;
 using Domain.Authentication.Enums;
@@ -10,7 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Domain.Authentication.Services;
 
-sealed class AuthService(IConfiguration configuration) : IAuthService
+internal sealed class AuthService(IConfiguration configuration) : IAuthService
 {
     public string GenerateToken(string email, UserRole role, int userId)
     {
@@ -41,9 +40,9 @@ sealed class AuthService(IConfiguration configuration) : IAuthService
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public byte[] ComputePasswordHash(string password, byte[] salt)
-    {
-        using var hmac = new HMACSHA512(salt);
-        return hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-    }
+    public string HashPassword(string password)
+        => BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
+
+    public bool VerifyPassword(string password, string hash)
+        => BCrypt.Net.BCrypt.Verify(password, hash);
 }

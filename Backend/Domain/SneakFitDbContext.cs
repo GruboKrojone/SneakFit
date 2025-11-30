@@ -1,28 +1,50 @@
+using System.Reflection;
+using Core.Database;
 using Domain.Dishes.Entities;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Domain;
 
-sealed class SneakFitDbContext : DbContext
+internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> options) : DbContext(options)
 {
-    public SneakFitDbContext(DbContextOptions<SneakFitDbContext> options) : base(options)
-    {
-    }
-
-
-    public DbSet<User> Users { get; set; }
-    public DbSet<Dish> Dishes { get; set; }
-    public DbSet<Ingredient> Ingredients { get; set; }
-    public DbSet<Category> Categories { get; set; }
+    internal DbSet<User> Users => Set<User>();
+    internal DbSet<Dish> Dishes => Set<Dish>();
+    internal DbSet<Ingredient> Ingredients => Set<Ingredient>();
+    internal DbSet<Category> Categories => Set<Category>();
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        User.OnModelCreating(modelBuilder);
-        Dish.OnModelCreating(modelBuilder);
-        Ingredient.OnModelCreating(modelBuilder);
-        Category.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfigurationsFromAssembly(typeof(SneakFitDbContext).Assembly);
+
+        modelBuilder.Entity<User>().HasQueryFilter(u => !u.IsDeleted);
+        modelBuilder.Entity<Dish>().HasQueryFilter(d => !d.IsDeleted);
+        modelBuilder.Entity<Ingredient>().HasQueryFilter(i => !i.IsDeleted);
+        modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
+    }
+
+    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        UpdateAuditFields();
+        return base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void UpdateAuditFields()
+    {
+        var entries = ChangeTracker.Entries<EntityBase>()
+            .Where(e => e.State is EntityState.Modified or EntityState.Added);
+
+        foreach (var entry in entries)
+        {
+            if (entry.State == EntityState.Modified)
+            {
+                entry.Entity.GetType()
+                    .GetMethod("MarkAsUpdated", BindingFlags.NonPublic | BindingFlags.Instance)
+                    ?.Invoke(entry.Entity, null);
+            }
+        }
     }
 }

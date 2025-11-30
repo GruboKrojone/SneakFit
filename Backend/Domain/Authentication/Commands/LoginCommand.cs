@@ -9,7 +9,7 @@ namespace Domain.Authentication.Commands;
 
 public record LoginCommand(LoginParams Input) : ICommand<LoginResponse>;
 
-sealed class LoginCommandHandler(
+internal sealed class LoginCommandHandler(
     IUserRepository userRepository,
     IAuthService authService
 ) : ICommandHandler<LoginCommand, LoginResponse>
@@ -20,12 +20,9 @@ sealed class LoginCommandHandler(
                    ?? throw new DomainException("User or password is incorrect",
                        (int)AuthErrorCode.InvalidData);
 
-        {
-            var hash = authService.ComputePasswordHash(request.Input.Password, user.PasswordSalt);
-            if (user.PasswordHash != null && !hash.SequenceEqual(user.PasswordHash))
-                throw new DomainException("User or password is incorrect",
-                    (int)AuthErrorCode.InvalidData);
-        }
+        if (!authService.VerifyPassword(request.Input.Password, user.Password))
+            throw new DomainException("User or password is incorrect",
+                (int)AuthErrorCode.InvalidData);
 
         var token = authService.GenerateToken(user.Email, user.Role, user.Id);
 
