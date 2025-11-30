@@ -9,8 +9,10 @@ import ChevronRight from "@mui/icons-material/ChevronRight";
 import EditSquare from "@mui/icons-material/EditSquare";
 import MacroCircle from "../components/MacroCircle";
 import "./styles/DishDetails.css";
+import { useTranslation } from "react-i18next";
 
 export default function DishDetails() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [dish, setDish] = useState<Dish | null>(null);
@@ -18,6 +20,7 @@ export default function DishDetails() {
   const [servings, setServings] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const totalImages = 5;
+  const emptyCategories = t("no_categories");
 
   const getImageStyle = (index: number) => {
     let offset = index - currentImageIndex;
@@ -35,7 +38,7 @@ export default function DishDetails() {
     let scale = 0.6;
     let opacity = 0;
     let zIndex = 1;
-    let translateX = direction * absOffset * 60;
+    let translateX = direction * absOffset * 100;
 
     if (isCenter) {
       scale = 0.9;
@@ -76,12 +79,12 @@ export default function DishDetails() {
   if (!dish)
     return (
       <div className="loading-container">
-        <p>Nie znaleziono dania</p>
+        <p>{t("dish_details_page_no_dish_found")}</p>
       </div>
     );
 
   return (
-    <div className="dish-details-container">
+    <div className="dish-details-content">
       <div className="dish-grid">
         <div className="grid-item grid-1">
           <div className="dish-image-box">
@@ -160,7 +163,7 @@ export default function DishDetails() {
             <div className="categories-content">
               {dish.categories && dish.categories.length > 0
                 ? dish.categories.map((c) => c.name).join(", ")
-                : "Brak kategorii"}
+                : emptyCategories}
             </div>
           </div>
         </div>
@@ -174,7 +177,7 @@ export default function DishDetails() {
           </div>
           <div className="description-container">
             <div className="description-box">
-              <p>{dish.description ?? "Brak opisu"}</p>
+              <p>{dish.description ?? t("empty_description")}</p>
             </div>
             <div className="description-icon">
               <EditSquare sx={{ fontSize: 24, color: "white" }} />
@@ -185,7 +188,9 @@ export default function DishDetails() {
         <div className="grid-item grid-3">
           <div className="grid-3-left">
             <div className="ingredients-box">
-              <h3 className="section-title">Składniki:</h3>
+              <h3 className="section-title">
+                {t("dish_details_page_ingredients")}
+              </h3>
               <div className="ingredients-list">
                 {dish.ingredients && dish.ingredients.length > 0 ? (
                   <ul className="ingredients-ul">
@@ -196,7 +201,7 @@ export default function DishDetails() {
                     ))}
                   </ul>
                 ) : (
-                  <p>Brak składników</p>
+                  <p>{t("dish_details_page_empty_ingredients")}</p>
                 )}
               </div>
             </div>
@@ -205,7 +210,9 @@ export default function DishDetails() {
           <div className="grid-3-right">
             <div className="servings-section">
               <div className="servings-box">
-                <h3 className="section-title">Porcje:</h3>
+                <h3 className="section-title">
+                  {t("dish_details_page_serving_size")}
+                </h3>
                 <div className="servings-controls">
                   <button
                     className="servings-btn"
@@ -226,25 +233,29 @@ export default function DishDetails() {
               <div className="macros-grid">
                 <div className="kcal-box">
                   <div className="kcal-value">{dish.calories ?? 0}</div>
-                  <div className="kcal-label">kcal</div>
+                  <div className="kcal-label">
+                    {t("dish_details_macro_circle_calories")}
+                  </div>
                 </div>
                 <MacroCircle
                   value={dish.protein ?? 0}
-                  label="białko"
+                  label={t("dish_details_macro_circle_proteins")}
                   maxValue={100}
                 />
                 <MacroCircle
                   value={dish.carbs ?? 0}
-                  label="węglowodany"
+                  label={t("dish_details_macro_circle_carbs")}
                   maxValue={100}
                 />
                 <MacroCircle
                   value={dish.fat ?? 0}
-                  label="tłuszcze"
+                  label={t("dish_details_macro_circle_fats")}
                   maxValue={100}
                 />
               </div>
-              <div className="comments-box">Komentarze</div>
+              <div className="comments-box">
+                {t("dish_details_page_comments")}
+              </div>
             </div>
           </div>
         </div>
@@ -253,11 +264,11 @@ export default function DishDetails() {
           <div className="action-buttons">
             <button className="btn btn-decline" onClick={() => navigate(-1)}>
               <Undo sx={{ fontSize: 64, marginRight: 1 }} />
-              Nie dziś
+              {t("dish_details_page_back_button")}
             </button>
             <button className="btn btn-accept">
               <PlayCircle sx={{ fontSize: 164, marginRight: 1 }} />
-              Zaczynamy
+              {t("dish_details_page_start_button")}
             </button>
           </div>
         </div>

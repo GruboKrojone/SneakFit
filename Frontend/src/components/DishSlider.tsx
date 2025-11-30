@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
@@ -7,18 +7,20 @@ import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 
 import DishesService, { Dish } from "../services/DishesService";
 import "./styles/DishSlider.css";
+import { useTranslation } from "react-i18next";
 
 export default function DishSlider() {
+  const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isComplete, setIsComplete] = useState(false);
   const [lastAction, setLastAction] = useState<
     "pass" | "loved" | "smash" | null
   >(null);
   const [actionCardIndex, setActionCardIndex] = useState<number | null>(null);
+  const [dimensions, setDimensions] = useState({ width: window.innerWidth });
   const navigate = useNavigate();
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const loadDishes = async () => {
@@ -28,8 +30,6 @@ export default function DishSlider() {
       } catch (error) {
         console.error("Failed to load dishes:", error);
         setDishes(await DishesService.getAllDishes());
-      } finally {
-        setIsLoading(false);
       }
     };
 
@@ -37,10 +37,13 @@ export default function DishSlider() {
   }, []);
 
   useEffect(() => {
-    if (currentIndex >= dishes.length && dishes.length > 0) {
-      setIsComplete(true);
-    }
-  }, [currentIndex, dishes.length]);
+    const handleResize = () => {
+      setDimensions({ width: window.innerWidth });
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const handleAnimationEnd = (cardIndex: number) => {
     return () => {
@@ -67,19 +70,19 @@ export default function DishSlider() {
     setActionCardIndex(currentIndex);
   };
 
-  if (isLoading) {
-    return (
-      <div className="dish-slider-container">
-        <p style={{ color: "white", fontSize: "20px" }}>Loading dishes...</p>
-      </div>
-    );
-  }
-
   const getCardStyle = (index: number) => {
     const offset = index - currentIndex;
     const absOffset = Math.abs(offset);
-    const isMobile = window.innerWidth <= 768;
-    const baseTranslate = isMobile ? 50 : 200;
+
+    const containerWidth = sliderRef.current?.offsetWidth || dimensions.width;
+    const isMobile = dimensions.width <= 768;
+    const cardWidth = isMobile
+      ? containerWidth * 0.95
+      : Math.min(containerWidth * 0.9, 400);
+
+    const maxSafeTranslate = (containerWidth - cardWidth) / 2;
+    const baseTranslate = Math.min(isMobile ? 50 : 200, maxSafeTranslate / 3);
+
     const translate =
       offset > 0 ? absOffset * baseTranslate : -absOffset * baseTranslate;
 
@@ -137,8 +140,8 @@ export default function DishSlider() {
   );
 
   return (
-    <div className="dish-slider-container">
-      <div className={`slider-wrapper ${isComplete ? "hidden" : ""}`}>
+    <>
+      <div className={"slider-wrapper"}>
         {dishesToRender.map((index) => {
           let actualIndex = index;
           if (index < 0) {
@@ -160,7 +163,7 @@ export default function DishSlider() {
                   ? `action-${lastAction}`
                   : ""
               } ${offset === 0 ? "front-card" : ""}`}
-              title={offset === 0 ? "Szczególy dania" : ""}
+              title={offset === 0 ? t("dish_details") : ""}
               style={getCardStyle(index) as React.CSSProperties}
               onClick={
                 offset === 0
@@ -197,7 +200,7 @@ export default function DishSlider() {
                 {dish.description ? (
                   <p className="dish-description">{dish.description}</p>
                 ) : (
-                  <p className="dish-description">Brak opisu</p>
+                  <p className="dish-description">{t("empty_description")}</p>
                 )}
                 <div className="dish-categories">
                   {dish.categories.map((cat) => (
@@ -243,20 +246,6 @@ export default function DishSlider() {
           );
         })}
       </div>
-
-      {isComplete && (
-        <div className="no-more-dishes visible">
-          <h2>Niestety skończyły się przepisy</h2>
-          <p>Wróć później po więcej pysznych opcji</p>
-        </div>
-      )}
-
-      {dishes.length < 1 && !isLoading && (
-        <div className="no-more-dishes visible">
-          <h2>Niestety skończyły się przepisy</h2>
-          <p>Wróć później po więcej pysznych opcji</p>
-        </div>
-      )}
-    </div>
+    </>
   );
 }

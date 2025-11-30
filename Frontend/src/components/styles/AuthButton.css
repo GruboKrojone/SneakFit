@@ -1,8 +1,7 @@
 .auth-button {
-  height: 5vh;
-  min-width: 10rem;
+  height: min(5dvw, 5dvh);
+  width: min(30dvw, 30dvh);
   border-radius: 3rem;
   background-color: #4a4a4a;
   color: #ffffff;
-  font-size: large;
 }

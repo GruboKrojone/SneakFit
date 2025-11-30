@@ -8,6 +8,8 @@ import {
 
 import enTranslations from "../en.json";
 import plTranslations from "../pl.json";
+import deTranslations from "../de.json";
+import esTranslations from "../es.json";
 
 const currentLocale = getLocaleFromPath();
 const devModeActive = isDevMode();
@@ -20,6 +22,8 @@ i18n.use(initReactI18next).init({
     : {
         en: { translation: enTranslations },
         pl: { translation: plTranslations },
+        de: { translation: deTranslations },
+        es: { translation: esTranslations },
       },
   lng: devModeActive ? DEV_MODE : currentLocale,
   fallbackLng: devModeActive ? false : "en",

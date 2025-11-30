@@ -25,6 +25,7 @@ sealed class GetDishesQueryHandler(
             d.Id,
             d.Name,
             d.Rates,
+            d.OwnerId,
             d.Owner.Name,
             d.IsPublic,
             d.Categories != null
