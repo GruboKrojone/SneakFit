@@ -11,6 +11,7 @@ export default function DishesPage() {
   const { t } = useTranslation();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
+  const emptyCategories = t("no_categories");
 
   useEffect(() => {
     let mounted = true;
@@ -60,7 +61,7 @@ export default function DishesPage() {
                     <div className="dishes-categories">
                       {dish.categories && dish.categories.length > 0
                         ? dish.categories.map((c) => c.name).join(", ")
-                        : "Brak kategorii"}
+                        : emptyCategories}
                     </div>
                   </div>
                 </div>

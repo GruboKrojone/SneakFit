@@ -7,8 +7,10 @@ import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 
 import DishesService, { Dish } from "../services/DishesService";
 import "./styles/DishSlider.css";
+import { useTranslation } from "react-i18next";
 
 export default function DishSlider() {
+  const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -161,7 +163,7 @@ export default function DishSlider() {
                   ? `action-${lastAction}`
                   : ""
               } ${offset === 0 ? "front-card" : ""}`}
-              title={offset === 0 ? "Szczególy dania" : ""}
+              title={offset === 0 ? t("dish_details") : ""}
               style={getCardStyle(index) as React.CSSProperties}
               onClick={
                 offset === 0
@@ -198,7 +200,7 @@ export default function DishSlider() {
                 {dish.description ? (
                   <p className="dish-description">{dish.description}</p>
                 ) : (
-                  <p className="dish-description">Brak opisu</p>
+                  <p className="dish-description">{t("empty_description")}</p>
                 )}
                 <div className="dish-categories">
                   {dish.categories.map((cat) => (

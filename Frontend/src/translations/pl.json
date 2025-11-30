@@ -1,4 +1,8 @@
 {
+  "no_categories": "Brak kategorii",
+  "empty_description": "Brak dostępnego opisu",
+  "dish_details": "Szczegóły dania",
+
   "register_page_title": "Rejestracja",
   "register_page_email_holder": "Adres e-mail",
   "register_page_name_holder": "Nazwa użytkownika",
@@ -16,5 +20,18 @@
   "home_page_welcome_message": "Co dziś ugotujemy?",
 
   "dishes_page_loading": "Ładowanie przepisów...",
-  "dishes_page_title": "Przepisy"
+  "dishes_page_title": "Przepisy",
+
+  "dish_details_page_ingredients": "Składniki",
+  "dish_details_page_empty_ingredients": "Brak dostępnych składników.",
+  "dish_details_page_back_button": "Nie dziś",
+  "dish_details_page_start_button": "Zaczynamy",
+  "dish_details_page_comments": "Komentarze",
+  "dish_details_page_serving_size": "Wielkość porcji",
+  "dish_details_page_no_dish_found": "Nie znaleziono dania",
+
+  "dish_details_macro_circle_calories": "Kcal",
+  "dish_details_macro_circle_proteins": "Białko",
+  "dish_details_macro_circle_fats": "Tłuszcze",
+  "dish_details_macro_circle_carbs": "Węglowodany"
 }
