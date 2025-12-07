@@ -26,7 +26,7 @@ internal sealed class RegisterCommandHandler(
         var user = new User(
             input.Email,
             password,
-            UserRole.Admin,
+            UserRole.User,
             input.Name,
             input.Age
         );
