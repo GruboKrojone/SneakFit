@@ -1,4 +1,6 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import ProtectedLayout from "./components/ProtectedLayout";
 import DishDetails from "./pages/DishDetails";
@@ -15,6 +17,17 @@ import LocaleValidator from "./translations/service/LocaleValidator";
 function App() {
   return (
     <BrowserRouter>
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+      />
       <Routes>
         <Route path="/" element={<Navigate to="/en/login" replace />} />
         <Route path="/:locale/*" element={<LocaleValidator />}>

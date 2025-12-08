@@ -6,11 +6,13 @@ import { useTranslation } from "react-i18next";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import CreateDishModal from "../components/CreateDishModal";
 
 export default function DishesPage() {
   const { t } = useTranslation();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -39,7 +41,11 @@ export default function DishesPage() {
           <div className="page-title">{t("dishes_page_title")}</div>
           <div className="page-subtitle">
             <AutoAwesomeIcon id="auto-awesome-icon" />
-            <AddBoxIcon id="add-box-icon" />
+            <AddBoxIcon
+              id="add-box-icon"
+              onClick={() => setIsModalOpen(true)}
+              style={{ cursor: "pointer" }}
+            />
             <FilterAltIcon id="filter-alt-icon" />
           </div>
           <div className="dishes-container">
@@ -69,6 +75,10 @@ export default function DishesPage() {
           </div>
         </>
       )}
+      <CreateDishModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 }

@@ -4,14 +4,18 @@ import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
+import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
+import { ClipLoader } from "react-spinners";
 
-import DishesService, { Dish } from "../services/DishesService";
+import { useFetchDishes } from "../hooks/useFetchDishes";
+import CreateDishModal from "./CreateDishModal";
 import "./styles/DishSlider.css";
 
 export default function DishSlider() {
   const { locale } = useParams<{ locale: string }>();
-  const [dishes, setDishes] = useState<Dish[]>([]);
+  const { dishes, isLoading } = useFetchDishes();
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const [lastAction, setLastAction] = useState<
     "pass" | "loved" | "smash" | null
   >(null);
@@ -19,20 +23,6 @@ export default function DishSlider() {
   const [dimensions, setDimensions] = useState({ width: window.innerWidth });
   const navigate = useNavigate();
   const sliderRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const loadDishes = async () => {
-      try {
-        const loadedDishes = await DishesService.getAllDishes();
-        setDishes(loadedDishes);
-      } catch (error) {
-        console.error("Failed to load dishes:", error);
-        setDishes(await DishesService.getAllDishes());
-      }
-    };
-
-    loadDishes();
-  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -53,18 +43,8 @@ export default function DishSlider() {
     };
   };
 
-  const handlePass = () => {
-    setLastAction("pass");
-    setActionCardIndex(currentIndex);
-  };
-
-  const handleLoved = () => {
-    setLastAction("loved");
-    setActionCardIndex(currentIndex);
-  };
-
-  const handleSmash = () => {
-    setLastAction("smash");
+  const handleAction = (action: "pass" | "loved" | "smash") => {
+    setLastAction(action);
     setActionCardIndex(currentIndex);
   };
 
@@ -105,14 +85,14 @@ export default function DishSlider() {
         return {
           transform: `translateX(${translate}px) scale(0.8)`,
           opacity: 0.6,
-          filter: offset > 0 ? "blur(5px)" : "blur(5px)",
+          filter: "blur(5px)",
           zIndex: 5,
         };
       case 2:
         return {
           transform: `translateX(${translate}px) scale(0.6)`,
-          opacity: offset > 0 ? 0.3 : 0.3,
-          filter: offset > 0 ? "blur(8px)" : "blur(8px)",
+          opacity: 0.3,
+          filter: "blur(8px)",
           zIndex: 2,
         };
       case 3:
@@ -137,113 +117,149 @@ export default function DishSlider() {
     (_, i) => currentIndex - 3 + i
   );
 
-  return (
-    <>
-      <div className={"slider-wrapper"}>
-        {dishesToRender.map((index) => {
-          let actualIndex = index;
-          if (index < 0) {
-            actualIndex = dishes.length + index;
-          } else if (index >= dishes.length) {
-            actualIndex = index - dishes.length;
-          }
-
-          if (actualIndex < 0 || actualIndex >= dishes.length) return null;
-
-          const dish = dishes[actualIndex];
-          const offset = index - currentIndex;
-
-          return (
-            <div
-              key={`${dish.id}-${index}`}
-              className={`dish-card ${
-                actualIndex === actionCardIndex && lastAction
-                  ? `action-${lastAction}`
-                  : ""
-              } ${offset === 0 ? "front-card" : ""}`}
-              title={offset === 0 ? "Szczególy dania" : ""}
-              style={getCardStyle(index) as React.CSSProperties}
-              onClick={
-                offset === 0
-                  ? () => navigate(`/${locale}/dish/${dish.id}`)
-                  : undefined
-              }
-              onAnimationEnd={handleAnimationEnd(index)}
-            >
-              <div className="dish-image">
-                {!dish.mainImageId || dish.mainImageId <= 1 ? (
-                  <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
-                ) : (
-                  <img
-                    alt={dish.name}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                    }}
-                  />
-                )}
-                {index === actionCardIndex && lastAction && (
-                  <div className={`action-overlay action-${lastAction}`}>
-                    {lastAction === "pass" && "PASS"}
-                    {lastAction === "smash" && "SMASH"}
-                    {lastAction === "loved" && "LOVED"}
-                  </div>
-                )}
-              </div>
-              <div className="dish-info">
-                <div className="dish-header">
-                  <h2 className="dish-name">{dish.name}</h2>
-                </div>
-                {dish.description ? (
-                  <p className="dish-description">{dish.description}</p>
-                ) : (
-                  <p className="dish-description">Brak opisu</p>
-                )}
-                <div className="dish-categories">
-                  {dish.categories.map((cat) => (
-                    <span key={cat.id} className="category-tag">
-                      {cat.name}
-                    </span>
-                  ))}
-                </div>
-                <div className="dish-actions">
-                  <button
-                    className="action-button btn-pass"
-                    title="Pass"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handlePass();
-                    }}
-                  >
-                    <ThumbDown sx={{ fontSize: 24 }} />
-                  </button>
-                  <button
-                    className="action-button btn-smash"
-                    title="Loved"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleLoved();
-                    }}
-                  >
-                    <Favorite sx={{ fontSize: 24 }} />
-                  </button>
-                  <button
-                    className="action-button btn-loved"
-                    title="Smash"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleSmash();
-                    }}
-                  >
-                    <ThumbUp sx={{ fontSize: 24 }} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
+  const getAddRecipeCard = (index: number) => {
+    return (
+      <div
+        key={`add-recipe-${index}`}
+        className="dish-card add-recipe-card"
+        style={getCardStyle(index) as React.CSSProperties}
+        onClick={() => setIsModalOpen(true)}
+      >
+        <div className="add-recipe-card-info">
+            <p className="add-recipe-card-text">
+              Niestety skończyły nam się pyszne przepisy,<br></br> lecz nic straconego!!!
+            </p>
+          <div className="add-recipe-card-icon">
+            <AddCircleOutline id="add-recipe-icon" />
+          </div>
+            <p className="add-recipe-card-text">Dodaj własny żeby nikogo więcej<br></br> nie spotkała ta smutna wiadomość </p>
+        </div>
       </div>
-    </>
+    );
+  };
+
+  return (
+    <div className={"slider-wrapper"}>
+      <CreateDishModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
+      {isLoading ? (
+        <div className="loading-container">
+          <ClipLoader color="#112270ff" size={60} />
+          <p>Ładowanie dań...</p>
+        </div>
+      ) : dishes.length === 0 ? (
+        getAddRecipeCard(0)
+      ) : (
+        <>
+          {dishesToRender.map((index) => {
+            let actualIndex = index;
+            if (index < 0) {
+              actualIndex = dishes.length + index;
+            } else if (index >= dishes.length) {
+              return getAddRecipeCard(index);
+            }
+
+            if (actualIndex < 0 || actualIndex >= dishes.length) {
+              return null;
+            }
+
+            const dish = dishes[actualIndex];
+            const offset = index - currentIndex;
+
+            return (
+              <div
+                key={`${dish.id}-${index}`}
+                className={`dish-card ${
+                  actualIndex === actionCardIndex && lastAction
+                    ? `action-${lastAction}`
+                    : ""
+                } ${offset === 0 ? "front-card" : ""}`}
+                title={offset === 0 ? "Szczególy dania" : ""}
+                style={getCardStyle(index) as React.CSSProperties}
+                onClick={
+                  offset === 0
+                    ? () => navigate(`/${locale}/dish/${dish.id}`)
+                    : undefined
+                }
+                onAnimationEnd={handleAnimationEnd(index)}
+              >
+                <div className="dish-image">
+                  {!dish.mainImageId || dish.mainImageId <= 1 ? (
+                    <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
+                  ) : (
+                    <img
+                      alt={dish.name}
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
+                  {index === actionCardIndex && lastAction && (
+                    <div className={`action-overlay action-${lastAction}`}>
+                      {lastAction === "pass" && "PASS"}
+                      {lastAction === "smash" && "SMASH"}
+                      {lastAction === "loved" && "LOVED"}
+                    </div>
+                  )}
+                </div>
+                <div className="dish-info">
+                  <div className="dish-header">
+                    <h2 className="dish-name">{dish.name}</h2>
+                  </div>
+                  {dish.description ? (
+                    <p className="dish-description">{dish.description}</p>
+                  ) : (
+                    <p className="dish-description">Brak opisu</p>
+                  )}
+                  <div className="dish-categories">
+                    {dish.categories.map((cat) => (
+                      <span key={cat.id} className="category-tag">
+                        {cat.name}
+                      </span>
+                    ))}
+                  </div>
+                  <div className="dish-actions">
+                    <button
+                      className="action-button btn-pass"
+                      title="Pass"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAction("pass");
+                      }}
+                    >
+                      <ThumbDown sx={{ fontSize: 24 }} />
+                    </button>
+                    <button
+                      className="action-button btn-smash"
+                      title="Loved"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAction("loved");
+                      }}
+                    >
+                      <Favorite sx={{ fontSize: 24 }} />
+                    </button>
+                    <button
+                      className="action-button btn-loved"
+                      title="Smash"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleAction("smash");
+                      }}
+                    >
+                      <ThumbUp sx={{ fontSize: 24 }} />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </>
+      )}
+    </div>
   );
 }

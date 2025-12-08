@@ -1,4 +1,4 @@
-input {
+.auth-input {
   width: 50dvw;
   height: 6dvh;
   border-radius: 3rem;
@@ -10,7 +10,7 @@ input {
   font-size: min(2.5dvw, 2.5dvh);
 }
 
-input::placeholder {
+.auth-input::placeholder {
   color: #000000;
   opacity: 0.4;
 }
