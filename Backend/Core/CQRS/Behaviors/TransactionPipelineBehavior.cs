@@ -4,19 +4,13 @@ using Microsoft.Extensions.Logging;
 
 namespace Core.CQRS.Behaviors;
 
-public sealed class TransactionPipelineBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
+public sealed class TransactionPipelineBehavior<TRequest, TResponse>(
+    DbContext dbContext,
+    ILogger<TransactionPipelineBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
     where TRequest : ICommand<TResponse>
 {
-    private readonly DbContext _dbContext;
-    private readonly ILogger<TransactionPipelineBehavior<TRequest, TResponse>> _logger;
-
-    public TransactionPipelineBehavior(
-        DbContext dbContext,
-        ILogger<TransactionPipelineBehavior<TRequest, TResponse>> logger)
-    {
-        _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
-        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
-    }
+    private readonly DbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    private readonly ILogger<TransactionPipelineBehavior<TRequest, TResponse>> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
 
     public async Task<TResponse> Handle(
         TRequest request,
@@ -54,7 +48,10 @@ public sealed class TransactionPipelineBehavior<TRequest, TResponse> : IPipeline
                     typeof(TRequest).Name);
 
                 await transaction.RollbackAsync(cancellationToken);
-                throw;
+
+                throw new InvalidOperationException(
+                    $"Transaction failed for command {typeof(TRequest).Name}. See inner exception for details.",
+                    ex);
             }
         });
     }

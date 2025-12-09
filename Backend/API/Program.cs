@@ -17,7 +17,7 @@ using Serilog;
 
 namespace API;
 
-internal sealed class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
@@ -84,6 +84,8 @@ internal sealed class Program
         AuthenticationSettings authenticationSettings,
         AzureConfig azureConfig)
     {
+        const string Bearer = "Bearer";
+
         builder.Services.AddHttpContextAccessor();
         builder.Services.AddScoped<IUserContext, UserContext>();
         builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
@@ -91,9 +93,9 @@ internal sealed class Program
 
         builder.Services.AddAuthentication(options =>
         {
-            options.DefaultAuthenticateScheme = "Bearer";
-            options.DefaultScheme = "Bearer";
-            options.DefaultChallengeScheme = "Bearer";
+            options.DefaultAuthenticateScheme = Bearer;
+            options.DefaultScheme = Bearer;
+            options.DefaultChallengeScheme = Bearer;
         }).AddJwtBearer(cfg =>
         {
             cfg.RequireHttpsMetadata = !builder.Environment.IsDevelopment();
@@ -164,13 +166,13 @@ internal sealed class Program
                 Description = "Modern fitness application API"
             });
             c.UseInlineDefinitionsForEnums();
-            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            c.AddSecurityDefinition(Bearer, new OpenApiSecurityScheme
             {
                 In = ParameterLocation.Header,
                 Description = "Please enter JWT with Bearer into field",
                 Name = "Authorization",
                 Type = SecuritySchemeType.ApiKey,
-                Scheme = "Bearer",
+                Scheme = Bearer,
                 BearerFormat = "JWT"
             });
             c.AddSecurityRequirement(new OpenApiSecurityRequirement
@@ -181,7 +183,7 @@ internal sealed class Program
                         Reference = new OpenApiReference
                         {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
+                            Id = Bearer
                         }
                     },
                     Array.Empty<string>()
