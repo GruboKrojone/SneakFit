@@ -26,10 +26,4 @@
         <ProjectReference Include="..\Core\Core.csproj" />
     </ItemGroup>
 
-	<ItemGroup>
-		<SonarQubeSetting Include="sonar.exclusions" Value="**/Migrations/**" />
-
-		<AdditionalFiles Include="**\Migrations\**" />
-	</ItemGroup>
-
 </Project>
