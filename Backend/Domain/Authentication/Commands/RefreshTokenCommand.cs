@@ -1,4 +1,4 @@
-using Core.CQRS;
+﻿using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
 using Domain.Authentication.Dto;
@@ -11,40 +11,46 @@ using Microsoft.Extensions.Configuration;
 
 namespace Domain.Authentication.Commands;
 
-public record LoginCommand(LoginParams Input) : ICommand<LoginResponse>;
+public record RefreshTokenCommand(RefreshTokenParams Input) : ICommand<LoginResponse>;
 
-internal sealed class LoginCommandHandler(
-    IUserRepository userRepository,
+internal sealed class RefreshTokenCommandHandler(
     IRefreshTokenRepository refreshTokenRepository,
+    IUserRepository userRepository,
     IAuthService authService,
     IConfiguration configuration,
     IUnitOfWork unitOfWork
-) : ICommandHandler<LoginCommand, LoginResponse>
+) : ICommandHandler<RefreshTokenCommand, LoginResponse>
 {
-    public async Task<LoginResponse> Handle(LoginCommand request, CancellationToken cancellationToken)
+    public async Task<LoginResponse> Handle(RefreshTokenCommand request, CancellationToken cancellationToken)
     {
-        var user = await userRepository.FindByEmailAsync(request.Input.Email, cancellationToken)
-                   ?? throw new DomainException("User or password is incorrect",
-                       (int)AuthErrorCode.InvalidData);
+        var refreshToken = await refreshTokenRepository.FindByTokenAsync(request.Input.RefreshToken, cancellationToken)
+                           ?? throw new DomainException("Invalid refresh token",
+                               (int)AuthErrorCode.InvalidData);
 
-        if (!authService.VerifyPassword(request.Input.Password, user.Password))
-            throw new DomainException("User or password is incorrect",
+        if (!refreshToken.IsActive())
+            throw new DomainException("Refresh token is expired or revoked",
                 (int)AuthErrorCode.InvalidData);
 
+        var user = await userRepository.FindAsync(refreshToken.UserId, cancellationToken)
+                   ?? throw new DomainException("User not found",
+                       (int)CommonErrorCode.EntityNotFound);
+
+        refreshToken.Revoke();
+
         var accessToken = authService.GenerateToken(user.Email, user.Role, user.Id);
-        var refreshTokenValue = authService.GenerateRefreshToken();
+        var newRefreshTokenValue = authService.GenerateRefreshToken();
 
         var RefreshTokenExpireDays = int.Parse(configuration["App:Authentication:RefreshTokenExpireDays"]
                                                ?? throw new DomainException("RefreshTokenExpireDays not configured",
                                                    (int)AuthErrorCode.JwtExpireHoursNotConfigured));
 
-        var refreshToken = new RefreshToken(
-            refreshTokenValue,
+        var newRefreshToken = new RefreshToken(
+            newRefreshTokenValue,
             user.Id,
             DateTime.UtcNow.AddDays(RefreshTokenExpireDays)
         );
 
-        await refreshTokenRepository.AddAsync(refreshToken, cancellationToken);
+        await refreshTokenRepository.AddAsync(newRefreshToken, cancellationToken);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return new LoginResponse(
@@ -52,7 +58,7 @@ internal sealed class LoginCommandHandler(
             user.Email,
             user.Role,
             accessToken,
-            refreshTokenValue
+            newRefreshTokenValue
         );
     }
 }

@@ -1,5 +1,7 @@
 using System.Reflection;
 using Core.Database;
+using Domain.Authentication.Configurations;
+using Domain.Authentication.Entities;
 using Domain.Dishes.Entities;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -12,6 +14,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
     internal DbSet<Dish> Dishes => Set<Dish>();
     internal DbSet<Ingredient> Ingredients => Set<Ingredient>();
     internal DbSet<Category> Categories => Set<Category>();
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -24,6 +27,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
         modelBuilder.Entity<Dish>().HasQueryFilter(d => !d.IsDeleted);
         modelBuilder.Entity<Ingredient>().HasQueryFilter(i => !i.IsDeleted);
         modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
+        modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

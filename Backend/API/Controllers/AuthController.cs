@@ -11,13 +11,25 @@ namespace API.Controllers;
 public class AuthController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    [Route("register")]
     [AllowAnonymous]
-    public async Task<int> Register(RegisterParams registerParams, CancellationToken cancellationToken)
-        => await mediator.Send(new RegisterCommand(registerParams), cancellationToken);
+    [Route("login")]
+    public async Task<LoginResponse> Login(LoginParams @params, CancellationToken cancellationToken)
+        => await mediator.Send(new LoginCommand(@params), cancellationToken);
 
     [HttpPost]
-    [Route("login")]
-    public Task<LoginResponse> Login(LoginParams loginParams, CancellationToken cancellationToken)
-        => mediator.Send(new LoginCommand(loginParams), cancellationToken);
+    [AllowAnonymous]
+    [Route("register")]
+    public async Task<int> Register(RegisterParams @params, CancellationToken cancellationToken)
+        => await mediator.Send(new RegisterCommand(@params), cancellationToken);
+
+    [HttpPost]
+    [AllowAnonymous]
+    [Route("refresh")]
+    public async Task<LoginResponse> RefreshToken(RefreshTokenParams @params, CancellationToken cancellationToken)
+        => await mediator.Send(new RefreshTokenCommand(@params), cancellationToken);
+
+    [HttpPost]
+    [Route("revoke")]
+    public async Task<Unit> RevokeToken(RefreshTokenParams @params, CancellationToken cancellationToken)
+        => await mediator.Send(new RevokeTokenCommand(@params), cancellationToken);
 }

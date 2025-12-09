@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Core.Middlewares;
 using Domain.Authentication.Enums;
@@ -31,13 +32,21 @@ internal sealed class AuthService(IConfiguration configuration) : IAuthService
             configuration["App:Authentication:JwtIssuer"],
             configuration["App:Authentication:JwtIssuer"],
             claims,
-            expires: DateTime.Now.AddDays(
-                int.Parse(configuration["App:Authentication:JwtExpireDays"]
-                          ?? throw new DomainException("JwtExpireDays not configured",
-                              (int)AuthErrorCode.JwtExpireDaysNotConfigured))),
+            expires: DateTime.UtcNow.AddHours(
+                int.Parse(configuration["App:Authentication:JwtExpireHours"]
+                          ?? throw new DomainException("JwtExpireHours not configured",
+                              (int)AuthErrorCode.JwtExpireHoursNotConfigured))),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
+    }
+
+    public string GenerateRefreshToken()
+    {
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
 
     public string HashPassword(string password)
