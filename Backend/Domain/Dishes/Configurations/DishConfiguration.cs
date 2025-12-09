@@ -1,16 +1,15 @@
-﻿using Domain.Dishes.Entities;
+﻿using Core.Database;
+using Domain.Dishes.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace Domain.Dishes.Configurations;
 
-internal sealed class DishConfiguration : IEntityTypeConfiguration<Dish>
+internal sealed class DishConfiguration : EntityBaseConfiguration<Dish>
 {
-    public void Configure(EntityTypeBuilder<Dish> builder)
+    protected override void ConfigureEntity(EntityTypeBuilder<Dish> builder)
     {
         builder.ToTable("Dishes");
-
-        builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Name)
             .IsRequired()
@@ -19,74 +18,45 @@ internal sealed class DishConfiguration : IEntityTypeConfiguration<Dish>
         builder.Property(x => x.Description)
             .HasMaxLength(280);
 
-        builder.Property(x => x.Calories)
-            .IsRequired(false);
-
-        builder.Property(x => x.Protein)
-            .IsRequired(false);
-
-        builder.Property(x => x.Carbs)
-            .IsRequired(false);
-
-        builder.Property(x => x.Fat)
-            .IsRequired(false);
+        builder.Property(x => x.Calories);
+        builder.Property(x => x.Protein);
+        builder.Property(x => x.Carbs);
+        builder.Property(x => x.Fat);
 
         builder.Property(x => x.IsPublic)
             .IsRequired()
             .HasDefaultValue(false);
 
         builder.Property(x => x.Rates)
-            .IsRequired()
-            .HasDefaultValue(0m)
-            .HasColumnType("decimal(3, 2)");
+            .HasColumnType("decimal(3, 2)")
+            .HasDefaultValue(0);
 
-        builder.Property(x => x.CreatedAt)
-            .IsRequired()
-            .HasDefaultValueSql("GETUTCDATE()");
-
-        builder.Property(x => x.UpdatedAt)
-            .IsRequired(false);
-
-        builder.Property(x => x.IsDeleted)
-            .IsRequired()
-            .HasDefaultValue(false);
-
-        builder.Property(x => x.DeletedAt)
-            .IsRequired(false);
-
-        builder.HasOne(d => d.Owner)
+        builder.HasOne(x => x.Owner)
             .WithMany()
-            .HasForeignKey(d => d.OwnerId)
+            .HasForeignKey(x => x.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
 
-        builder.HasMany(d => d.Ingredients)
-            .WithMany(i => i.Dishes)
-            .UsingEntity<Dictionary<string, object>>(
-                "DishIngredient",
-                j => j.HasOne<Ingredient>().WithMany().HasForeignKey("IngredientId").OnDelete(DeleteBehavior.Cascade),
-                j => j.HasOne<Dish>().WithMany().HasForeignKey("DishId").OnDelete(DeleteBehavior.Cascade),
-                j =>
-                {
-                    j.HasKey("DishId", "IngredientId");
-                    j.ToTable("DishIngredients");
-                }
-            );
-
-        builder.HasMany(d => d.Categories)
-            .WithMany(c => c.Dishes)
-            .UsingEntity<Dictionary<string, object>>(
+        builder.HasMany(x => x.Categories)
+            .WithMany(x => x.Dishes)
+            .UsingEntity(
                 "DishCategory",
-                j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId").OnDelete(DeleteBehavior.Cascade),
-                j => j.HasOne<Dish>().WithMany().HasForeignKey("DishId").OnDelete(DeleteBehavior.Cascade),
-                j =>
-                {
-                    j.HasKey("DishId", "CategoryId");
-                    j.ToTable("DishCategories");
-                }
-            );
+                l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("CategoryId"),
+                r => r.HasOne(typeof(Dish)).WithMany().HasForeignKey("DishId"),
+                j => j.ToTable("DishCategories"));
 
-        builder.HasIndex(d => d.OwnerId);
-        builder.HasIndex(d => d.IsPublic);
-        builder.HasIndex(d => new { d.IsPublic, d.IsDeleted });
+        builder.HasMany(x => x.Ingredients)
+            .WithMany(x => x.Dishes)
+            .UsingEntity(
+                "DishIngredient",
+                l => l.HasOne(typeof(Ingredient)).WithMany().HasForeignKey("IngredientId"),
+                r => r.HasOne(typeof(Dish)).WithMany().HasForeignKey("DishId"),
+                j => j.ToTable("DishIngredients"));
+
+        builder.HasMany(x => x.FavoritedByUsers)
+            .WithMany(x => x.FavoriteDishes)
+            .UsingEntity(j => j.ToTable("UserFavouriteDishes"));
+
+        builder.HasIndex(x => x.IsPublic);
+        builder.HasIndex(x => new { x.IsPublic, x.IsDeleted });
     }
 }

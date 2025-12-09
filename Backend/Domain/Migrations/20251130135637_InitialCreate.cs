@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -190,7 +189,7 @@ namespace Domain.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Dishes_IsPublic_IsDeleted",
                 table: "Dishes",
-                columns: new[] { "IsPublic", "IsDeleted" });
+                columns: ["IsPublic", "IsDeleted"]);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Dishes_OwnerId",
