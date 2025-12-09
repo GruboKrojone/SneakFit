@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(SneakFitDbContext))]
-    [Migration("20251209213000_VerifyNoChanges")]
+    [Migration("20251209213643_VerifyNoChanges")]
     partial class VerifyNoChanges
     {
         /// <inheritdoc />
