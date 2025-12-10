@@ -1,0 +1,37 @@
+{
+  "no_categories": "Sin categorías",
+  "empty_description": "No hay descripción disponible",
+  "dish_details": "Detalles del Plato",
+
+  "register_page_title": "Registrarse",
+  "register_page_email_holder": "Correo electrónico",
+  "register_page_name_holder": "Nombre",
+  "register_page_password_holder": "Contraseña",
+  "register_page_confirm_password_holder": "Confirmar contraseña",
+  "register_page_register_button": "Registrarse",
+  "register_page_clear_button": "Limpiar",
+
+  "login_page_title": "SneakFit",
+  "login_page_email_holder": "Correo electrónico",
+  "login_page_password_holder": "Contraseña",
+  "login_page_login_button": "Iniciar sesión",
+  "login_page_forgot_password": "¿Olvidaste tu contraseña?",
+
+  "home_page_welcome_message": "¿Qué te gustaría comer hoy?",
+
+  "dishes_page_loading": "Cargando platos...",
+  "dishes_page_title": "Recetas",
+
+  "dish_details_page_ingredients": "Ingredientes",
+  "dish_details_page_empty_ingredients": "No hay ingredientes proporcionados",
+  "dish_details_page_back_button": "Hoy no",
+  "dish_details_page_start_button": "Empecemos",
+  "dish_details_page_comments": "Comentarios",
+  "dish_details_page_serving_size": "Tamaño de la Porción",
+  "dish_details_page_no_dish_found": "No se encontró el plato",
+
+  "dish_details_macro_circle_calories": "Kcal",
+  "dish_details_macro_circle_proteins": "Proteínas",
+  "dish_details_macro_circle_fats": "Grasas",
+  "dish_details_macro_circle_carbs": "Carbohidratos"
+}
