@@ -7,8 +7,8 @@ import { useFetchDishes } from "../hooks/useFetchDishes";
 import "./styles/CreateDishModal.css";
 
 interface CreateDishModalProps {
-  isOpen: boolean;
-  onClose: () => void;
+  readonly isOpen: boolean;
+  readonly onClose: () => void;
 }
 
 export default function CreateDishModal({
@@ -34,25 +34,25 @@ export default function CreateDishModal({
       newErrors.name = "Nazwa jest wymagana";
     }
 
-    if (!formData.calories || isNaN(Number(formData.calories))) {
+    if (!formData.calories || Number.isNaN(Number(formData.calories))) {
       newErrors.calories = "Kalorie muszą być liczbą";
     } else if (Number(formData.calories) <= 0) {
       newErrors.calories = "Kalorie muszą być większe od 0";
     }
 
-    if (!formData.carbs || isNaN(Number(formData.carbs))) {
+    if (!formData.carbs || Number.isNaN(Number(formData.carbs))) {
       newErrors.carbs = "Węglowodany muszą być liczbą";
     } else if (Number(formData.carbs) < 0) {
       newErrors.carbs = "Węglowodany nie mogą być ujemne";
     }
 
-    if (!formData.protein || isNaN(Number(formData.protein))) {
+    if (!formData.protein || Number.isNaN(Number(formData.protein))) {
       newErrors.protein = "Białko musi być liczbą";
     } else if (Number(formData.protein) < 0) {
       newErrors.protein = "Białko nie może być ujemne";
     }
 
-    if (!formData.fat || isNaN(Number(formData.fat))) {
+    if (!formData.fat || Number.isNaN(Number(formData.fat))) {
       newErrors.fat = "Tłuszcze muszą być liczbą";
     } else if (Number(formData.fat) < 0) {
       newErrors.fat = "Tłuszcze nie mogą być ujemne";
@@ -74,7 +74,7 @@ export default function CreateDishModal({
     if (
       ["calories", "carbs", "protein", "fat"].includes(name) &&
       value &&
-      isNaN(Number(value))
+      Number.isNaN(Number(value))
     ) {
       return;
     }
@@ -151,8 +151,11 @@ export default function CreateDishModal({
   };
 
   return (
-    <div className={`modal-overlay ${isOpen ? "open" : ""}`} onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+    <div
+      className={`modal-overlay ${isOpen ? "open" : ""}`}
+      onPointerDown={onClose}
+    >
+      <div className="modal-content" onPointerDown={(e) => e.stopPropagation()}>
         <button className="close-button" onClick={onClose} title="Zamknij">
           <Close className="close-icon" />
         </button>
