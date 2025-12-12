@@ -118,7 +118,7 @@ export default function CreateDishModal({
       };
 
       await DishesService.createDish(newDish);
-      
+
       if (onDishAdded) {
         onDishAdded();
       }
