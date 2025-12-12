@@ -15,25 +15,21 @@ export default function DishesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const emptyCategories = t("no_categories");
 
-  useEffect(() => {
-    let mounted = true;
-    async function fetchDishes() {
-      setLoading(true);
-      try {
-        const data = await DishesService.getAllDishes();
-        if (mounted) setDishes(data);
-      } catch (error) {
-        console.error("Failed to fetch dishes:", error);
-        if (mounted) setDishes([]);
-      } finally {
-        if (mounted) setLoading(false);
-      }
+  const fetchDishes = async () => {
+    setLoading(true);
+    try {
+      const data = await DishesService.getAllDishes();
+      setDishes(data);
+    } catch (error) {
+      console.error("Failed to fetch dishes:", error);
+      setDishes([]);
+    } finally {
+      setLoading(false);
     }
+  };
 
+  useEffect(() => {
     fetchDishes();
-    return () => {
-      mounted = false;
-    };
   }, []);
 
   return (
@@ -81,6 +77,7 @@ export default function DishesPage() {
       <CreateDishModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onDishAdded={fetchDishes}
       />
     </div>
   );

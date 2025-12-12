@@ -6,41 +6,31 @@ import ThumbUp from "@mui/icons-material/ThumbUp";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
 import { ClipLoader } from "react-spinners";
-
-import DishesService, { Dish } from "../services/DishesService";
 import CreateDishModal from "./CreateDishModal";
 import "./styles/DishSlider.css";
 import { useTranslation } from "react-i18next";
+import { useFetchDishes } from "../hooks/useFetchDishes";
+
+type ActionType = "pass" | "loved" | "smash" | null;
 
 export default function DishSlider() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
-  const [dishes, setDishes] = useState<Dish[]>([]);
+  const { dishes, isLoading, refetchDishes } = useFetchDishes();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [lastAction, setLastAction] = useState<
-    "pass" | "loved" | "smash" | null
-  >(null);
+  const [lastAction, setLastAction] = useState<ActionType>(null);
   const [actionCardIndex, setActionCardIndex] = useState<number | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
+    null
+  );
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
   const [dimensions, setDimensions] = useState({ width: window.innerWidth });
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
   const sliderRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const loadDishes = async () => {
-      try {
-        const loadedDishes = await DishesService.getAllDishes();
-        setDishes(loadedDishes);
-      } catch (error) {
-        console.error("Failed to load dishes:", error);
-        setDishes([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    loadDishes();
-  }, []);
 
   useEffect(() => {
     const handleResize = () => setDimensions({ width: window.innerWidth });
@@ -48,25 +38,148 @@ export default function DishSlider() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleAnimationEnd = (cardIndex: number) => () => {
-    if (cardIndex === currentIndex) {
-      setCurrentIndex(currentIndex + 1);
+  const handleActionTransitionEnd = (cardIndex: number) => () => {
+    if (cardIndex === actionCardIndex && lastAction) {
       setLastAction(null);
-      setActionCardIndex(null);
+      setIsAnimating(false);
+      setDragOffset({ x: 0, y: 0 });
+      setIsTransitioning(true);
     }
   };
 
-  const handlePass = () => {
-    setLastAction("pass");
-    setActionCardIndex(currentIndex);
+  const handleTransitionEnd = (cardIndex: number) => () => {
+    if (cardIndex === actionCardIndex && isTransitioning) {
+      setCurrentIndex(currentIndex + 1);
+
+      setTimeout(() => {
+        setLastAction(null);
+        setIsAnimating(false);
+        setIsTransitioning(false);
+        setActionCardIndex(null);
+        setDragOffset({ x: 0, y: 0 });
+      }, 30);
+    }
   };
-  const handleLoved = () => {
-    setLastAction("loved");
+
+  const handleAction = (
+    action: Exclude<ActionType, null>,
+    fromDrag: boolean = false
+  ) => {
+    if (
+      lastAction ||
+      isAnimating ||
+      isTransitioning ||
+      actionCardIndex !== null
+    ) {
+      return;
+    }
+
     setActionCardIndex(currentIndex);
+    if (!fromDrag) {
+      setDragOffset({ x: 0, y: 0 });
+    }
+    setIsAnimating(false);
+    requestAnimationFrame(() => {
+      setIsAnimating(true);
+      requestAnimationFrame(() => {
+        setLastAction(action);
+      });
+    });
   };
-  const handleSmash = () => {
-    setLastAction("smash");
-    setActionCardIndex(currentIndex);
+
+  const handleDragStart = (e: React.PointerEvent, index: number) => {
+    if (
+      index !== currentIndex ||
+      lastAction ||
+      isTransitioning ||
+      isAnimating ||
+      actionCardIndex !== null
+    )
+      return;
+    setIsDragging(true);
+    setDragStart({ x: e.clientX, y: e.clientY });
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const handleDragMove = (e: React.PointerEvent) => {
+    if (!isDragging || !dragStart) return;
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+    setDragOffset({ x: deltaX, y: deltaY });
+  };
+
+  const handleDragEnd = (e: React.PointerEvent) => {
+    if (!isDragging || !dragStart) return;
+
+    const deltaX = e.clientX - dragStart.x;
+    const deltaY = e.clientY - dragStart.y;
+    const threshold = 100;
+    let actionTriggered = false;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < -threshold) {
+        handleAction("pass", true);
+        actionTriggered = true;
+      } else if (deltaX > threshold) {
+        handleAction("smash", true);
+        actionTriggered = true;
+      }
+    } else if (deltaY < -threshold) {
+      handleAction("loved", true);
+      actionTriggered = true;
+    }
+
+    setIsDragging(false);
+    setDragStart(null);
+
+    if (!actionTriggered) {
+      setDragOffset({ x: 0, y: 0 });
+    }
+
+    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+
+    if (!actionTriggered && Math.abs(deltaX) < 5 && Math.abs(deltaY) < 5) {
+      const target = e.target as HTMLElement;
+      const isButton = target.closest("button") !== null;
+      if (!isButton) {
+        navigate("/" + locale + "/dish/" + dishes[currentIndex]?.id);
+      }
+    }
+  };
+
+  const getActionCardStyle = (action: ActionType) => {
+    let finalTransform = "";
+    if (action === "pass") {
+      finalTransform = "translateX(-200%) scale(0.8) rotate(-15deg)";
+    } else if (action === "smash") {
+      finalTransform = "translateX(200%) scale(0.8) rotate(15deg)";
+    } else if (action === "loved") {
+      finalTransform = "translateY(-200%) scale(0.9) rotate(0deg)";
+    }
+
+    return {
+      transform: finalTransform,
+      opacity: 0,
+      filter: "blur(0px)",
+      zIndex: 100,
+      transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
+      willChange: "transform, opacity",
+    };
+  };
+
+  const getDragStyle = () => {
+    const rotation = dragOffset.x * 0.1;
+    const opacity = Math.max(
+      0.5,
+      1 - Math.abs(dragOffset.x) / 300 - Math.abs(dragOffset.y) / 300
+    );
+    return {
+      transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${rotation}deg) scale(1)`,
+      opacity,
+      filter: "blur(0px)",
+      zIndex: 100,
+      transition: "none",
+    };
   };
 
   const getCardStyle = (index: number) => {
@@ -85,22 +198,46 @@ export default function DishSlider() {
     const translate =
       offset > 0 ? absOffset * baseTranslate : -absOffset * baseTranslate;
 
-    if (index === actionCardIndex && lastAction) {
+    if (index === actionCardIndex && isAnimating && !lastAction) {
+      const rotation = dragOffset.x * 0.1;
       return {
-        transform: "translateX(0) scale(1)",
+        transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${rotation}deg) scale(1)`,
         opacity: 1,
         filter: "blur(0px)",
         zIndex: 100,
+        transition: "none",
       };
+    }
+
+    if (index === actionCardIndex && lastAction) {
+      return getActionCardStyle(lastAction);
+    }
+
+    if (index === actionCardIndex && isTransitioning) {
+      return {
+        transform: `translateX(${baseTranslate}px) translateY(0) scale(0.8) rotate(0deg)`,
+        opacity: 0,
+        filter: "blur(5px)",
+        zIndex: 0,
+        transition:
+          "transform 0.3s ease-in-out, opacity 0.3s ease-in-out, filter 0.3s ease-in-out",
+        pointerEvents: "none",
+      };
+    }
+
+    if (offset === 0 && isDragging) {
+      return getDragStyle();
     }
 
     switch (absOffset) {
       case 0:
         return {
-          transform: "translateX(0) scale(1)",
+          transform: "translateX(0) translateY(0) scale(1) rotate(0deg)",
           opacity: 1,
           filter: "blur(0px)",
           zIndex: 10,
+          transition:
+            "transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out",
         };
       case 1:
         return {
@@ -118,11 +255,24 @@ export default function DishSlider() {
         };
       default:
         return {
-          transform: `translateX(${translate}px) scale(0.5)`, 
+          transform: `translateX(${translate}px) scale(0.5)`,
           opacity: 0,
           filter: "blur(10px)",
           zIndex: 1,
         };
+    }
+  };
+
+  const getActionClassName = (action: ActionType) => {
+    switch (action) {
+      case "pass":
+        return "drag-pass";
+      case "smash":
+        return "drag-smash";
+      case "loved":
+        return "drag-loved";
+      default:
+        return "";
     }
   };
 
@@ -180,17 +330,9 @@ export default function DishSlider() {
       const dish = dishes[actualIndex];
       const offset = index - currentIndex;
       const cardKey = dish.id + "-" + index;
-      const actionClass =
-        actualIndex === actionCardIndex && lastAction
-          ? "action-" + lastAction
-          : "";
       const frontCardClass = offset === 0 ? "front-card" : "";
-      const classNames = "dish-card " + actionClass + " " + frontCardClass;
+      const classNames = "dish-card " + frontCardClass;
       const cardTitle = offset === 0 ? t("dish_details") : "";
-      const handlePointerDown =
-        offset === 0
-          ? () => navigate("/" + locale + "/dish/" + dish.id)
-          : undefined;
 
       return (
         <div
@@ -198,8 +340,30 @@ export default function DishSlider() {
           className={classNames}
           title={cardTitle}
           style={getCardStyle(index) as React.CSSProperties}
-          onPointerDown={handlePointerDown}
-          onAnimationEnd={handleAnimationEnd(index)}
+          onPointerDown={(e) => {
+            if (offset === 0) {
+              handleDragStart(e, index);
+            }
+          }}
+          onPointerMove={handleDragMove}
+          onPointerUp={handleDragEnd}
+          onPointerCancel={handleDragEnd}
+          onTransitionEnd={(e) => {
+            if (e.propertyName !== "transform") return;
+
+            e.stopPropagation();
+
+            if (index === actionCardIndex && lastAction && !isTransitioning) {
+              handleActionTransitionEnd(index)();
+            }
+            else if (
+              index === actionCardIndex &&
+              isTransitioning &&
+              !lastAction
+            ) {
+              handleTransitionEnd(index)();
+            }
+          }}
         >
           <div className="dish-image">
             {!dish.mainImageId || dish.mainImageId <= 1 ? (
@@ -211,12 +375,42 @@ export default function DishSlider() {
               />
             )}
             {index === actionCardIndex && lastAction && (
-              <div className={"action-overlay action-" + lastAction}>
-                {lastAction === "pass" && "PASS"}
-                {lastAction === "smash" && "SMASH"}
-                {lastAction === "loved" && "LOVED"}
+              <div className="action-overlay">
+                <span className={getActionClassName(lastAction)}>
+                  {lastAction === "pass" && "PASS"}
+                  {lastAction === "smash" && "SMASH"}
+                  {lastAction === "loved" && "LOVED"}
+                </span>
               </div>
             )}
+            {offset === 0 &&
+              isDragging &&
+              (() => {
+                const absX = Math.abs(dragOffset.x);
+                const absY = Math.abs(dragOffset.y);
+
+                if (absX > absY) {
+                  if (dragOffset.x < -50)
+                    return (
+                      <div className="drag-overlay">
+                        <span className="drag-hint drag-pass">PASS</span>
+                      </div>
+                    );
+                  if (dragOffset.x > 50)
+                    return (
+                      <div className="drag-overlay">
+                        <span className="drag-hint drag-smash">SMASH</span>
+                      </div>
+                    );
+                } else if (dragOffset.y < -50) {
+                  return (
+                    <div className="drag-overlay">
+                      <span className="drag-hint drag-loved">LOVED</span>
+                    </div>
+                  );
+                }
+                return null;
+              })()}
           </div>
           <div className="dish-info">
             <div className="dish-header">
@@ -238,7 +432,7 @@ export default function DishSlider() {
                 title="Pass"
                 onPointerDown={(e) => {
                   e.stopPropagation();
-                  handlePass();
+                  handleAction("pass");
                 }}
               >
                 <ThumbDown sx={{ fontSize: 24 }} />
@@ -248,7 +442,7 @@ export default function DishSlider() {
                 title="Loved"
                 onPointerDown={(e) => {
                   e.stopPropagation();
-                  handleLoved();
+                  handleAction("loved");
                 }}
               >
                 <Favorite sx={{ fontSize: 24 }} />
@@ -258,7 +452,7 @@ export default function DishSlider() {
                 title="Smash"
                 onPointerDown={(e) => {
                   e.stopPropagation();
-                  handleSmash();
+                  handleAction("smash");
                 }}
               >
                 <ThumbUp sx={{ fontSize: 24 }} />
@@ -276,6 +470,7 @@ export default function DishSlider() {
       <CreateDishModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onDishAdded={refetchDishes}
       />
     </>
   );
