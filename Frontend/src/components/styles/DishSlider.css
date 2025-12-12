@@ -289,13 +289,16 @@
 
 .add-recipe-card {
   background: #9c9c9c;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center ;
   box-sizing: border-box;
   overflow-y: auto;
+}
+
+.add-recipe-card.clickable {
+  cursor: pointer;
 }
 
 .add-recipe-card-icon {
