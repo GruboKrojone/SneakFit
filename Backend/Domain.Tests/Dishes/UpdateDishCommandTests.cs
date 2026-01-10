@@ -88,7 +88,7 @@ public class UpdateDishCommandTests
         var command = new UpdateDishCommand(existingDish.Id, updatedParams);
 
         // Act
-        Func<Task> act = async () => { await _handler.Handle(command, CancellationToken.None); };
+        Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<DomainException>()
@@ -114,7 +114,7 @@ public class UpdateDishCommandTests
         var command = new UpdateDishCommand(999, updatedParams);
 
         // Act
-        Func<Task> act = async () => { await _handler.Handle(command, CancellationToken.None); };
+        Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
 
         // Assert
         await act.Should().ThrowAsync<DomainException>()

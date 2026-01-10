@@ -1,16 +1,58 @@
-using System.ComponentModel.DataAnnotations;
 using Core.Database;
 using Domain.Dishes.Dto;
 using Domain.Users.Entities;
-using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Entities;
 
-sealed class Dish : EntityBase
+public sealed class Dish : EntityBase
 {
-    private Dish() { }
+    public string Name { get; private set; }
+    public string? Description { get; private set; }
+    public int? Calories { get; private set; }
+    public int? Protein { get; private set; }
+    public int? Carbs { get; private set; }
+    public int? Fat { get; private set; }
+    public bool IsPublic { get; private set; }
+    public decimal Rates { get; private set; }
+    public int OwnerId { get; private set; }
+    public User? Owner { get; private set; }
+    public ICollection<Category> Categories { get; private set; }
+    public ICollection<Ingredient> Ingredients { get; private set; }
+    public ICollection<User> FavoritedByUsers { get; private set; }
+
+    private Dish()
+    {
+        Name = string.Empty;
+        Categories = [];
+        Ingredients = [];
+        FavoritedByUsers = [];
+        Rates = 0;
+        IsPublic = false;
+    }
 
     public Dish(
+        string name,
+        string? description,
+        int? calories,
+        int? protein,
+        int? carbs,
+        int? fat) : this()
+    {
+        Name = name;
+        Description = description;
+        Calories = calories;
+        Protein = protein;
+        Carbs = carbs;
+        Fat = fat;
+    }
+
+    public void AssignToUser(int ownerId)
+    {
+        OwnerId = ownerId;
+        MarkAsUpdated();
+    }
+
+    public void Update(
         string name,
         string? description,
         int? calories,
@@ -24,85 +66,21 @@ sealed class Dish : EntityBase
         Protein = protein;
         Carbs = carbs;
         Fat = fat;
+        MarkAsUpdated();
     }
 
+    public DishDto ToDto() =>
+        new(Name, Description, Calories, Protein, Carbs, Fat);
 
-    [Required][MaxLength(100)] public string Name { get; private set; }
-    [MaxLength(500)] public string? Description { get; private set; }
-    public int? Calories { get; private set; }
-    public int? Protein { get; private set; }
-    public int? Carbs { get; private set; }
-    public int? Fat { get; private set; }
-    public bool IsPublic { get; private set; } = true;
-    public float Rates { get; private set; }
-    public int OwnerId { get; private set; }
-    public User Owner { get; private set; }
-    public List<Category>? Categories { get; private set; }
-    public List<Ingredient>? Ingredients { get; private set; }
-    public ICollection<User> FavoritedByUsers { get; set; } = new List<User>();
-
-
-    public void AssignToUser(int ownerId) => OwnerId = ownerId;
-
-    public void Update(
-        string? name,
-        string? description,
-        int? calories,
-        int? protein,
-        int? carbs,
-        int? fat)
+    public void MarkAsPublic()
     {
-        Name = name;
-        Description = description;
-        Calories = calories;
-        Protein = protein;
-        Carbs = carbs;
-        Fat = fat;
+        IsPublic = true;
+        MarkAsUpdated();
     }
 
-    public DishDto ToDto()
-        => new DishDto(
-            Name,
-            Description,
-            Calories,
-            Protein,
-            Carbs,
-            Fat);
-
-    public void MarkAsPublic() => IsPublic = true;
-
-    public static void OnModelCreating(ModelBuilder builder)
+    public void UpdateRating(decimal newRating)
     {
-        builder.Entity<Dish>().HasKey(x => x.Id);
-
-        builder.Entity<Dish>()
-            .HasOne(d => d.Owner)
-            .WithMany()
-            .HasForeignKey(d => d.OwnerId)
-            .OnDelete(DeleteBehavior.Restrict);
-
-        builder.Entity<Dish>()
-            .HasMany(d => d.Ingredients)
-            .WithMany(i => i.Dishes)
-            .UsingEntity<Dictionary<string, object>>(
-                "DishIngredient",
-                j => j.HasOne<Ingredient>().WithMany().HasForeignKey("IngredientId").OnDelete(DeleteBehavior.Cascade),
-                j => j.HasOne<Dish>().WithMany().HasForeignKey("DishId").OnDelete(DeleteBehavior.Cascade),
-                j =>
-                {
-                    j.HasKey("DishId", "IngredientId");
-                    j.ToTable("DishIngredients");
-                }
-            );
-
-        builder.Entity<Dish>()
-            .HasMany(d => d.Categories)
-            .WithMany(c => c.Dishes)
-            .UsingEntity<Dictionary<string, object>>(
-                "DishCategory",
-                j => j.HasOne<Category>().WithMany().HasForeignKey("CategoryId").OnDelete(DeleteBehavior.Cascade),
-                j => j.HasOne<Dish>().WithMany().HasForeignKey("DishId").OnDelete(DeleteBehavior.Cascade),
-                j => { j.HasKey("DishId", "CategoryId"); }
-            );
+        Rates = newRating;
+        MarkAsUpdated();
     }
 }

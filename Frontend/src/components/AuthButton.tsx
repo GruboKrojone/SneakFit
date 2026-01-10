@@ -16,7 +16,7 @@ export default function AuthButton({
   onClick,
   disabled = false,
   loading = false,
-}: AuthButtonProps) {
+}: Readonly<AuthButtonProps>) {
   return (
     <button
       id={id}

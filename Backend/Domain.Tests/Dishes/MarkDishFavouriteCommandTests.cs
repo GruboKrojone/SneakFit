@@ -42,13 +42,11 @@ public class MarkDishFavouriteCommandTests
     [Fact]
     public async Task AuthorizedUser_ShouldMarkDishAsFavourite()
     {
-        // Arrange
         var userId = 1;
         var dishId = 10;
         var user = new User(
             "test@example.com",
-            [1, 2, 3],
-            [4, 5, 6],
+            "Password",
             UserRole.User,
             "Test User",
             25);

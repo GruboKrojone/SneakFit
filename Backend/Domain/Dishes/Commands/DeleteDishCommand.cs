@@ -10,7 +10,7 @@ namespace Domain.Dishes.Commands;
 
 public record DeleteDishCommand(int DishId) : ICommand<Unit>;
 
-sealed class DeleteDishCommandHandler(
+internal sealed class DeleteDishCommandHandler(
     IDishRepository dishRepository,
     IUserRepository userRepository,
     IUserContext userContext,

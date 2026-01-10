@@ -3,8 +3,8 @@ using Domain.Dishes.Entities;
 
 namespace Domain.Dishes.Repositories;
 
-sealed class CategoryRepository(IUnitOfWork unitOfWork, SneakFitDbContext dbContext)
-    : EntityRepositoryBase<Category>(unitOfWork), ICategoryRepository
+internal sealed class CategoryRepository(SneakFitDbContext dbContext)
+    : EntityRepositoryBase<Category>(dbContext), ICategoryRepository
 {
     protected override IQueryable<Category> GetQuery() => dbContext.Categories.AsQueryable();
 }
