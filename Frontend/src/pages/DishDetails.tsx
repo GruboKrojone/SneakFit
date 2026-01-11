@@ -151,19 +151,18 @@ export default function DishDetails() {
               </button>
             </div>
 
-            <div className="carousel-indicators" style={{ display: "none" }}>
-              {Array.from({ length: totalImages }, (_, index) => index).map(
-                (imageIndex) => (
-                  <button
-                    key={`indicator-${dish.id}-${imageIndex}`}
-                    className={`indicator ${
-                      imageIndex === currentImageIndex ? "active" : ""
-                    }`}
-                    onClick={() => setCurrentImageIndex(imageIndex)}
-                    aria-label={`Go to image ${imageIndex + 1}`}
-                  />
-                )
-              )}
+            <div className="carousel-indicators">
+              {Array.from({ length: totalImages }).map((_, index) => (
+                <button
+                  key={`carousel-indicator-${dish.id}-${index}`}
+                  className={`indicator ${
+                    index === currentImageIndex ? "active" : ""
+                  }`}
+                  onClick={() => setCurrentImageIndex(index)}
+                  aria-label={`Go to image ${index + 1}`}
+                  type="button"
+                />
+              ))}
             </div>
           </div>
           <div className="categories-box">
@@ -179,7 +178,7 @@ export default function DishDetails() {
           <div className="dish-name-container">
             <h1 className="dish-name-box">{dish.name}</h1>
             <div className="dish-name-icon">
-              <EditSquare sx={{ fontSize: 24, color: "white" }} />
+              <EditSquare className="edit-square-icon" />
             </div>
           </div>
           <div className="description-container">
@@ -187,7 +186,7 @@ export default function DishDetails() {
               <p>{dish.description ?? t("empty_description")}</p>
             </div>
             <div className="description-icon">
-              <EditSquare sx={{ fontSize: 24, color: "white" }} />
+              <EditSquare className="edit-square-icon" />
             </div>
           </div>
         </div>
@@ -270,11 +269,11 @@ export default function DishDetails() {
         <div className="grid-item grid-4">
           <div className="action-buttons">
             <button className="btn btn-decline" onClick={() => navigate(-1)}>
-              <Undo sx={{ fontSize: 64, marginRight: 1 }} />
+              <Undo className="undo-icon" />
               {t("dish_details_page_back_button")}
             </button>
             <button className="btn btn-accept">
-              <PlayCircle sx={{ fontSize: 164, marginRight: 1 }} />
+              <PlayCircle className="play-circle-icon" />
               {t("dish_details_page_start_button")}
             </button>
           </div>
