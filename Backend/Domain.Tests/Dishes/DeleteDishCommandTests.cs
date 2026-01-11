@@ -39,12 +39,14 @@ public class DeleteDishCommandTests
         // Arrange
         var userId = 1;
         var dishId = 10;
-        var dish = new Dish("Test Dish", null, null, null, null, null);
+        var dish = new Dish("Test Dish", null, null, null, null, userId);
+
+        typeof(Dish).GetProperty("Id")?.SetValue(dish, dishId);
 
         _userContext.Setup(x => x.UserId).Returns(userId);
+        _userRepository.Setup(x => x.IsOperationAllowed(userId, dishId)).Returns(true);
         _dishRepository.Setup(x => x.FindAsync(dishId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(dish);
-        _userRepository.Setup(x => x.IsOperationAllowed(userId, dishId)).Returns(true);
 
         var command = new DeleteDishCommand(dishId);
 
@@ -53,6 +55,7 @@ public class DeleteDishCommandTests
 
         // Assert
         result.Should().Be(Unit.Value);
+        _userRepository.Verify(x => x.IsOperationAllowed(userId, dishId), Times.Once);
         _dishRepository.Verify(x => x.FindAsync(dishId, CancellationToken.None), Times.Once);
         _dishRepository.Verify(x => x.Delete(dish), Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(CancellationToken.None), Times.Once);
