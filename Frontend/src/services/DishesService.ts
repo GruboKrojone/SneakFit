@@ -31,7 +31,7 @@ export interface Dish {
 }
 
 class DishesService {
-  private static baseUrl = "https://localhost:7059";
+  private static readonly baseUrl = "https://localhost:7059";
 
   static async getAllDishes(): Promise<Dish[]> {
     try {

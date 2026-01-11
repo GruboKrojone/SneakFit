@@ -99,6 +99,11 @@
   border-radius: 1.25rem;
 }
 
+.dishes-restaurant-icon {
+  font-size: 50px !important;
+  color: white !important;
+}
+
 #auto-awesome-icon {
   color: #ddb41e;
   width: min(4dvw, 4dvh);
@@ -109,6 +114,7 @@
   color: #868686;
   width: min(4dvw, 4dvh);
   height: min(4dvw, 4dvh);
+  cursor: pointer;
 }
 
 #filter-alt-icon {
