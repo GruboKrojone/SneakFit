@@ -1,4 +1,5 @@
 using Autofac;
+using Domain.Categories.Repositories;
 using Domain.Dishes.Repositories;
 
 namespace Domain.Dishes;

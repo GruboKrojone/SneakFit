@@ -1,4 +1,5 @@
 using Core.Database;
+using Domain.Categories.Entities;
 using Domain.Dishes.Dto;
 using Domain.Users.Entities;
 
@@ -15,7 +16,7 @@ public sealed class Dish : EntityBase
     public bool IsPublic { get; private set; }
     public decimal Rates { get; private set; }
     public int OwnerId { get; private set; }
-    public User? Owner { get; private set; }
+    public User? Owner { get; }
     public ICollection<Category> Categories { get; private set; }
     public ICollection<Ingredient> Ingredients { get; private set; }
     public ICollection<User> FavoritedByUsers { get; private set; }

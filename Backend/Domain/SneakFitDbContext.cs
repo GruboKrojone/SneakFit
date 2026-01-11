@@ -2,6 +2,7 @@ using System.Reflection;
 using Core.Database;
 using Domain.Authentication.Configurations;
 using Domain.Authentication.Entities;
+using Domain.Categories.Entities;
 using Domain.Dishes.Entities;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;

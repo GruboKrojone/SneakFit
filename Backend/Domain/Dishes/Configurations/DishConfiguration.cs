@@ -1,4 +1,5 @@
 ﻿using Core.Database;
+using Domain.Categories.Entities;
 using Domain.Dishes.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
