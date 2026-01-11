@@ -21,69 +21,63 @@ interface AuthResponse {
 }
 
 class AuthService {
-  private static baseUrl = "https://localhost:7059/auth";
-  private static TOKEN_KEY = "accessToken";
+  private static readonly baseUrl = "https://localhost:7059/auth";
+  private static readonly TOKEN_KEY = "accessToken";
 
   static async login(credentials: LoginCredentials): Promise<string> {
-    try {
-      const response = await fetch(`${this.baseUrl}/login`, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+    const response = await fetch(`${this.baseUrl}/login`, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
 
-      if (!response.ok) {
-        throw new Error("Authentication failed");
-      }
-
-      const data: AuthResponse = await response.json();
-
-      this.setToken(data.accessToken);
-
-      return data.accessToken;
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      throw new Error("Authentication failed");
     }
+
+    const data: AuthResponse = await response.json();
+
+    this.setToken(data.accessToken);
+
+    return data.accessToken;
   }
 
   static async register(credentials: RegisterCredentials): Promise<string> {
-    try {
-      const response = await fetch(`${this.baseUrl}/register`, {
-        method: "POST",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(credentials),
-      });
+    const response = await fetch(`${this.baseUrl}/register`, {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(credentials),
+    });
 
-      if (!response.ok) {
-        throw new Error("Registration failed");
-      }
-
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.includes("application/json")) {
-        const data: AuthResponse = await response.json();
-
-        if (data.accessToken) {
-          this.setToken(data.accessToken);
-          return data.accessToken;
-        }
-      }
-
-      return "";
-    } catch (error) {
-      throw error;
+    if (!response.ok) {
+      throw new Error("Registration failed");
     }
+
+    const contentType = response.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
+      const data: AuthResponse = await response.json();
+
+      if (data.accessToken) {
+        this.setToken(data.accessToken);
+        return data.accessToken;
+      }
+    }
+
+    return "";
   }
 
   static setToken(token: string): void {
     try {
       localStorage.setItem(this.TOKEN_KEY, token);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Failed to store token in localStorage", error);
+    }
   }
 
   static getToken(): string | null {

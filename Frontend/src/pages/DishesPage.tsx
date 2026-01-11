@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react";
 import DishesService, { Dish } from "../services/DishesService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
+import "./styles/DishesPage.css";
+import { useTranslation } from "react-i18next";
 import AddBoxIcon from "@mui/icons-material/AddBox";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
-import "./styles/DishesPage.css";
-import { useTranslation } from "react-i18next";
+import { useNavigate, useParams } from "react-router-dom";
 import CreateDishModal from "../components/CreateDishModal";
 
 export default function DishesPage() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { locale } = useParams<{ locale: string }>();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,7 +54,11 @@ export default function DishesPage() {
           <div className="dishes-container">
             <div className="dishes-grid">
               {dishes.map((dish) => (
-                <div className="dishes-box" key={dish.id}>
+                <div
+                  className="dishes-box"
+                  key={dish.id}
+                  onPointerUp={() => navigate(`/${locale}/dish/${dish.id}`)}
+                >
                   <div className="dishes-owner">{dish.ownerName ?? "-"}</div>
                   <div className="dishes-image-wrap">
                     {dish.mainImageId ? (

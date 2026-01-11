@@ -9,7 +9,7 @@ namespace Domain.Users.Commands;
 
 public record SetUserLangCommand(int UserId, Lang Lang) : ICommand<Unit>;
 
-sealed class SetUserLangCommandHandler(
+internal sealed class SetUserLangCommandHandler(
     IUserRepository userRepository,
     IUnitOfWork unitOfWork) : ICommandHandler<SetUserLangCommand, Unit>
 {
