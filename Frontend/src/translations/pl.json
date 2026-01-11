@@ -37,5 +37,20 @@
   "dish_details_macro_circle_calories": "Kcal",
   "dish_details_macro_circle_proteins": "Białko",
   "dish_details_macro_circle_fats": "Tłuszcze",
-  "dish_details_macro_circle_carbs": "Węglowodany"
+  "dish_details_macro_circle_carbs": "Węglowodany",
+  
+  "profile": "Profil",
+  "profile_settings_title": "Ustawienia profilu",
+  "profile_settings_name": "Imię",
+  "profile_settings_name_placeholder": "Wpisz swoje imię",
+  "profile_settings_name_required": "Imię jest wymagane",
+  "profile_settings_age": "Wiek",
+  "profile_settings_age_placeholder": "Wpisz swój wiek",
+  "profile_settings_age_must_be_number": "Wiek musi być liczbą",
+  "profile_settings_age_must_be_positive": "Wiek musi być większy od 0",
+  "profile_settings_age_too_high": "Wiek nie może przekraczać 150",
+  "profile_settings_save": "Zapisz",
+  "profile_settings_close": "Zamknij",
+  "profile_settings_success": "✓ Profil zaktualizowany pomyślnie!",
+  "profile_settings_error": "Błąd przy aktualizacji profilu"
 }
