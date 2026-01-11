@@ -1,71 +1,62 @@
 # SneakFit
 
-> "SneakFit" - intelligent recipes recommendation swipe system
+> **SneakFit** – an intelligent recipe recommendation system with a swipe mechanism.
 
 ## 📋 Contents
 
-- [About](#about)
-- [Running](#running)
-- [Tech](#tech)
-- [Architecture](#architecture)
-- [Requirements](#requirements)
+- [About](#-about)
+- [Running](#-running)
+- [Tech Stack](#-tech-stack)
+- [Architecture](#-architecture)
+- [Requirements](#-requirements)
+
+---
 
 ## 🎯 About
 
-"SneakFit" - Web application which works like cooking book and kitchen assistant in one. Now you can storage all of your grandmother's recipes in one place and share (or not) with others.
+**SneakFit** is a web application that acts as a digital cookbook and kitchen assistant in one. It allows you to store all your family recipes in one place, manage your daily meals, and discover new inspirations through an intuitive swipe interface.
 
 ### Main Functions
 
-- 🔐 **Authentication && authorization** - JWT token
-- 🍽️ **Recipes management** - dish CRUD
-- ⭐ **Loved dishes** - mark dish as loved
-- 📂 **Categories** - recipes categorization (Admin)
-- 🔒 **Access control** - private and public dishes
-- 👥 **User roles** - User && Admin
+* 🔐 **Authentication & Authorization** – Secure access using **JWT** tokens.
+* 🍽️ **Recipe Management** – Full **CRUD** operations for your dishes.
+* ⭐ **Favorites** – Mark and save your most-loved recipes.
+* 📂 **Categories** – Recipe categorization (Admin managed).
+* 🔒 **Access Control** – Toggle between **private** and **public** visibility.
+* 👥 **User Roles** – Managed permissions for **Users** and **Admins**.
+
+---
 
 ## 🎮 Running
-`here will be paste our link in the future`
 
-## 🚀 Tech
+`Deployment link will be provided here in the future.`
+
+---
+
+## 🚀 Tech Stack
 
 ### Backend
-
-- **.NET 8** - main framework
-- **C# 12.0** - programming lang
-- **Entity Framework Core** - ORM
-- **MediatR** - CQRS implementation
-- **Autofac** - DI
-- **JWT** - authentication
-- **Serilog** - logging
-- **FluentAssertions** - unit tests
-- **Moq** - mock in tests
+* **Language/Framework:** .NET / C#
+* **Database:** SQL Server (Entity Framework Core)
+* **Libraries:** MediatR, FluentValidation, AutoMapper
+* *More details in the* `Backend/` *directory.*
 
 ### Frontend
+* **Framework:** React.js
+* **Styling:** CSS Modules / Tailwind CSS
+* *More details in the* `Frontend/` *directory.*
 
-- Actually information about in `Frontend/`
+---
 
 ## 🏗️ Architecture
 
-**Clean Architecture** application layers :
+The project follows **Clean Architecture** principles to ensure maintainability and scalability.
 
-Backend/
-    API/                # Presentation layer (Controllers, Middleware)
-    Domain/             # Domain layer (Entities, Commands, Queries)
-    Core/               # Infrastructure layer (Database, CQRS, Auth)
-    Domain.Tests/       # Unit tests
-Frontend/
-    /
-    /
-    /
-
-### Design patterns
-
-- **CQRS** (Command Query Responsibility Segregation)
-- **Mediator Pattern** (MediatR)
-- **Repository Pattern**
-- **Unit of Work**
-- **Dependency Injection**
-
-## 📦 Requirements
-
-- no needed :D
+### Project Structure
+```text
+├── Backend/
+│   ├── API/             # Presentation Layer (Controllers, Middleware)
+│   ├── Domain/          # Domain Layer (Entities, Value Objects)
+│   ├── Core/            # Infrastructure & Application Layer (CQRS, Auth, DB)
+│   └── Domain.Tests/    # Unit & Integration Tests
+└── Frontend/            # Client-side application
