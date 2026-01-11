@@ -1,6 +1,6 @@
 .slider-wrapper {
   width: 25dvw;
-  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.4s ease-out;
 }
 
 .dish-card {
@@ -12,9 +12,9 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   user-select: none;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    filter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0s;
+  transition: transform 0.4s ease-out,
+    opacity 0.4s ease-out,
+    filter 0.4s ease-out, z-index 0s;
   inset: 0;
   margin: auto;
   will-change: transform, opacity, filter;
@@ -56,10 +56,48 @@
   font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
-  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   pointer-events: none;
 }
 
+.action-overlay span {
+  padding: 20px 40px;
+  border-radius: 15px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.drag-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.drag-hint {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 20px 40px;
+  border-radius: 15px;
+  opacity: 0.9;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.drag-pass {
+  background: #ff6b6b66;
+  color: #ffffff;
+}
+
+.drag-smash {
+  background: #51cf6666;
+  color: #ffffff;
+}
+
+.drag-loved {
+  background: #2196f366;
+  color: #ffffff;
+}
 @keyframes popIn {
   0% {
     opacity: 0;
@@ -78,19 +116,37 @@
   }
 }
 
-.action-pass {
-  background: #ff6b6b66;
-  color: #ffffff;
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-150%) scale(0.8) rotate(-15deg);
+    opacity: 0;
+  }
 }
 
-.action-smash {
-  background: #51cf6666;
-  color: #ffffff;
+@keyframes slideRight {
+  0% {
+    transform: translateX(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150%) scale(0.8) rotate(15deg);
+    opacity: 0;
+  }
 }
 
-.action-loved {
-  background: #2196f366;
-  color: #ffffff;
+@keyframes slideUp {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-150%) scale(0.9);
+    opacity: 0;
+  }
 }
 
 .dish-content {
@@ -261,7 +317,7 @@
 }
 
 .no-more-dishes.visible {
-  animation: fadeInCompletion 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+  animation: fadeInCompletion 0.8s ease-out 0.3s forwards;
   pointer-events: auto;
 }
 

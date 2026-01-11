@@ -3,19 +3,19 @@ import Close from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import DishesService from "../services/DishesService";
 import type { Dish } from "../services/DishesService";
-import { useFetchDishes } from "../hooks/useFetchDishes";
 import "./styles/CreateDishModal.css";
 
 interface CreateDishModalProps {
   readonly isOpen: boolean;
   readonly onClose: () => void;
+  readonly onDishAdded?: () => void;
 }
 
 export default function CreateDishModal({
   isOpen,
   onClose,
+  onDishAdded,
 }: CreateDishModalProps) {
-  const { refetchDishes } = useFetchDishes();
   const [formData, setFormData] = useState({
     name: "",
     calories: "",
@@ -118,7 +118,10 @@ export default function CreateDishModal({
       };
 
       await DishesService.createDish(newDish);
-      await refetchDishes();
+
+      if (onDishAdded) {
+        onDishAdded();
+      }
 
       setFormData({
         name: "",

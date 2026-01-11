@@ -1,6 +1,7 @@
 using Core.Authentication;
 using Core.CQRS;
 using Core.Middlewares;
+using Domain.Categories.Dtos;
 using Domain.Dishes.Dto;
 using Domain.Dishes.Repositories;
 

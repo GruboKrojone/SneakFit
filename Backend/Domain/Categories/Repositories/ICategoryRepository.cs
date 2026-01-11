@@ -1,7 +1,7 @@
 using Core.Database;
-using Domain.Dishes.Entities;
+using Domain.Categories.Entities;
 
-namespace Domain.Dishes.Repositories;
+namespace Domain.Categories.Repositories;
 
 interface ICategoryRepository : IEntityRepository<Category>
 {
