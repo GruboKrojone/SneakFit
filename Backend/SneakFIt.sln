@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36616.10 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.3.11312.210 d18.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{2A08254A-A4E7-4310-810B-7CEC02A10DFE}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{6C1D41AA-1747-4596-B641-35B2BAE48B4C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain.Tests", "Domain.Tests\Domain.Tests.csproj", "{F8724BF1-07FE-4E74-943F-D91834C66DE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Algorithm", "Algorithm\Algorithm.csproj", "{E5601072-389D-4191-892D-DB0F72824C93}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{F8724BF1-07FE-4E74-943F-D91834C66DE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8724BF1-07FE-4E74-943F-D91834C66DE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8724BF1-07FE-4E74-943F-D91834C66DE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5601072-389D-4191-892D-DB0F72824C93}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5601072-389D-4191-892D-DB0F72824C93}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5601072-389D-4191-892D-DB0F72824C93}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5601072-389D-4191-892D-DB0F72824C93}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
