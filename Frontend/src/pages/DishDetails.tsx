@@ -64,7 +64,7 @@ export default function DishDetails() {
     const dishId = Number(id);
     if (hasFetched.current === dishId) return;
     hasFetched.current = dishId;
-    
+
     const load = async () => {
       setIsLoading(true);
       const data = await DishesService.getDishById(dishId);
@@ -114,7 +114,7 @@ export default function DishDetails() {
 
                     return (
                       <div
-                        key={index}
+                        key={`carousel-image-${dish.id}-${index}`}
                         className="center-mode-item"
                         style={{
                           transform: `translateX(${translateX}px) scale(${scale})`,
@@ -152,15 +152,18 @@ export default function DishDetails() {
             </div>
 
             <div className="carousel-indicators" style={{ display: "none" }}>
-              {Array.from({ length: totalImages }).map((_, index) => (
-                <div
-                  key={index}
-                  className={`indicator ${
-                    index === currentImageIndex ? "active" : ""
-                  }`}
-                  onClick={() => setCurrentImageIndex(index)}
-                />
-              ))}
+              {Array.from({ length: totalImages }, (_, index) => index).map(
+                (imageIndex) => (
+                  <button
+                    key={`indicator-${dish.id}-${imageIndex}`}
+                    className={`indicator ${
+                      imageIndex === currentImageIndex ? "active" : ""
+                    }`}
+                    onClick={() => setCurrentImageIndex(imageIndex)}
+                    aria-label={`Go to image ${imageIndex + 1}`}
+                  />
+                )
+              )}
             </div>
           </div>
           <div className="categories-box">
