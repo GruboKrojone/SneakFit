@@ -92,7 +92,7 @@
 }
 
 .carousel-indicators {
-  display: flex;
+  display: none;
   gap: 0.5rem;
   justify-content: center;
   align-items: center;
@@ -240,6 +240,11 @@
   cursor: pointer;
 }
 
+.edit-square-icon {
+  font-size: 24px !important;
+  color: white !important;
+}
+
 .dish-name-container:hover .dish-name-icon,
 .dish-name-container:hover .edit-icon {
   opacity: 1;
@@ -375,7 +380,7 @@
   height: 2.5rem;
   border: none;
   background-color: #505050;
-  color: #b1b1b1;
+  color: #ffffff;
   border-radius: 50%;
   font-size: 1.125rem;
   cursor: pointer;
@@ -423,7 +428,7 @@
 
 .comments-box {
   background-color: #b3b3b3;
-  color: #696969;
+  color: #333333;
   border-radius: 1rem;
   padding: 1.25rem;
   display: flex;
@@ -452,6 +457,20 @@
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+.undo-icon {
+  font-size: 64px !important;
+  margin-right: 8px !important;
+}
+
+.play-circle-icon {
+  font-size: 164px !important;
+  margin-right: 8px !important;
 }
 
 .btn-decline {

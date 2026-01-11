@@ -355,8 +355,7 @@ export default function DishSlider() {
 
             if (index === actionCardIndex && lastAction && !isTransitioning) {
               handleActionTransitionEnd(index)();
-            }
-            else if (
+            } else if (
               index === actionCardIndex &&
               isTransitioning &&
               !lastAction
@@ -367,12 +366,9 @@ export default function DishSlider() {
         >
           <div className="dish-image">
             {!dish.mainImageId || dish.mainImageId <= 1 ? (
-              <RestaurantMenu sx={{ fontSize: 60, color: "white" }} />
+              <RestaurantMenu className="restaurant-menu-icon" />
             ) : (
-              <img
-                alt={dish.name}
-                style={{ width: "100%", height: "100%", objectFit: "cover" }}
-              />
+              <img alt={dish.name} />
             )}
             {index === actionCardIndex && lastAction && (
               <div className="action-overlay">
@@ -435,7 +431,7 @@ export default function DishSlider() {
                   handleAction("pass");
                 }}
               >
-                <ThumbDown sx={{ fontSize: 24 }} />
+                <ThumbDown className="action-button-icon" />
               </button>
               <button
                 className="action-button btn-smash"
@@ -445,7 +441,7 @@ export default function DishSlider() {
                   handleAction("loved");
                 }}
               >
-                <Favorite sx={{ fontSize: 24 }} />
+                <Favorite className="action-button-icon" />
               </button>
               <button
                 className="action-button btn-loved"
@@ -455,7 +451,7 @@ export default function DishSlider() {
                   handleAction("smash");
                 }}
               >
-                <ThumbUp sx={{ fontSize: 24 }} />
+                <ThumbUp className="action-button-icon" />
               </button>
             </div>
           </div>

@@ -24,6 +24,10 @@
   height: 100%;
 }
 
+.macro-circle-animated {
+  transition: stroke-dashoffset 1.2s ease-out;
+}
+
 .macro-circle-text {
   position: absolute;
   display: flex;

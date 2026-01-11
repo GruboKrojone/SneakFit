@@ -46,7 +46,6 @@ export default function DishesPage() {
             <AutoAwesomeIcon id="auto-awesome-icon" />
             <AddBoxIcon
               id="add-box-icon"
-              style={{ cursor: "pointer" }}
               onClick={() => setIsModalOpen(true)}
             />
             <FilterAltIcon id="filter-alt-icon" />
@@ -64,7 +63,7 @@ export default function DishesPage() {
                     {dish.mainImageId ? (
                       <img alt={dish.name} className="dishes-image" />
                     ) : (
-                      <RestaurantMenu sx={{ fontSize: 50, color: "white" }} />
+                      <RestaurantMenu className="dishes-restaurant-icon" />
                     )}
                   </div>
                   <div className="dishes-body">
