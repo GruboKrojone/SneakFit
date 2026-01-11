@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import DishesService, { Dish } from "../services/DishesService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import "./styles/DishesPage.css";
@@ -16,6 +16,7 @@ export default function DishesPage() {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const hasFetched = useRef(false);
   const emptyCategories = t("no_categories");
 
   const fetchDishes = async () => {
@@ -32,6 +33,8 @@ export default function DishesPage() {
   };
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     fetchDishes();
   }, []);
 

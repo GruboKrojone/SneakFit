@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DishesService, { Dish } from "../services/DishesService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
@@ -19,6 +19,7 @@ export default function DishDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [servings, setServings] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const hasFetched = useRef<number | null>(null);
   const totalImages = 5;
   const emptyCategories = t("no_categories");
 
@@ -59,11 +60,14 @@ export default function DishDetails() {
   };
 
   useEffect(() => {
+    if (!id) return;
+    const dishId = Number(id);
+    if (hasFetched.current === dishId) return;
+    hasFetched.current = dishId;
+    
     const load = async () => {
-      if (!id) return;
       setIsLoading(true);
-      const parsed = Number(id);
-      const data = await DishesService.getDishById(parsed);
+      const data = await DishesService.getDishById(dishId);
       setDish(data);
       setIsLoading(false);
     };
