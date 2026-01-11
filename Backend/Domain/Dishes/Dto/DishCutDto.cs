@@ -1,3 +1,5 @@
+using Domain.Categories.Dtos;
+
 namespace Domain.Dishes.Dto;
 
 public record DishCutDto(

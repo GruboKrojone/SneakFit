@@ -1,9 +1,9 @@
 ﻿using Core.Database;
-using Domain.Dishes.Entities;
+using Domain.Categories.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Domain.Dishes.Configurations;
+namespace Domain.Categories.Configurations;
 
 internal sealed class CategoryConfiguration : EntityBaseConfiguration<Category>
 {

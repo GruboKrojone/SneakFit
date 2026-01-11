@@ -1,7 +1,7 @@
 using Core.Database;
-using Domain.Dishes.Entities;
+using Domain.Categories.Entities;
 
-namespace Domain.Dishes.Repositories;
+namespace Domain.Categories.Repositories;
 
 internal sealed class CategoryRepository(SneakFitDbContext dbContext)
     : EntityRepositoryBase<Category>(dbContext), ICategoryRepository
