@@ -21,8 +21,13 @@ internal sealed class UserRepository(
 
     public bool IsOperationAllowed(int userId, int? dishId)
     {
-        var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
-        var dish = dbContext.Dishes.FirstOrDefault(d => d.Id == dishId);
+        var user = dbContext.Users
+            .AsNoTracking()
+            .FirstOrDefault(u => u.Id == userId);
+
+        var dish = dbContext.Dishes
+            .AsNoTracking()
+            .FirstOrDefault(d => d.Id == dishId);
 
         if (user == null || dish == null)
             return false;
