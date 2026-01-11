@@ -5,9 +5,8 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Dishes.Repositories;
 
-sealed class DishRepository(
-    IUnitOfWork unitOfWork,
-    SneakFitDbContext dbContext) : EntityRepositoryBase<Dish>(unitOfWork), IDishRepository
+internal sealed class DishRepository(
+    SneakFitDbContext dbContext) : EntityRepositoryBase<Dish>(dbContext), IDishRepository
 {
     public bool IsUserAllowedToAccess(Dish dish, IUserContext userContext)
         => !dish.IsPublic && dish.OwnerId == userContext.UserId;

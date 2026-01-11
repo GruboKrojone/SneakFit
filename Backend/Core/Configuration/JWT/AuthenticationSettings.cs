@@ -2,7 +2,8 @@ namespace Core.Configuration.JWT;
 
 public class AuthenticationSettings : IAuthenticationSettings
 {
-    public string JwtKey { get; set; }
-    public int JwtExpireDays { get; set; }
-    public string JwtIssuer { get; set; }
+    public string JwtKey { get; set; } = string.Empty;
+    public int JwtExpireHours { get; set; }
+    public string JwtIssuer { get; set; } = string.Empty;
+    public int RefreshTokenExpireDays { get; } = 6;
 }

@@ -5,10 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Users.Repositories;
 
-sealed class UserRepository(
-    IUnitOfWork unitOfWork,
+internal sealed class UserRepository(
     SneakFitDbContext dbContext
-) : EntityRepositoryBase<User>(unitOfWork), IUserRepository
+) : EntityRepositoryBase<User>(dbContext), IUserRepository
 {
     public async Task<User?> FindByEmailAsync(string email, CancellationToken cancellationToken)
     {
@@ -24,6 +23,9 @@ sealed class UserRepository(
     {
         var user = dbContext.Users.FirstOrDefault(u => u.Id == userId);
         var dish = dbContext.Dishes.FirstOrDefault(d => d.Id == dishId);
+
+        if (user == null || dish == null)
+            return false;
 
         if (dish.OwnerId == user.Id
             || user.Role == UserRole.Admin

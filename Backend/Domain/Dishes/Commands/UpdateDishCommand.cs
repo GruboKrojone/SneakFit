@@ -10,7 +10,7 @@ namespace Domain.Dishes.Commands;
 
 public record UpdateDishCommand(int DishId, DishParams Params) : ICommand<DishDto>;
 
-sealed class UpdateDishCommandHandler(
+internal sealed class UpdateDishCommandHandler(
     IDishRepository dishRepository,
     IUserRepository userRepository,
     IUserContext userContext,

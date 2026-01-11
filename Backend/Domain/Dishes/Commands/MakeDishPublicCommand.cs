@@ -10,7 +10,7 @@ namespace Domain.Dishes.Commands;
 
 public record MakeDishPublicCommand(int DishId) : ICommand<Unit>;
 
-sealed class MakeDishPublicCommandHandler(
+internal sealed class MakeDishPublicCommandHandler(
     IDishRepository dishRepository,
     IUserRepository userRepository,
     IUserContext userContext,

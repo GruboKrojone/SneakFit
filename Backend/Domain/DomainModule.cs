@@ -15,8 +15,7 @@ using Module = Autofac.Module;
 
 namespace Domain;
 
-public class DomainModule(
-    IConfigurationRoot configuration) : Module
+public class DomainModule(IConfigurationRoot configuration) : Module
 {
     private const string ConnectionStringName = nameof(SneakFitDbContext);
 
@@ -42,9 +41,17 @@ public class DomainModule(
         try
         {
             logger.LogInformation("Starting database migration...");
+
             var dbContext = scope.Resolve<SneakFitDbContext>();
-            dbContext.Database.Migrate();
-            logger.LogInformation("Database migration completed successfully.");
+
+            if (dbContext.Database.GetPendingMigrations().Any())
+            {
+                logger.LogInformation("Applying pending migrations...");
+                dbContext.Database.Migrate();
+                logger.LogInformation("Database migration completed successfully.");
+            }
+            else
+                logger.LogInformation("No pending migrations found.");
         }
         catch (Exception ex)
         {
@@ -57,20 +64,31 @@ public class DomainModule(
     {
         var connectionString = configuration.GetConnectionString(ConnectionStringName);
 
-        if (string.IsNullOrEmpty(connectionString))
-            throw new DomainException("Cannot find connection string for db",
+        if (string.IsNullOrWhiteSpace(connectionString))
+            throw new DomainException(
+                "Cannot find connection string for database",
                 (int)CommonErrorCode.InvalidOperation);
 
         builder
             .Register(c =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<SneakFitDbContext>();
+
                 optionsBuilder.UseSqlServer(
                     connectionString,
-                    sqlOptions => sqlOptions.EnableRetryOnFailure(
-                        maxRetryCount: 5,
-                        maxRetryDelay: TimeSpan.FromSeconds(30),
-                        errorNumbersToAdd: null));
+                    sqlOptions =>
+                    {
+                        sqlOptions.EnableRetryOnFailure(
+                            maxRetryCount: 5,
+                            maxRetryDelay: TimeSpan.FromSeconds(30),
+                            errorNumbersToAdd: null);
+
+                        sqlOptions.CommandTimeout(30);
+                        sqlOptions.MigrationsAssembly(typeof(SneakFitDbContext).Assembly.FullName);
+                    });
+
+                optionsBuilder.EnableSensitiveDataLogging(false);
+                optionsBuilder.EnableDetailedErrors(false);
 
                 return new SneakFitDbContext(optionsBuilder.Options);
             })
