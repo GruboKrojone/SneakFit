@@ -3,6 +3,7 @@ using Core.Database;
 using Domain.Authentication.Configurations;
 using Domain.Authentication.Entities;
 using Domain.Categories.Entities;
+using Domain.Comments.Entities;
 using Domain.Dishes.Entities;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -15,6 +16,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
     internal DbSet<Dish> Dishes => Set<Dish>();
     internal DbSet<Ingredient> Ingredients => Set<Ingredient>();
     internal DbSet<Category> Categories => Set<Category>();
+    internal DbSet<Comment> Comments => Set<Comment>();
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
@@ -28,6 +30,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
         modelBuilder.Entity<Dish>().HasQueryFilter(d => !d.IsDeleted);
         modelBuilder.Entity<Ingredient>().HasQueryFilter(i => !i.IsDeleted);
         modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
+        modelBuilder.Entity<Comment>().HasQueryFilter(c => !c.IsDeleted);
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }
 
