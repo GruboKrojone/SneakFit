@@ -17,7 +17,7 @@ public class CategoryController(IMediator mediator) : ControllerBase
         => await mediator.Send(new AddCategoryCommand(request), cancellationToken);
 
     [HttpDelete]
-    [Route("delete/{id}")]
+    [Route("{id}/delete")]
     public async Task<Unit> DeleteCategory(int id, CancellationToken cancellationToken)
         => await mediator.Send(new DeleteCategoryCommand(id), cancellationToken);
 }
