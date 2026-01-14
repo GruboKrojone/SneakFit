@@ -17,6 +17,10 @@
   "login_page_login_button": "Zaloguj się",
   "login_page_forgot_password": "Zapomniałeś hasła?",
 
+  "loading_dishes": "Ładowanie przepisów...",
+  "no_more_dishes": "Brak przepisów.",
+  "add_own_dish": "Dodaj własny przepis.",
+
   "home_page_welcome_message": "Co dziś ugotujemy?",
 
   "dishes_page_loading": "Ładowanie przepisów...",

@@ -1,6 +1,7 @@
 using Core.Database;
+using Domain.Dishes.Entities;
 
-namespace Domain.Dishes.Entities;
+namespace Domain.Categories.Entities;
 
 public sealed class Category(string name) : EntityBase
 {

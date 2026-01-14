@@ -2,9 +2,9 @@ import "./styles/MacroCircle.css";
 import { useEffect, useState } from "react";
 
 interface MacroCircleProps {
-  value: number;
-  label: string;
-  maxValue: number;
+  readonly value: number;
+  readonly label: string;
+  readonly maxValue: number;
 }
 
 export default function MacroCircle({
@@ -44,7 +44,7 @@ export default function MacroCircle({
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
-            style={{ transition: "stroke-dashoffset 1.2s ease-out" }}
+            className="macro-circle-animated"
             transform="rotate(-90 60 60)"
           />
         </svg>

@@ -1,6 +1,6 @@
 .slider-wrapper {
   width: 25dvw;
-  transition: opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: opacity 0.4s ease-out;
 }
 
 .dish-card {
@@ -12,9 +12,9 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   user-select: none;
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    opacity 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94),
-    filter 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), z-index 0s;
+  transition: transform 0.4s ease-out,
+    opacity 0.4s ease-out,
+    filter 0.4s ease-out, z-index 0s;
   inset: 0;
   margin: auto;
   will-change: transform, opacity, filter;
@@ -46,6 +46,17 @@
   overflow: hidden;
 }
 
+.dish-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.restaurant-menu-icon {
+  font-size: 60px !important;
+  color: white !important;
+}
+
 .action-overlay {
   position: absolute;
   inset: 0;
@@ -56,52 +67,97 @@
   font-weight: 900;
   letter-spacing: 2px;
   text-transform: uppercase;
-  animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   pointer-events: none;
 }
 
+.action-overlay span {
+  padding: 20px 40px;
+  border-radius: 15px;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+.drag-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.drag-hint {
+  font-size: 48px;
+  font-weight: 900;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 20px 40px;
+  border-radius: 15px;
+  opacity: 0.9;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.drag-pass {
+  background: #ff6b6b66;
+  color: #000000;
+}
+
+.drag-smash {
+  background: #51cf6666;
+  color: #000000;
+}
+
+.drag-loved {
+  background: #2196f366;
+  color: #000000;
+}
 @keyframes popIn {
   0% {
     opacity: 0;
-    transform: scale(0.5) rotate(-10deg);
-  }
-
-  15% {
-    transform: scale(1.15);
   }
 
   35% {
     opacity: 1;
-    transform: scale(1) rotate(0deg);
   }
 
   75% {
     opacity: 1;
-    transform: scale(1) rotate(0deg);
   }
 
   100% {
     opacity: 0;
-    transform: scale(1) rotate(0deg);
   }
 }
 
-.action-pass {
-  background: rgba(255, 107, 107, 0.4);
-  color: #ffffff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+@keyframes slideLeft {
+  0% {
+    transform: translateX(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-150%) scale(0.8) rotate(-15deg);
+    opacity: 0;
+  }
 }
 
-.action-smash {
-  background: rgba(81, 207, 102, 0.4);
-  color: #ffffff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+@keyframes slideRight {
+  0% {
+    transform: translateX(0) scale(1) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(150%) scale(0.8) rotate(15deg);
+    opacity: 0;
+  }
 }
 
-.action-loved {
-  background: rgba(33, 150, 243, 0.4);
-  color: #ffffff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+@keyframes slideUp {
+  0% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-150%) scale(0.9);
+    opacity: 0;
+  }
 }
 
 .dish-content {
@@ -171,7 +227,7 @@
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  background: #b3b3b3;
+  background: #767676;
   padding: 1.5dvh;
   border-radius: 8px;
   height: 18dvh;
@@ -185,7 +241,7 @@
 
 .category-tag {
   background: #e0e7ff;
-  color: #667eea;
+  color: #3730a3;
   padding: 4px 12px;
   border-radius: 20px;
   font-size: 12px;
@@ -229,9 +285,13 @@
   transform: scale(0.95);
 }
 
+.action-button-icon {
+  font-size: 24px !important;
+}
+
 .btn-pass {
   background: #ff6b6b;
-  color: #ffffff;
+  color: #000000;
 }
 
 .btn-pass:hover {
@@ -240,7 +300,7 @@
 
 .btn-smash {
   background: #2196f3;
-  color: white;
+  color: #000000;
   transform: scale(1.15);
 }
 
@@ -251,7 +311,7 @@
 
 .btn-loved {
   background: #51cf66;
-  color: #ffffff;
+  color: #000000;
 }
 
 .btn-loved:hover {
@@ -260,7 +320,7 @@
 
 .no-more-dishes {
   text-align: center;
-  color: #ffffff;
+  color: #000000;
   font-size: 24px;
   padding: 40px 20px;
   opacity: 0;
@@ -272,7 +332,7 @@
 }
 
 .no-more-dishes.visible {
-  animation: fadeInCompletion 0.8s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+  animation: fadeInCompletion 0.8s ease-out 0.3s forwards;
   pointer-events: auto;
 }
 
@@ -296,4 +356,60 @@
 .no-more-dishes p {
   font-size: 18px;
   opacity: 0.9;
+}
+
+.add-recipe-card {
+  background: #9c9c9c;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center ;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.add-recipe-card.clickable {
+  cursor: pointer;
+}
+
+.add-recipe-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+}
+
+.add-recipe-card-info {
+  background-color: #bababa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 8rem 2rem;
+  border-radius: 2rem;
+  gap: 1rem;
+}
+
+.add-recipe-card .dish-header {
+  margin-bottom: 0;
+}
+
+.add-recipe-card-text {
+  font-size: 1rem;
+  color: #000000;
+  text-align: center;
+}
+
+.loading-container {
+  padding: 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+#add-recipe-icon {
+  font-size: 6rem;
+  color: #333333;
 }
