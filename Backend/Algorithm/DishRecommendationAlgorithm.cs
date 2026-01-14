@@ -1,4 +1,6 @@
-﻿namespace Algorithm;
+﻿using System.Security.Cryptography;
+
+namespace Algorithm;
 
 public sealed class DishRecommendationAlgorithm
 {
@@ -35,8 +37,7 @@ public sealed class DishRecommendationAlgorithm
 
         if (shuffle)
         {
-            var random = new Random();
-            scoredDishes = scoredDishes.OrderBy(_ => random.Next());
+            scoredDishes = scoredDishes.OrderBy(_ => RandomNumberGenerator.GetInt32(int.MaxValue));
         }
 
         return scoredDishes;
