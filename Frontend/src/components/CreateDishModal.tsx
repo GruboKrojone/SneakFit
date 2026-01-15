@@ -161,7 +161,11 @@ export default function CreateDishModal({
       onPointerDown={onClose}
     >
       <div className="modal-content" onPointerDown={(e) => e.stopPropagation()}>
-        <button className="close-button" onClick={onClose} title={t("create_dish_modal_close_button")}>
+        <button
+          className="close-button"
+          onClick={onClose}
+          title={t("create_dish_modal_close_button")}
+        >
           <Close className="close-icon" />
         </button>
 
@@ -183,7 +187,9 @@ export default function CreateDishModal({
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="calories">{t("create_dish_modal_calories")}</label>
+              <label htmlFor="calories">
+                {t("create_dish_modal_calories")}
+              </label>
               <input
                 type="number"
                 id="calories"
@@ -244,7 +250,9 @@ export default function CreateDishModal({
           </div>
 
           <div className="form-group-description">
-            <label htmlFor="description">{t("create_dish_modal_description")}</label>
+            <label htmlFor="description">
+              {t("create_dish_modal_description")}
+            </label>
             <textarea
               id="description"
               name="description"
