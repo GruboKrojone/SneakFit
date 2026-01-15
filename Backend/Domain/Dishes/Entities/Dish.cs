@@ -1,5 +1,6 @@
 using Core.Database;
 using Domain.Categories.Entities;
+using Domain.Comments.Entities;
 using Domain.Dishes.Dto;
 using Domain.Users.Entities;
 
@@ -20,6 +21,7 @@ public sealed class Dish : EntityBase
     public ICollection<Category> Categories { get; private set; }
     public ICollection<Ingredient> Ingredients { get; private set; }
     public ICollection<User> FavoritedByUsers { get; private set; }
+    public ICollection<Comment> Comments { get; private set; }
 
     private Dish()
     {
@@ -27,6 +29,7 @@ public sealed class Dish : EntityBase
         Categories = [];
         Ingredients = [];
         FavoritedByUsers = [];
+        Comments = [];
         Rates = 0;
         IsPublic = false;
     }

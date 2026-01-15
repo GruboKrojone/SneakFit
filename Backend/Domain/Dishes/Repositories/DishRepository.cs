@@ -15,5 +15,6 @@ internal sealed class DishRepository(
         => dbContext.Dishes.AsQueryable()
             .Include(d => d.Ingredients)
             .Include(d => d.Categories)
-            .Include(d => d.Owner);
+            .Include(d => d.Owner)
+            .Include(d => d.Comments);
 }

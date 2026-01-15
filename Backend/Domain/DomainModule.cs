@@ -3,6 +3,7 @@ using Autofac;
 using Core.Database;
 using Core.Middlewares;
 using Domain.Authentication;
+using Domain.Comments;
 using Domain.Dishes;
 using Domain.Users;
 using MediatR.Extensions.Autofac.DependencyInjection;
@@ -27,6 +28,7 @@ public class DomainModule(IConfigurationRoot configuration) : Module
         builder.RegisterModule<UsersModule>();
         builder.RegisterModule<AuthenticationModule>();
         builder.RegisterModule<DishesModule>();
+        builder.RegisterModule<CommentsModule>();
 
         builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
 

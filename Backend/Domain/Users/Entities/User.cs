@@ -1,4 +1,5 @@
 using Core.Database;
+using Domain.Comments.Entities;
 using Domain.Dishes.Entities;
 using Domain.Users.Enums;
 
@@ -13,6 +14,7 @@ public sealed class User : EntityBase
     public int? Age { get; private set; }
     public Lang Lang { get; private set; }
     public ICollection<Dish> FavoriteDishes { get; private set; }
+    public ICollection<Comment> Comments { get; private set; }
 
 
     private User()
