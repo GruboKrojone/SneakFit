@@ -1,4 +1,4 @@
-using Domain.Categories.Dtos;
+using Domain.Categories.Dto;
 
 namespace Domain.Dishes.Dto;
 

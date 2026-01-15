@@ -1,6 +1,7 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
+using Algorithm;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Core.Authentication;
@@ -90,6 +91,7 @@ internal static class Program
         builder.Services.AddScoped<IUserContext, UserContext>();
         builder.Services.AddSingleton<IAuthenticationSettings>(authenticationSettings);
         builder.Services.AddSingleton<IAzureConfig>(azureConfig);
+        builder.Services.AddSingleton<DishRecommendationAlgorithm>();
 
         builder.Services.AddAuthentication(options =>
         {
