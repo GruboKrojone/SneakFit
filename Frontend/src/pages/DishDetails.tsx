@@ -238,7 +238,9 @@ export default function DishDetails() {
 
               <div className="macros-grid">
                 <div className="kcal-box">
-                  <div className="kcal-value">{Math.round((dish.calories ?? 0) * servings)}</div>
+                  <div className="kcal-value">
+                    {Math.round((dish.calories ?? 0) * servings)}
+                  </div>
                   <div className="kcal-label">
                     {t("dish_details_macro_circle_calories")}
                   </div>
