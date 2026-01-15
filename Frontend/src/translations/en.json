@@ -50,5 +50,36 @@
   "profile_settings_save": "Save",
   "profile_settings_close": "Close",
   "profile_settings_success": "✓ Profile updated successfully!",
-  "profile_settings_error": "Error updating profile"
+  "profile_settings_error": "Error updating profile",
+
+  "create_dish_modal_title": "Add New Dish",
+  "create_dish_modal_name": "Name",
+  "create_dish_modal_name_placeholder": "Enter dish name",
+  "create_dish_modal_name_required": "Name is required",
+  "create_dish_modal_calories": "Calories",
+  "create_dish_modal_calories_placeholder": "0",
+  "create_dish_modal_calories_must_be_number": "Calories must be a number",
+  "create_dish_modal_calories_must_be_positive": "Calories must be greater than 0",
+  "create_dish_modal_protein": "Protein (g)",
+  "create_dish_modal_protein_placeholder": "0",
+  "create_dish_modal_protein_must_be_number": "Protein must be a number",
+  "create_dish_modal_protein_cannot_be_negative": "Protein cannot be negative",
+  "create_dish_modal_carbs": "Carbs (g)",
+  "create_dish_modal_carbs_placeholder": "0",
+  "create_dish_modal_carbs_must_be_number": "Carbs must be a number",
+  "create_dish_modal_carbs_cannot_be_negative": "Carbs cannot be negative",
+  "create_dish_modal_fat": "Fat (g)",
+  "create_dish_modal_fat_placeholder": "0",
+  "create_dish_modal_fat_must_be_number": "Fat must be a number",
+  "create_dish_modal_fat_cannot_be_negative": "Fat cannot be negative",
+  "create_dish_modal_description": "Description",
+  "create_dish_modal_description_placeholder": "Enter dish description",
+  "create_dish_modal_description_required": "Description is required",
+  "create_dish_modal_submit_button": "Add",
+  "create_dish_modal_close_button": "Close",
+  "create_dish_modal_success": "✓ Dish added successfully!",
+  "create_dish_modal_error": "Error adding dish",
+
+  "loading_dishes": "Loading dishes..."
+
 }
