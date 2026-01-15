@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Close from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
+import { useTranslation } from "react-i18next";
 import DishesService from "../services/DishesService";
 import type { Dish } from "../services/DishesService";
 import "./styles/CreateDishModal.css";
@@ -16,6 +17,7 @@ export default function CreateDishModal({
   onClose,
   onDishAdded,
 }: CreateDishModalProps) {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     calories: "",
@@ -31,35 +33,35 @@ export default function CreateDishModal({
     const newErrors: Record<string, string> = {};
 
     if (!formData.name.trim()) {
-      newErrors.name = "Nazwa jest wymagana";
+      newErrors.name = t("create_dish_modal_name_required");
     }
 
     if (!formData.calories || Number.isNaN(Number(formData.calories))) {
-      newErrors.calories = "Kalorie muszą być liczbą";
+      newErrors.calories = t("create_dish_modal_calories_must_be_number");
     } else if (Number(formData.calories) <= 0) {
-      newErrors.calories = "Kalorie muszą być większe od 0";
+      newErrors.calories = t("create_dish_modal_calories_must_be_positive");
     }
 
     if (!formData.carbs || Number.isNaN(Number(formData.carbs))) {
-      newErrors.carbs = "Węglowodany muszą być liczbą";
+      newErrors.carbs = t("create_dish_modal_carbs_must_be_number");
     } else if (Number(formData.carbs) < 0) {
-      newErrors.carbs = "Węglowodany nie mogą być ujemne";
+      newErrors.carbs = t("create_dish_modal_carbs_cannot_be_negative");
     }
 
     if (!formData.protein || Number.isNaN(Number(formData.protein))) {
-      newErrors.protein = "Białko musi być liczbą";
+      newErrors.protein = t("create_dish_modal_protein_must_be_number");
     } else if (Number(formData.protein) < 0) {
-      newErrors.protein = "Białko nie może być ujemne";
+      newErrors.protein = t("create_dish_modal_protein_cannot_be_negative");
     }
 
     if (!formData.fat || Number.isNaN(Number(formData.fat))) {
-      newErrors.fat = "Tłuszcze muszą być liczbą";
+      newErrors.fat = t("create_dish_modal_fat_must_be_number");
     } else if (Number(formData.fat) < 0) {
-      newErrors.fat = "Tłuszcze nie mogą być ujemne";
+      newErrors.fat = t("create_dish_modal_fat_cannot_be_negative");
     }
 
     if (!formData.description.trim()) {
-      newErrors.description = "Opis jest wymagany";
+      newErrors.description = t("create_dish_modal_description_required");
     }
 
     setErrors(newErrors);
@@ -132,7 +134,7 @@ export default function CreateDishModal({
         description: "",
       });
 
-      toast.success("✓ Danie dodane pomyślnie!", {
+      toast.success(t("create_dish_modal_success"), {
         position: "top-center",
         autoClose: 2000,
       });
@@ -140,7 +142,7 @@ export default function CreateDishModal({
       onClose();
     } catch (error) {
       const errorMessage =
-        error instanceof Error ? error.message : "Błąd przy dodawaniu dania";
+        error instanceof Error ? error.message : t("create_dish_modal_error");
 
       toast.error("✗ " + errorMessage, {
         position: "top-center",
@@ -159,36 +161,36 @@ export default function CreateDishModal({
       onPointerDown={onClose}
     >
       <div className="modal-content" onPointerDown={(e) => e.stopPropagation()}>
-        <button className="close-button" onClick={onClose} title="Zamknij">
+        <button className="close-button" onClick={onClose} title={t("create_dish_modal_close_button")}>
           <Close className="close-icon" />
         </button>
 
-        <h2 className="modal-title">Dodaj nowe danie</h2>
+        <h2 className="modal-title">{t("create_dish_modal_title")}</h2>
 
         <form onSubmit={handleSubmit} className="form-container">
           <div className="form-group">
-            <label htmlFor="name">Nazwa</label>
+            <label htmlFor="name">{t("create_dish_modal_name")}</label>
             <input
               type="text"
               id="name"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              placeholder="Wpisz nazwę dania"
+              placeholder={t("create_dish_modal_name_placeholder")}
             />
             {errors.name && <span className="error-text">{errors.name}</span>}
           </div>
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="calories">Kalorie</label>
+              <label htmlFor="calories">{t("create_dish_modal_calories")}</label>
               <input
                 type="number"
                 id="calories"
                 name="calories"
                 value={formData.calories}
                 onChange={handleInputChange}
-                placeholder="0"
+                placeholder={t("create_dish_modal_calories_placeholder")}
               />
               {errors.calories && (
                 <span className="error-text">{errors.calories}</span>
@@ -196,14 +198,14 @@ export default function CreateDishModal({
             </div>
 
             <div className="form-group">
-              <label htmlFor="protein">Białko (g)</label>
+              <label htmlFor="protein">{t("create_dish_modal_protein")}</label>
               <input
                 type="number"
                 id="protein"
                 name="protein"
                 value={formData.protein}
                 onChange={handleInputChange}
-                placeholder="0"
+                placeholder={t("create_dish_modal_protein_placeholder")}
               />
               {errors.protein && (
                 <span className="error-text">{errors.protein}</span>
@@ -213,14 +215,14 @@ export default function CreateDishModal({
 
           <div className="form-row">
             <div className="form-group">
-              <label htmlFor="carbs">Węglowodany (g)</label>
+              <label htmlFor="carbs">{t("create_dish_modal_carbs")}</label>
               <input
                 type="number"
                 id="carbs"
                 name="carbs"
                 value={formData.carbs}
                 onChange={handleInputChange}
-                placeholder="0"
+                placeholder={t("create_dish_modal_carbs_placeholder")}
               />
               {errors.carbs && (
                 <span className="error-text">{errors.carbs}</span>
@@ -228,27 +230,27 @@ export default function CreateDishModal({
             </div>
 
             <div className="form-group">
-              <label htmlFor="fat">Tłuszcze (g)</label>
+              <label htmlFor="fat">{t("create_dish_modal_fat")}</label>
               <input
                 type="number"
                 id="fat"
                 name="fat"
                 value={formData.fat}
                 onChange={handleInputChange}
-                placeholder="0"
+                placeholder={t("create_dish_modal_fat_placeholder")}
               />
               {errors.fat && <span className="error-text">{errors.fat}</span>}
             </div>
           </div>
 
           <div className="form-group-description">
-            <label htmlFor="description">Opis</label>
+            <label htmlFor="description">{t("create_dish_modal_description")}</label>
             <textarea
               id="description"
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              placeholder="Wpisz opis dania"
+              placeholder={t("create_dish_modal_description_placeholder")}
             />
             {errors.description && (
               <span className="error-text">{errors.description}</span>
@@ -260,7 +262,7 @@ export default function CreateDishModal({
           )}
 
           <button type="submit" className="submit-button">
-            Dodaj
+            {t("create_dish_modal_submit_button")}
           </button>
         </form>
       </div>
