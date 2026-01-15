@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import DishesService, { Dish } from "../services/DishesService";
 
 export const useFetchDishes = () => {
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const hasFetched = useRef(false);
 
   const loadDishes = useCallback(async () => {
     try {
@@ -22,6 +23,8 @@ export const useFetchDishes = () => {
   }, []);
 
   useEffect(() => {
+    if (hasFetched.current) return;
+    hasFetched.current = true;
     loadDishes();
   }, [loadDishes]);
 
