@@ -33,5 +33,20 @@
   "dish_details_macro_circle_calories": "Kcal",
   "dish_details_macro_circle_proteins": "Proteínas",
   "dish_details_macro_circle_fats": "Grasas",
-  "dish_details_macro_circle_carbs": "Carbohidratos"
+  "dish_details_macro_circle_carbs": "Carbohidratos",
+
+  "profile": "Perfil",
+  "profile_settings_title": "Configuración del perfil",
+  "profile_settings_name": "Nombre",
+  "profile_settings_name_placeholder": "Ingresa tu nombre",
+  "profile_settings_name_required": "El nombre es requerido",
+  "profile_settings_age": "Edad",
+  "profile_settings_age_placeholder": "Ingresa tu edad",
+  "profile_settings_age_must_be_number": "La edad debe ser un número",
+  "profile_settings_age_must_be_positive": "La edad debe ser mayor que 0",
+  "profile_settings_age_too_high": "La edad no puede exceder 150",
+  "profile_settings_save": "Guardar",
+  "profile_settings_close": "Cerrar",
+  "profile_settings_success": "✓ ¡Perfil actualizado exitosamente!",
+  "profile_settings_error": "Error al actualizar el perfil"
 }

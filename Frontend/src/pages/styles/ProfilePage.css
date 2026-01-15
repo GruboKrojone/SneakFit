@@ -1,0 +1,45 @@
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100dvh;
+  width: 94dvw;
+}
+
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 1rem 2rem;
+  position: relative;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  color: #d0d0d0;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+#settings-icon {
+  width: min(4dvw, 4dvh);
+  height: min(4dvw, 4dvh);
+  cursor: pointer;
+  color: #979797;
+  position: absolute;
+  right: 2rem;
+}
+
+
+.profile-content {
+  width: 94dvw;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-color: #666666 #2e2e2e;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
