@@ -2,14 +2,14 @@
 
 namespace Algorithm;
 
-public static class DishRecommendationAlgorithm
+public class DishRecommendationAlgorithm
 {
     private const decimal RatesWeight = 0.4m;
     private const decimal PopularityWeight = 0.3m;
     private const decimal FavoriteMatchWeight = 0.2m;
     private const decimal CategoryDiversityWeight = 0.1m;
 
-    public static IEnumerable<RecommendedDishResult> CalculateRecommendations(
+    public IEnumerable<RecommendedDishResult> CalculateRecommendations(
         IEnumerable<DishData> allDishes,
         IEnumerable<int> userFavoriteDishIds,
         IEnumerable<int> userFavoriteCategoryIds,
