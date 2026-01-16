@@ -130,6 +130,21 @@ Creates a new user account.
 | `age` | integer | No | User age |
 | `lang` | string | No | User preferred language. Allowed values: EN, PL, DE, ES. |
 
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<DOMAIN>/auth/register' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "email": "<YOUR_EMAIL>",
+  "password": "<YOUR_PASSWORD>",
+  "name": "<USER_NAME>",
+  "age": "<USER_AGE>",
+  "lang": "<USER_DEFAULT_LANG>"
+}'
+```
+
 **Example Response:**
 **200**
 ```bash
@@ -139,4 +154,20 @@ Creates a new user account.
   "role": "<USER_ROLE>",
   "accessToken": "<BEARER_TOKEN>"
 }
+```
+
+#### Refresh
+Refreshes bearer token.
+
+**Definition:**
+`POST /auth/refresh`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `refreshToken` | string | Yes | Refresh token |
+
+**Example Response:**
+**200**
+```bash
 ```
