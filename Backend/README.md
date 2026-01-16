@@ -1,41 +1,55 @@
 # SneakFit API Documentation
 
+## 📋 Contents
+
+- [Overview](#-overview)
+- [API Structure](#-api-structure)
+- [Base URL](#-base-url)
+- [Authentication](#-authentication)
+- [Content Negotiation](#-content-negotiation)
+- [Response Codes](#-response-codes)
+- [Endpoints](#-endpoints)
+
 ## Overview
 The **SneakFit API** is a RESTful service for recipe management, meal planning, and algorithmic food discovery.
 
+
+
 ### API Structure
+The API is organized into the following resources:
+
 ```text
-├── Auth                                     #  Authorization segment
-│   ├── POST    /auth/login                  ## Presentation Layer (Controllers, Middleware)
-│   ├── POST    /auth/register               ## Domain Layer (Entities, Value Objects)
-│   ├── POST    /auth/refresh                ## Infrastructure & Application Layer (CQRS, Auth, DB)
-│   └── POST    /auth/revoke                 ## Unit & Integration Tests
-├── Category                                 #  Categories segment
-|   ├── POST    /category/add                ## 
-|   └── DELETE  /category/delete/{id}        ## 
-├── Comment                                  #  Categories segment
-|   ├── POST    /comment/{dishId}/add        ## 
-|   ├── PUT     /comment/{commentId}/edit    ## 
-|   ├── DELETE  /comment/{commentId}/delete  ## 
-|   └── GET     /comment/{dishId}/all        ## 
-├── Dish                                     #  Dishes segment
-|   ├── POST    /dish/add                    ##
-|   ├── PUT     /dish/{dishId}/public        ##
-|   ├── GET     /dish/{dishId}               ##
-|   ├── PUT     /dish/{dishId}/update        ##  
-|   ├── GET     /dishes                      ##
-|   ├── POST    /dish/{id}/favorite          ##
-|   ├── DELETE  /dish/{id}/delete            ##
-|   └── GET     /dish/recommended            ##
-└── User                                     #  Users segment
-|   ├── PUT     /user/{id}/lang              ## Client-side application
-|   └── PUT     /user/{id}/settings          ##
-└────────────────────────────────────────────
+├── Auth                     # Authorization & Authentication
+│   ├── POST   /auth/login
+│   ├── POST   /auth/register
+│   ├── POST   /auth/refresh
+│   └── POST   /auth/revoke
+├── Category                 # Recipe Categories
+│   ├── POST   /category/add
+│   └── DELETE /category/delete/{id}
+├── Comment                  # Recipe Comments
+│   ├── GET    /comment/{dishId}/all
+│   ├── POST   /comment/{dishId}/add
+│   ├── PUT    /comment/{commentId}/edit
+│   └── DELETE /comment/{commentId}/delete
+├── Dish                     # Recipes & Dishes
+│   ├── GET    /dishes
+│   ├── GET    /dish/{dishId}
+│   ├── GET    /dish/recommended
+│   ├── POST   /dish/add
+│   ├── POST   /dish/{id}/favorite
+│   ├── PUT    /dish/{dishId}/public
+│   ├── PUT    /dish/{dishId}/update
+│   └── DELETE /dish/{id}/delete
+└── User                     # User Profile & Settings
+    ├── PUT    /user/{id}/lang
+    └── PUT    /user/{id}/settings
 ```
 
 ## Base URL
-All URLs referenced in the documentation have the following base:
-`localhost`
+All URLs referenced in the documentation have the following base: https://localhost:7059
+
+(TODO: Change to prod link)
 
 ## Authentication
 This API uses **Bearer Token** authentication. You must include your API key in the `Authorization` header for all requests.
@@ -68,7 +82,7 @@ The API uses standard HTTP status codes to indicate the success or failure of an
 ### 1. Authorization
 
 #### Login
-After providing valid data, return tokens
+Authenticates a user and returns access tokens.
 
 **Definition:**
 `POST /auth/login`
@@ -91,8 +105,7 @@ curl -X 'POST' \
 }'
 ```
 
-**Example Response:**
-**200**
+**Example Response (200):**
 ```bash
 {
   "userId": <ID>,
@@ -101,10 +114,10 @@ curl -X 'POST' \
   "accessToken": "<BEARER_TOKEN>"
 }
 ```
-<HR>
+---
 
 #### Register
-Allow user to register account
+Creates a new user account.
 
 **Definition:**
 `POST /auth/register`
