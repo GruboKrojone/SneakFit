@@ -2,14 +2,13 @@
 
 ## 📋 Contents
 
-- [Overview](#-overview)
-- [API Structure](#-api-structure)
-- [Base URL](#-base-url)
-- [Authentication](#-authentication)
-- [Content Negotiation](#-content-negotiation)
-- [Response Codes](#-response-codes)
-- [Endpoints](#-endpoints)
-
+- [Overview](#overview)
+- [API Structure](#api-structure)
+- [Base URL](#base-url)
+- [Authentication](#authentication)
+- [Content Negotiation](#content-negotiation)
+- [Response Codes](#response-codes)
+- [Endpoints](#endpoints)
 ## Overview
 The **SneakFit API** is a RESTful service for recipe management, meal planning, and algorithmic food discovery.
 
