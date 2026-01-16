@@ -18,6 +18,7 @@ public class MarkDishFavoriteCommandTests
 {
     private readonly Mock<IDishRepository> _dishRepository;
     private readonly Mock<IUserRepository> _userRepository;
+    private readonly Mock<IFavoritedRepository> _favoritedRepository;
     private readonly Mock<IUserContext> _userContext;
     private readonly Mock<IUnitOfWork> _unitOfWork;
     private readonly MarkDishAsFavoriteCommandHandler _handler;
@@ -27,12 +28,14 @@ public class MarkDishFavoriteCommandTests
     {
         _dishRepository = new Mock<IDishRepository>();
         _userRepository = new Mock<IUserRepository>();
+        _favoritedRepository = new Mock<IFavoritedRepository>();
         _userContext = new Mock<IUserContext>();
         _unitOfWork = new Mock<IUnitOfWork>();
         _logger = new Mock<ILogger>();
         _handler = new MarkDishAsFavoriteCommandHandler(
             _dishRepository.Object,
             _userRepository.Object,
+            _favoritedRepository.Object,
             _userContext.Object,
             _unitOfWork.Object,
             _logger.Object);
@@ -42,6 +45,7 @@ public class MarkDishFavoriteCommandTests
     [Fact]
     public async Task AuthorizedUser_ShouldMarkDishAsFavorite()
     {
+        // Arrange
         var userId = 1;
         var dishId = 10;
         var user = new User(
@@ -50,7 +54,12 @@ public class MarkDishFavoriteCommandTests
             UserRole.User,
             "Test User",
             25);
+
+        typeof(User).GetProperty("Id")?.SetValue(user, userId);
+
         var dish = new Dish("Test Dish", null, null, null, null, null);
+
+        typeof(Dish).GetProperty("Id")?.SetValue(dish, dishId);
 
         _userContext.Setup(x => x.UserId).Returns(userId);
         _userRepository.Setup(x => x.FindAsync(userId, It.IsAny<CancellationToken>()))
@@ -65,11 +74,10 @@ public class MarkDishFavoriteCommandTests
 
         // Assert
         result.Should().Be(Unit.Value);
-        user.FavoriteDishes.Should().Contain(dish);
-        user.FavoriteDishes.Should().HaveCount(1);
-        _userRepository.Verify(x => x.FindAsync(userId, CancellationToken.None), Times.Once);
-        _dishRepository.Verify(x => x.FindAsync(dishId, CancellationToken.None), Times.Once);
-        _unitOfWork.Verify(x => x.SaveChangesAsync(CancellationToken.None), Times.Once);
+        _userRepository.Verify(x => x.FindAsync(userId, It.IsAny<CancellationToken>()), Times.Once);
+        _dishRepository.Verify(x => x.FindAsync(dishId, It.IsAny<CancellationToken>()), Times.Once);
+        _favoritedRepository.Verify(x => x.Add(It.Is<Favorited>(f => f.UserId == userId && f.DishId == dishId)), Times.Once);
+        _unitOfWork.Verify(x => x.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
     [Fact]
