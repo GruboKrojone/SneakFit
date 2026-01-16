@@ -10,5 +10,6 @@ internal sealed class UsersModule : Module
         base.Load(builder);
 
         builder.RegisterType<UserRepository>().AsImplementedInterfaces();
+        builder.RegisterType<FavoritedRepository>().AsImplementedInterfaces();
     }
 }

@@ -14,6 +14,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
 {
     internal DbSet<User> Users => Set<User>();
     internal DbSet<Dish> Dishes => Set<Dish>();
+    internal DbSet<Favorited> Favorited => Set<Favorited>();
     internal DbSet<Ingredient> Ingredients => Set<Ingredient>();
     internal DbSet<Category> Categories => Set<Category>();
     internal DbSet<Comment> Comments => Set<Comment>();
@@ -31,6 +32,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
         modelBuilder.Entity<Ingredient>().HasQueryFilter(i => !i.IsDeleted);
         modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
         modelBuilder.Entity<Comment>().HasQueryFilter(c => !c.IsDeleted);
+        modelBuilder.Entity<Favorited>().HasQueryFilter(f => !f.IsDeleted);
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }
 

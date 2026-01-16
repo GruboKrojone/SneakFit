@@ -14,23 +14,23 @@ using Serilog;
 
 namespace Domain.Tests.Dishes;
 
-public class MarkDishFavouriteCommandTests
+public class MarkDishFavoriteCommandTests
 {
     private readonly Mock<IDishRepository> _dishRepository;
     private readonly Mock<IUserRepository> _userRepository;
     private readonly Mock<IUserContext> _userContext;
     private readonly Mock<IUnitOfWork> _unitOfWork;
-    private readonly MarkDishAsFavouriteCommandHandler _handler;
+    private readonly MarkDishAsFavoriteCommandHandler _handler;
     private readonly Mock<ILogger> _logger;
 
-    public MarkDishFavouriteCommandTests()
+    public MarkDishFavoriteCommandTests()
     {
         _dishRepository = new Mock<IDishRepository>();
         _userRepository = new Mock<IUserRepository>();
         _userContext = new Mock<IUserContext>();
         _unitOfWork = new Mock<IUnitOfWork>();
         _logger = new Mock<ILogger>();
-        _handler = new MarkDishAsFavouriteCommandHandler(
+        _handler = new MarkDishAsFavoriteCommandHandler(
             _dishRepository.Object,
             _userRepository.Object,
             _userContext.Object,
@@ -40,7 +40,7 @@ public class MarkDishFavouriteCommandTests
 
 
     [Fact]
-    public async Task AuthorizedUser_ShouldMarkDishAsFavourite()
+    public async Task AuthorizedUser_ShouldMarkDishAsFavorite()
     {
         var userId = 1;
         var dishId = 10;
@@ -58,7 +58,7 @@ public class MarkDishFavouriteCommandTests
         _dishRepository.Setup(x => x.FindAsync(dishId, It.IsAny<CancellationToken>()))
             .ReturnsAsync(dish);
 
-        var command = new MarkDishFavouriteCommand(dishId);
+        var command = new MarkDishFavoriteCommand(dishId);
 
         // Act
         var result = await _handler.Handle(command, CancellationToken.None);
@@ -78,7 +78,7 @@ public class MarkDishFavouriteCommandTests
         // Arrange
         var dishId = 10;
         _userContext.Setup(x => x.UserId).Returns((int?)null);
-        var command = new MarkDishFavouriteCommand(dishId);
+        var command = new MarkDishFavoriteCommand(dishId);
 
         // Act
         Func<Task> act = async () => await _handler.Handle(command, CancellationToken.None);
