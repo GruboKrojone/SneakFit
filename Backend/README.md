@@ -76,9 +76,9 @@ The API uses standard HTTP status codes to indicate the success or failure of an
 
 ---
 
-## Endpoints
+# Endpoints
 
-### 1. Authorization
+## 1. Authorization
 
 #### Login
 Authenticates a user and returns access tokens.
@@ -113,6 +113,7 @@ curl -X 'POST' \
   "accessToken": "<BEARER_TOKEN>"
 }
 ```
+
 ---
 
 #### Register
@@ -145,8 +146,7 @@ curl -X 'POST' \
 }'
 ```
 
-**Example Response:**
-**200**
+**Example Response (200):**
 ```bash
 {
   "userId": <ID>,
@@ -155,6 +155,8 @@ curl -X 'POST' \
   "accessToken": "<BEARER_TOKEN>"
 }
 ```
+
+---
 
 #### Refresh
 Refreshes bearer token.
@@ -167,7 +169,184 @@ Refreshes bearer token.
 | :--- | :--- | :--- | :--- |
 | `refreshToken` | string | Yes | Refresh token |
 
-**Example Response:**
-**200**
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Revoke
+Desc sample.
+
+**Definition:**
+`POST /auth/revoke`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `refreshToken` | string | Yes | Refresh token |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+## 2. Category
+
+#### Add
+Desc sample.
+
+**Definition:**
+`POST /category/add`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `<TODO>` | string | Yes | TODO |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Delete
+Desc sample.
+
+**Definition:**
+`POST /category/{id}/delete`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | integer | Yes | Category ID |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+## 3. Comment
+
+#### Add
+Desc sample.
+
+**Definition:**
+`POST /comment/{dishId}/add`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | Dish ID |
+| `comment` | string | Yes | Comment content |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Edit
+Desc sample.
+
+**Definition:**
+`PUT /comment/{commentId}/edit`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `commentId` | integer | Yes | Comment ID |
+| `comment` | string | Yes | Comment content |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Delete
+Desc sample.
+
+**Definition:**
+`DELETE /comment/{commentId}/delete`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `commentId` | integer | Yes | Comment ID |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Get All
+Get all dish comments
+
+**Definition:**
+`GET /comment/{dishId}/all`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | Comment ID |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### TODO
+Desc sample.
+
+**Definition:**
+`POST /auth/refresh`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `<TODO>` | string | Yes | TODO |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
 ```bash
 ```
