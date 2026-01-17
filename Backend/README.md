@@ -9,6 +9,7 @@
 - [Content Negotiation](#content-negotiation)
 - [Response Codes](#response-codes)
 - [Endpoints](#endpoints)
+- [Data Models](#data-models)
 ## Overview
 The **SneakFit API** is a RESTful service for recipe management, meal planning, and algorithmic food discovery.
 
@@ -615,3 +616,5 @@ Update user settings.
 **Example Response (200):**
 ```bash
 ```
+
+# Data Models
