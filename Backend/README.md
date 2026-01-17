@@ -12,8 +12,6 @@
 ## Overview
 The **SneakFit API** is a RESTful service for recipe management, meal planning, and algorithmic food discovery.
 
-
-
 ### API Structure
 The API is organized into the following resources:
 
@@ -203,7 +201,7 @@ Desc sample.
 ## 2. Category
 
 #### Add
-Desc sample.
+Add new dish category.
 
 **Definition:**
 `POST /category/add`
@@ -211,7 +209,7 @@ Desc sample.
 **Query Parameters:**
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `<TODO>` | string | Yes | TODO |
+| `name` | string | Yes | Category name |
 
 **Example Request:**
 ```bash
@@ -224,7 +222,7 @@ Desc sample.
 ---
 
 #### Delete
-Desc sample.
+Soft delete dish category.
 
 **Definition:**
 `POST /category/{id}/delete`
@@ -247,7 +245,7 @@ Desc sample.
 ## 3. Comment
 
 #### Add
-Desc sample.
+Add new recipe comment.
 
 **Definition:**
 `POST /comment/{dishId}/add`
@@ -269,7 +267,7 @@ Desc sample.
 ---
 
 #### Edit
-Desc sample.
+Edit recipe comment.
 
 **Definition:**
 `PUT /comment/{commentId}/edit`
@@ -291,7 +289,7 @@ Desc sample.
 ---
 
 #### Delete
-Desc sample.
+Soft delete recipe comment.
 
 **Definition:**
 `DELETE /comment/{commentId}/delete`
@@ -332,16 +330,201 @@ Get all dish comments
 
 ---
 
-#### TODO
+## 4. Dish
+
+#### Add
 Desc sample.
 
 **Definition:**
-`POST /auth/refresh`
+`POST /dish/add`
 
 **Query Parameters:**
 | Parameter | Type | Required | Description |
 | :--- | :--- | :--- | :--- |
-| `<TODO>` | string | Yes | TODO |
+| `name` | string | Yes | Recipe name |
+| `description` | string | No | Recipe description |
+| `calories` | integer | No | Recipe calories |
+| `protein` | integer | No | Recipe proteins |
+| `carbs` | integer | No | Recipe carbs |
+| `fat` | integer | No | Recipe fat |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Make Public
+Make recipe public.
+
+**Definition:**
+`PUT /dish/{dishId}/public`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | Recipe ID |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Update dish
+Update dish details.
+
+**Definition:**
+`PUT /dish/{dishId}/update`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | Recipe ID |
+| `name` | string | Yes | Updated recipe name |
+| `description` | string | No | Updated dish decription |
+| `calories` | integer | No | Updated recipe calories |
+| `protein` | integer | No | Updated recipe proteins |
+| `carbs` | integer | No | Updated recipe carbs |
+| `fat` | integer | No | Updated recipe fat |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Get dishes
+Get all public and your private dishes.
+
+**Definition:**
+`GET /dishes`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Favorite dish
+Make dish favorite.
+
+**Definition:**
+`PUT /dish/{id}/favorite`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | integer | Yes | Recipe ID |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Delete dish
+Soft delete dish.
+
+**Definition:**
+`DELETE /dish/{id}/delete`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | integer | Yes | Recipe ID |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Recommended dishes
+Get recommended dishes.
+
+**Definition:**
+`GET /dish/recommended`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `maxResults` | integer | No | Count of recommended dishes to return |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+## 5. User
+
+#### Language
+Set user preferred language.
+
+**Definition:**
+`PUT /user/{id}/lang`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | integer | Yes | User ID |
+| `lang` | string | No | User preferred language |
+
+**Example Request:**
+```bash
+```
+
+**Example Response (200):**
+```bash
+```
+
+---
+
+#### Settings
+Update user settings.
+
+**Definition:**
+`PUT /user/{id}/settings`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | integer | Yes | User ID |
+| `name` | string | No | User name |
+| `age` | integer | No | User age |
 
 **Example Request:**
 ```bash
