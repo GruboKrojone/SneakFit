@@ -169,16 +169,31 @@ Refreshes bearer token.
 
 **Example Request:**
 ```bash
+curl -X 'POST' \
+  'https://<HOST>/auth/refresh' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "refreshToken": "<REFRESH_TOKEN>"
+}'
 ```
 
 **Example Response (200):**
 ```bash
+{
+  "userId": <ID>,
+  "email": "<USER_EMAIL>",
+  "role": "<USER_ROLE>",
+  "accessToken": "<BEARER_TOKEN>",
+  "refreshToken": "<REFRESH_TOKEN>"
+}
 ```
 
 ---
 
 #### Revoke
-Desc sample.
+Revokes auth token.
 
 **Definition:**
 `POST /auth/revoke`
@@ -190,10 +205,19 @@ Desc sample.
 
 **Example Request:**
 ```bash
+curl -X 'POST' \
+  'https://<HOST>/auth/revoke' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "refreshToken": "<REFRESH_TOKEN>"
+}'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -213,10 +237,19 @@ Add new dish category.
 
 **Example Request:**
 ```bash
+curl -X 'POST' \
+  'https://<HOST>/category/add' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "<NAME>"
+}'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -234,10 +267,15 @@ Soft delete dish category.
 
 **Example Request:**
 ```bash
+curl -X 'DELETE' \
+  'https://<HOST>/category/<ID>/delete' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -258,10 +296,17 @@ Add new recipe comment.
 
 **Example Request:**
 ```bash
+curl -X 'POST' \
+  'https://<HOST>/comment/<ID>/add' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '"<CONTENT>"'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -280,10 +325,21 @@ Edit recipe comment.
 
 **Example Request:**
 ```bash
+curl -X 'PUT' \
+  'https://<HOST>/comment/<ID>/edit' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '"<EDITET_CONTENT>"'
 ```
 
 **Example Response (200):**
 ```bash
+{
+  "content": "<EDITED_CONTENT>",
+  "authorId": <USER_ID>,
+  "dishId": <DISH_ID>
+}
 ```
 
 ---
@@ -301,10 +357,15 @@ Soft delete recipe comment.
 
 **Example Request:**
 ```bash
+curl -X 'DELETE' \
+  'https://<HOST>/comment/<ID>/delete' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -322,10 +383,31 @@ Get all dish comments
 
 **Example Request:**
 ```bash
+curl -X 'GET' \
+  'https://<HOST>/comment/<DISH_ID>/all' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+[
+  {
+    "content": "<CONTENT>",
+    "authorId": <ID>,
+    "dishId": <ID>
+  },
+  {
+    "content": "<CONTENT>",
+    "authorId": <ID>,
+    "dishId": <ID>
+  },
+  {
+    "content": "<CONTENT>",
+    "authorId": <ID>,
+    "dishId": <ID>
+  }
+]
 ```
 
 ---
