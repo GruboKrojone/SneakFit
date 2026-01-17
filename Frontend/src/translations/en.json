@@ -29,6 +29,11 @@
   "dish_details_page_back_button": "Not today",
   "dish_details_page_start_button": "Let's start",
   "dish_details_page_comments": "Comments",
+  "dish_details_page_comments_button": "Comments",
+  "dish_details_page_no_comments": "No comments yet. Be the first to comment!",
+  "dish_details_page_add_comment_placeholder": "Write a comment...",
+  "dish_details_page_add_comment": "Add Comment",
+  "dish_details_page_submitting": "Submitting...",
   "dish_details_page_serving_size": "Serving Size",
   "dish_details_page_no_dish_found": "No dish found",
 
@@ -79,6 +84,16 @@
   "create_dish_modal_close_button": "Close",
   "create_dish_modal_success": "✓ Dish added successfully!",
   "create_dish_modal_error": "Error adding dish",
+
+  "comments_modal_title": "Comments",
+  "comments_modal_close": "Close",
+  "comments_modal_no_comments": "No comments yet. Be the first to comment!",
+  "comments_modal_placeholder": "Write your comment here...",
+  "comments_modal_add_button": "Add Comment",
+  "comments_modal_submitting": "Submitting...",
+  "comments_modal_success": "✓ Comment added successfully!",
+  "comments_modal_error": "Error adding comment",
+  "comments_modal_login_required": "You must be logged in to comment",
 
   "loading_dishes": "Loading dishes..."
 

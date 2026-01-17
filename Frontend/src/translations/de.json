@@ -27,6 +27,11 @@
   "dish_details_page_back_button": "Heute nicht",
   "dish_details_page_start_button": "Los geht's",
   "dish_details_page_comments": "Kommentare",
+  "dish_details_page_comments_button": "Kommentare",
+  "dish_details_page_no_comments": "Noch keine Kommentare. Sei der Erste!",
+  "dish_details_page_add_comment_placeholder": "Schreibe einen Kommentar...",
+  "dish_details_page_add_comment": "Kommentar hinzufügen",
+  "dish_details_page_submitting": "Wird gesendet...",
   "dish_details_page_serving_size": "Portionsgröße",
   "dish_details_page_no_dish_found": "Kein Gericht gefunden",
 
@@ -77,6 +82,16 @@
   "create_dish_modal_close_button": "Schließen",
   "create_dish_modal_success": "✓ Gericht erfolgreich hinzugefügt!",
   "create_dish_modal_error": "Fehler beim Hinzufügen des Gerichts",
+
+  "comments_modal_title": "Kommentare",
+  "comments_modal_close": "Schließen",
+  "comments_modal_no_comments": "Noch keine Kommentare. Sei der Erste!",
+  "comments_modal_placeholder": "Schreibe deinen Kommentar hier...",
+  "comments_modal_add_button": "Kommentar hinzufügen",
+  "comments_modal_submitting": "Wird gesendet...",
+  "comments_modal_success": "✓ Kommentar erfolgreich hinzugefügt!",
+  "comments_modal_error": "Fehler beim Hinzufügen des Kommentars",
+  "comments_modal_login_required": "Sie müssen angemeldet sein, um zu kommentieren",
 
   "loading_dishes": "Gerichte werden geladen..."
 }

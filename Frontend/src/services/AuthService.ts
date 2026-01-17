@@ -96,6 +96,23 @@ class AuthService {
     const token = this.getToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
+
+  static getCurrentUser(): { id: number; email: string; name: string } | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return {
+        id: Number.parseInt(payload.sub || payload.id || payload.userId),
+        email: payload.email || '',
+        name: payload.name || payload.unique_name || ''
+      };
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      return null;
+    }
+  }
 }
 
 export default AuthService;

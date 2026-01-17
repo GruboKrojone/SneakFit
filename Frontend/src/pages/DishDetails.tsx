@@ -1,13 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DishesService, { Dish } from "../services/DishesService";
+import CommentsService, { Comment } from "../services/CommentsService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import Undo from "@mui/icons-material/Undo";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import EditSquare from "@mui/icons-material/EditSquare";
+import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import MacroCircle from "../components/MacroCircle";
+import CommentsModal from "../components/CommentsModal";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
 
@@ -19,6 +22,8 @@ export default function DishDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [servings, setServings] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const hasFetched = useRef<number | null>(null);
   const totalImages = 5;
   const emptyCategories = t("no_categories");
@@ -69,10 +74,19 @@ export default function DishDetails() {
       setIsLoading(true);
       const data = await DishesService.getDishById(dishId);
       setDish(data);
+
+      // Load comments
+      const commentsData = await CommentsService.getCommentsByDishId(dishId);
+      setComments(commentsData);
+
       setIsLoading(false);
     };
     load();
   }, [id]);
+
+  const handleCommentAdded = (comment: Comment) => {
+    setComments((prevComments) => [...prevComments, comment]);
+  };
 
   if (isLoading)
     return (
@@ -259,9 +273,14 @@ export default function DishDetails() {
                   maxValue={100}
                 />
               </div>
-              <div className="comments-box">
-                {t("dish_details_page_comments")}
-              </div>
+              <button
+                className="comments-button"
+                onClick={() => setIsCommentsModalOpen(true)}
+              >
+                <ChatBubbleOutline className="comments-button-icon" />
+                <span>{t("dish_details_page_comments_button")}</span>
+                <span className="comments-count">({comments.length})</span>
+              </button>
             </div>
           </div>
         </div>
@@ -279,6 +298,17 @@ export default function DishDetails() {
           </div>
         </div>
       </div>
+
+      {dish && (
+        <CommentsModal
+          isOpen={isCommentsModalOpen}
+          onClose={() => setIsCommentsModalOpen(false)}
+          dishId={dish.id}
+          dishName={dish.name}
+          comments={comments}
+          onCommentAdded={handleCommentAdded}
+        />
+      )}
     </div>
   );
 }
