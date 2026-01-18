@@ -259,7 +259,7 @@ curl -X 'POST' \
 Soft delete dish category.
 
 **Definition:**
-`POST /category/{id}/delete`
+`DELETE /category/{id}/delete`
 
 **Query Parameters:**
 | Parameter | Type | Required | Description |
@@ -433,10 +433,62 @@ Desc sample.
 
 **Example Request:**
 ```bash
+curl -X 'POST' \
+  'https://<HOST>>/dish/add' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "<NAME>",
+  "description": "<DESCRIPTION>",
+  "calories": <CALORIES_NUM>,
+  "protein": <PROTEINS_NUM>,
+  "carbs": <CARBS_NUM>,
+  "fat": <FAT_NUM>
+}'
 ```
 
 **Example Response (200):**
 ```bash
+{}
+```
+
+---
+
+#### Get dish details
+Get dish details by ID.
+
+**Definition:**
+`GET /dish/{dishId}`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | Recipe ID |
+
+**Example Request:**
+```bash
+curl -X 'GET' \
+  'https://<HOST>/dish/<DISH_ID>' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{
+  "id": <DISH_ID>,
+  "name": "<DISH_NAME>",
+  "description": "<DISH_DESCRIPTION>",
+  "calories": <CALORIES_NUM>,
+  "protein": <PROTEINS_NUM>,
+  "carbs": <CARBS_NUM>,
+  "fat": <FAT_NUM>,
+  "isPublic": <IS_PUBLIC>,
+  "rates": <RATES_NUM>,,
+  "ownerId": <OWNER_ID>,
+  "ingredients": <INGREDIENTS_ARRAY>,
+}
 ```
 
 ---
@@ -454,10 +506,15 @@ Make recipe public.
 
 **Example Request:**
 ```bash
+curl -X 'PUT' \
+  'https://<HOST>/dish/<DISH_ID>/public' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -481,10 +538,31 @@ Update dish details.
 
 **Example Request:**
 ```bash
+curl -X 'PUT' \
+  'https://<HOST>/dish/<ID>/update' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "<NAME>",
+  "description": "<DESCRIPTION>",
+  "calories": <CALORIES_NUM>,
+  "protein": <PROTEINS_NUM>,
+  "carbs": <CARBS_NUM>,
+  "fat": <FAT_NUM>
+}'
 ```
 
 **Example Response (200):**
 ```bash
+{
+  "name": "<NAME>",
+  "description": "<DESCRIPTION>",
+  "calories": <CALORIES_NUM>,
+  "protein": <PROTEINS_NUM>,
+  "carbs": <CARBS_NUM>,
+  "fat": <FAT_NUM>
+}
 ```
 
 ---
@@ -501,10 +579,32 @@ Get all public and your private dishes.
 
 **Example Request:**
 ```bash
+curl -X 'GET' \
+  'https://<HOST>/dishes' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+[
+  {
+    "id": <DISH_ID>,
+    "name": "<NAME>",,
+    "rates": <RATES_NUM>,
+    "userId": <USER_ID>,
+    "ownerName": "<OWNER_NAME>",
+    "isPublic": <IS_PUBLIC>,
+    "categories": ["<CATEGORY1>", "<CATEGORY2>"],
+    "mainPictureId": <PICTURE_ID>
+  },
+ {
+   <DISH_OBJECT>
+ },
+ {
+   <DISH_OBJECT>
+ }
+]
 ```
 
 ---
@@ -522,10 +622,15 @@ Make dish favorite.
 
 **Example Request:**
 ```bash
+curl -X 'PUT' \
+  'https://<HOST>/dish/<ID>/favourite' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -543,10 +648,15 @@ Soft delete dish.
 
 **Example Request:**
 ```bash
+curl -X 'DELETE' \
+  'https://<HOST>/dish/<ID>/delete' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -564,10 +674,34 @@ Get recommended dishes.
 
 **Example Request:**
 ```bash
+curl -X 'GET' \
+  'https://<HOST>/dish/recommended?maxResults=<MAX_RESULTS>' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+[
+  {
+    "id": <ID>,
+    "name": "<NAME>",
+    "rates": <RATES_NUM>,,
+    "userId": <USER_ID>,,
+    "ownerName": "<OWNER_NAME>",
+    "isPublic": <IS_PUBLIC>,,
+    "categories": ["<CATEGORY1>", "<CATEGORY2>"]
+  },
+  {
+    "id": <ID>,
+    "name": "<NAME>",
+    "rates": <RATES_NUM>,
+    "userId": <USER_ID>,
+    "ownerName": "<OWNER_NAME>",
+    "isPublic": <IS_PUBLIC>,
+    "categories": ["<CATEGORY1>"]
+  }
+]
 ```
 
 ---
@@ -588,10 +722,15 @@ Set user preferred language.
 
 **Example Request:**
 ```bash
+curl -X 'PUT' \
+  'https://<HOST>/user/<ID>/lang?lang=<LANG>' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 ---
@@ -611,10 +750,20 @@ Update user settings.
 
 **Example Request:**
 ```bash
+curl -X 'PUT' \
+  'https://<HOST>/user/<ID>/settings' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "<NEW_NAME>",
+  "age": <NEW_AGE>
+}'
 ```
 
 **Example Response (200):**
 ```bash
+{}
 ```
 
 # Data Models
