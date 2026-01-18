@@ -2,6 +2,9 @@
   "no_categories": "Brak kategorii",
   "empty_description": "Brak dostępnego opisu",
   "dish_details": "Szczegóły dania",
+  "loading_dishes": "Ładowanie przepisów...",
+  "no_more_dishes": "Brak przepisów.",
+  "add_own_dish": "Dodaj własny przepis.",
 
   "register_page_title": "Rejestracja",
   "register_page_email_holder": "Adres e-mail",
@@ -16,10 +19,6 @@
   "login_page_password_holder": "Hasło",
   "login_page_login_button": "Zaloguj się",
   "login_page_forgot_password": "Zapomniałeś hasła?",
-
-  "loading_dishes": "Ładowanie przepisów...",
-  "no_more_dishes": "Brak przepisów.",
-  "add_own_dish": "Dodaj własny przepis.",
 
   "home_page_welcome_message": "Co dziś ugotujemy?",
 
@@ -93,9 +92,23 @@
   "comments_modal_placeholder": "Napisz swój komentarz tutaj...",
   "comments_modal_add_button": "Dodaj komentarz",
   "comments_modal_submitting": "Wysyłanie...",
+  "comments_modal_too_long": "Komentarz jest za długi. Maksimum {0} znaków.",
+  "comments_modal_user": "Użytkownik",
   "comments_modal_success": "✓ Komentarz dodany pomyślnie!",
   "comments_modal_error": "Błąd podczas dodawania komentarza",
   "comments_modal_login_required": "Musisz być zalogowany, aby komentować",
-
-  "loading_dishes": "Ładowanie dań..."
+  "comments_modal_delete_title": "Czy na pewno chcesz usunąć ten komentarz?",
+  "comments_modal_delete_confirm": "Tak",
+  "comments_modal_delete_cancel": "Nie",
+  "comments_modal_delete_success": "Komentarz usunięty",
+  "comments_modal_delete_error": "Nie udało się usunąć komentarza",
+  "comments_modal_edit_title": "Edytuj komentarz",
+  "comments_modal_edit_confirm": "Edytuj",
+  "comments_modal_edit_cancel": "Anuluj",
+  "comments_modal_edit_empty": "Komentarz nie może być pusty!",
+  "comments_modal_edit_too_long": "Komentarz jest za długi. Maksimum {0} znaków.",
+  "comments_modal_edit_success": "Komentarz zaktualizowany",
+  "comments_modal_edit_error": "Nie udało się zaktualizować komentarza",
+  "comments_modal_menu_edit": "Edytuj",
+  "comments_modal_menu_delete": "Usuń"
 }

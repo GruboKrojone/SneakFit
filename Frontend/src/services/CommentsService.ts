@@ -1,9 +1,11 @@
 import AuthService from "./AuthService";
 
 export interface Comment {
+  id?: number;
   content: string;
   authorId: number;
   dishId: number;
+  userName?: string;
 }
 
 class CommentsService {
@@ -56,6 +58,55 @@ class CommentsService {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       throw new Error(`Failed to add comment: ${errorMessage}`);
+    }
+  }
+
+  static async editComment(commentId: number, content: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${commentId}/edit`, {
+        method: "PUT",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+        body: JSON.stringify(content),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server error:", response.status, errorText);
+        throw new Error(`Failed to edit comment: ${response.status} - ${errorText}`);
+      }
+    } catch (error) {
+      console.error("Error editing comment:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      throw new Error(`Failed to edit comment: ${errorMessage}`);
+    }
+  }
+
+  static async deleteComment(commentId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/${commentId}/delete`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Server error:", response.status, errorText);
+        throw new Error(`Failed to delete comment: ${response.status} - ${errorText}`);
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      throw new Error(`Failed to delete comment: ${errorMessage}`);
     }
   }
 }

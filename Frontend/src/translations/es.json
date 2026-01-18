@@ -2,6 +2,9 @@
   "no_categories": "Sin categorías",
   "empty_description": "No hay descripción disponible",
   "dish_details": "Detalles del Plato",
+  "loading_dishes": "Cargando platos...",
+  "no_more_dishes": "No hay más platos disponibles.",
+  "add_own_dish": "Agrega tu propia receta.",
 
   "register_page_title": "Registrarse",
   "register_page_email_holder": "Correo electrónico",
@@ -89,9 +92,23 @@
   "comments_modal_placeholder": "Escribe tu comentario aquí...",
   "comments_modal_add_button": "Agregar Comentario",
   "comments_modal_submitting": "Enviando...",
+  "comments_modal_too_long": "El comentario es demasiado largo. Máximo {0} caracteres permitidos.",
+  "comments_modal_user": "Usuario",
   "comments_modal_success": "✓ ¡Comentario agregado exitosamente!",
   "comments_modal_error": "Error al agregar comentario",
   "comments_modal_login_required": "Debes iniciar sesión para comentar",
-
-  "loading_dishes": "Cargando platos..."
+  "comments_modal_delete_title": "¿Estás seguro de que quieres eliminar este comentario?",
+  "comments_modal_delete_confirm": "Sí",
+  "comments_modal_delete_cancel": "No",
+  "comments_modal_delete_success": "Comentario eliminado",
+  "comments_modal_delete_error": "No se pudo eliminar el comentario",
+  "comments_modal_edit_title": "Editar comentario",
+  "comments_modal_edit_confirm": "Editar",
+  "comments_modal_edit_cancel": "Cancelar",
+  "comments_modal_edit_empty": "¡El comentario no puede estar vacío!",
+  "comments_modal_edit_too_long": "El comentario es demasiado largo. Máximo {0} caracteres.",
+  "comments_modal_edit_success": "Comentario actualizado",
+  "comments_modal_edit_error": "No se pudo actualizar el comentario",
+  "comments_modal_menu_edit": "Editar",
+  "comments_modal_menu_delete": "Eliminar"
 }
