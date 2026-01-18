@@ -767,3 +767,122 @@ curl -X 'PUT' \
 ```
 
 # Data Models
+
+<details>
+<summary>Auth</summary>
+
+```mermaid
+classDiagram
+    class LoginParams {
+        +String email
+        +String password
+    }
+    class LoginResponse {
+        +Integer userId
+        +String email
+        +String role
+        +String accessToken
+        +String refreshToken
+    }
+    class RefreshTokenParams {
+        +String refreshToken
+    }
+    class RegisterParams {
+        +String email
+        +String password
+        +String name
+        +Integer age
+        +String lang
+    }
+    
+```
+</details>
+
+<details>
+<summary>Category</summary>
+
+```mermaid
+classDiagram
+    class CategoryDTO {
+        +Integer id
+        +String name
+    }
+    class CategoryRequest {
+        +String name
+    }
+```
+</details>
+
+<details>
+<summary>Comment</summary>
+
+```mermaid
+classDiagram
+    class CommentDTO {
+        +String content
+        +Integer authorId
+        +Integer dishId
+    }
+```
+</details>
+
+<details>
+<summary>Dish</summary>
+
+```mermaid
+classDiagram
+    class DishCutDTO {
+        +Integer id
+        +String name
+        +Double rates
+        +Integer userId
+        +String ownerName
+        +Boolean isPublic
+        +List<CategoryDTO> categories
+        +Integer mainPictureId
+        +Integer secondaryPictureId
+        +Integer thirdPictureId
+    }
+    class DishDetails {
+        +Integer id
+        +String name
+        +String description
+        +Integer calories
+        +Integer protein
+        +Integer carbs
+        +Integer fat
+        +Boolean isPublic
+        +Double rates
+        +Integer ownerId
+        +List<IngredientDTO> ingredients
+    }
+    class DishDTO {
+        +String name
+        +String description
+        +Integer calories
+        +Integer protein
+        +Integer carbs
+        +Integer fat
+    }
+    class DishParams {
+        +String name
+        +String description
+        +Integer calories
+        +Integer protein
+        +Integer carbs
+        +Integer fat
+    }
+```
+</details>
+
+<details>
+<summary>Ingredient</summary>
+
+```mermaid
+classDiagram
+    class IngredientDTO {
+        +String name
+        +String description
+    }
+```
+</details>
