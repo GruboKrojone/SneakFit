@@ -774,25 +774,25 @@ curl -X 'PUT' \
 ```mermaid
 classDiagram
     class LoginParams {
-        +String email
-        +String password
+        String email
+        String password
     }
     class LoginResponse {
-        +Integer userId
-        +String email
-        +String role
-        +String accessToken
-        +String refreshToken
+        Integer userId
+        String email
+        String role
+        String accessToken
+        String refreshToken
     }
     class RefreshTokenParams {
-        +String refreshToken
+        String refreshToken
     }
     class RegisterParams {
-        +String email
-        +String password
-        +String name
-        +Integer age
-        +String lang
+        String email
+        String password
+        String name
+        Integer age
+        String lang
     }
     
 ```
@@ -804,11 +804,11 @@ classDiagram
 ```mermaid
 classDiagram
     class CategoryDTO {
-        +Integer id
-        +String name
+        Integer id
+        String name
     }
     class CategoryRequest {
-        +String name
+        String name
     }
 ```
 </details>
@@ -819,9 +819,9 @@ classDiagram
 ```mermaid
 classDiagram
     class CommentDTO {
-        +String content
-        +Integer authorId
-        +Integer dishId
+        String content
+        Integer authorId
+        Integer dishId
     }
 ```
 </details>
@@ -832,45 +832,45 @@ classDiagram
 ```mermaid
 classDiagram
     class DishCutDTO {
-        +Integer id
-        +String name
-        +Double rates
-        +Integer userId
-        +String ownerName
-        +Boolean isPublic
-        +List<CategoryDTO> categories
-        +Integer mainPictureId
-        +Integer secondaryPictureId
-        +Integer thirdPictureId
+        Integer id
+        String name
+        Double rates
+        Integer userId
+        String ownerName
+        Boolean isPublic
+        List<CategoryDTO> categories
+        Integer mainPictureId
+        Integer secondaryPictureId
+        Integer thirdPictureId
     }
     class DishDetails {
-        +Integer id
-        +String name
-        +String description
-        +Integer calories
-        +Integer protein
-        +Integer carbs
-        +Integer fat
-        +Boolean isPublic
-        +Double rates
-        +Integer ownerId
-        +List<IngredientDTO> ingredients
+        Integer id
+        String name
+        String description
+        Integer calories
+        Integer protein
+        Integer carbs
+        Integer fat
+        Boolean isPublic
+        Double rates
+        Integer ownerId
+        List<IngredientDTO> ingredients
     }
     class DishDTO {
-        +String name
-        +String description
-        +Integer calories
-        +Integer protein
-        +Integer carbs
-        +Integer fat
+        String name
+        String description
+        Integer calories
+        Integer protein
+        Integer carbs
+        Integer fat
     }
     class DishParams {
-        +String name
-        +String description
-        +Integer calories
-        +Integer protein
-        +Integer carbs
-        +Integer fat
+        String name
+        String description
+        Integer calories
+        Integer protein
+        Integer carbs
+        Integer fat
     }
 ```
 </details>
@@ -881,8 +881,8 @@ classDiagram
 ```mermaid
 classDiagram
     class IngredientDTO {
-        +String name
-        +String description
+        String name
+        String description
     }
 ```
 </details>
