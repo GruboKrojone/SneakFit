@@ -1,4 +1,4 @@
-# SneakFit API Documentation
+# SneakFit API Documentation v1.0.0
 
 ## 📋 Contents
 
@@ -72,6 +72,15 @@ The API uses standard HTTP status codes to indicate the success or failure of an
 | **401** | Unauthorized | Authentication failed or user does not have permissions. |
 | **404** | Not Found | The requested resource could not be found. |
 | **500** | Server Error | Something went wrong on the server side. |
+
+### Error Response Format
+```bash
+{
+  "StatusCode": <CODE>,
+  "Message": "<MESSAGE>",
+  "ErrorCode": <ERROR_CODE>
+}
+```
 
 ---
 
