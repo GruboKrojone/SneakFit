@@ -10,6 +10,8 @@
 - [Response Codes](#response-codes)
 - [Endpoints](#endpoints)
 - [Data Models](#data-models)
+- [Environment Setup](#environment-setup)
+
 ## Overview
 The **SneakFit API** is a RESTful service for recipe management, meal planning, and algorithmic food discovery.
 
@@ -895,3 +897,131 @@ classDiagram
     }
 ```
 </details>
+
+---
+
+# Environment setup
+
+## Repository Setup
+
+#### Clone the Repository
+```bash
+git clone https://github.com/GruboKrojone/SneakFit.git
+cd SneakFit
+```
+
+#### Switch to Development Branch
+```bash
+git checkout dev
+```
+
+#### Restore dependencies
+```bash
+dotnet restore
+```
+
+#### Build the project
+```bash
+dotnet build
+```
+
+#### Run the application
+```bash
+dotnet run --project API
+```
+
+---
+
+## ⚠️ Important Configuration
+
+> **Warning**
+> Before running the application, you must create your own local configuration file.
+
+### Create `appsettings.Local.json`
+
+1. Navigate to the `API` project folder
+2. Create a new file named `appsettings.Local.json`
+3. Add the following configuration:
+
+```json
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "ConnectionStrings": {
+    "SneakFitDbContext": "<YOUR_LOCAL_DB_CONNECTION_STRING>",
+  },
+  "App": {
+    "Azure": {
+      "ConnectionString": "<YOUR_AZURE_STORAGE_CONNECTION_STRING>",
+      "ContainerName": "<YOUR_AZURE_STORAGE_CONTAINER_NAME>"
+    },
+    "Authentication": {
+      "JwtKey": "<YOUR_SECRET_KEY>",
+      "JwtExpireHours": <YOUR_JWT_EXPIRATION_HOURS>,
+      "RefreshTokenExpireDays": <YOUR_REFRESH_TOKEN_EXPIRATION_DAYS>,
+      "JwtIssuer": "<YOUR_JWT_ISSUER>",
+      "InitPassword": "<YOUR_INITIAL_PASSWORD>"
+    },
+    "CORS": {
+      "AllowedOrigins": [ "<YOUR_ALLOWED_ORIGIN>" ]
+    }
+  }
+}
+
+```
+
+---
+
+## Docker Setup
+
+1. **Start the Services**
+
+```bash
+docker pull mcr.microsoft.com/mssql/server:2019-latest
+docker run -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=<YOUR_PASSWORD>' -p 1433:1433 -d --name sqlserver mcr.microsoft.com/mssql/server:2019-latest
+```
+
+Run docker container (if exists)
+
+```bash
+docker start sqlserver
+```
+
+Check running containers
+
+```bash
+docker ps
+```
+
+2. **Stoping Services**
+
+```bash
+docker stop sqlserver
+```
+
+### Creating new db migration
+
+- Ensure Entity Framework tools are installed 
+```bash
+dotnet tool install --global dotnet-ef
+```
+
+- Update Entity Framework tools
+```bash
+dotnet tool update --global dotnet-ef
+```
+
+- In project root catalog run migrations add command
+```bash
+dotnet ef migrations add [MIGRATION_NAME] -s API -p Domain  --context SneakFitDbContext
+```
+
+- Run database update command
+```bash
+dotnet ef database update -s API -p Domain  --context SneakFitDbContext
+```
