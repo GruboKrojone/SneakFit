@@ -29,8 +29,6 @@ button {
   width: 94dvw;
   display: flex;
   justify-content: center;
-  background: linear-gradient(180deg, #9f9f9f, #999999);
-  -webkit-text-fill-color: transparent;
   background-clip: text;
   text-align: center;
   margin-top: 1.5dvh;

@@ -29,6 +29,21 @@
   cursor: pointer;
 }
 
+.empty-placeholder-card {
+  background: #9c9c9c;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.empty-placeholder-card .dish-image {
+  background-color: #333333;
+}
+
+.empty-placeholder-card .action-button {
+  opacity: 0.3;
+  cursor: default;
+}
+
 .dish-image {
   width: 100%;
   height: 55%;
@@ -108,56 +123,6 @@
 .drag-loved {
   background: #2196f366;
   color: #000000;
-}
-@keyframes popIn {
-  0% {
-    opacity: 0;
-  }
-
-  35% {
-    opacity: 1;
-  }
-
-  75% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0;
-  }
-}
-
-@keyframes slideLeft {
-  0% {
-    transform: translateX(0) scale(1) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(-150%) scale(0.8) rotate(-15deg);
-    opacity: 0;
-  }
-}
-
-@keyframes slideRight {
-  0% {
-    transform: translateX(0) scale(1) rotate(0deg);
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(150%) scale(0.8) rotate(15deg);
-    opacity: 0;
-  }
-}
-
-@keyframes slideUp {
-  0% {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-150%) scale(0.9);
-    opacity: 0;
-  }
 }
 
 .dish-content {
@@ -346,6 +311,36 @@
     opacity: 1;
     transform: translateX(-50%) translateY(-50%) scale(1);
   }
+}
+
+@keyframes fadeInFromLeft {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 0.7;
+  }
+}
+
+@keyframes fadeInCard {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.fade-in-from-left {
+  animation: fadeInFromLeft 0.5s ease-out forwards;
+}
+
+.fade-in-card {
+  animation: fadeInCard 0.6s ease-out forwards;
 }
 
 .no-more-dishes h2 {
