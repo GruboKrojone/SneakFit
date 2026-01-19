@@ -97,6 +97,7 @@
   "comments_modal_success": "✓ Kommentar erfolgreich hinzugefügt!",
   "comments_modal_error": "Fehler beim Hinzufügen des Kommentars",
   "comments_modal_login_required": "Sie müssen angemeldet sein, um zu kommentieren",
+  "comments_modal_duplicate_error": "Sie haben diesen Kommentar bereits hinzugefügt",
   "comments_modal_delete_title": "Möchten Sie diesen Kommentar wirklich löschen?",
   "comments_modal_delete_confirm": "Ja",
   "comments_modal_delete_cancel": "Nein",

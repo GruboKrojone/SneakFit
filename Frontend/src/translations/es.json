@@ -97,6 +97,7 @@
   "comments_modal_success": "✓ ¡Comentario agregado exitosamente!",
   "comments_modal_error": "Error al agregar comentario",
   "comments_modal_login_required": "Debes iniciar sesión para comentar",
+  "comments_modal_duplicate_error": "Ya has agregado este comentario",
   "comments_modal_delete_title": "¿Estás seguro de que quieres eliminar este comentario?",
   "comments_modal_delete_confirm": "Sí",
   "comments_modal_delete_cancel": "No",

@@ -97,6 +97,7 @@
   "comments_modal_success": "✓ Komentarz dodany pomyślnie!",
   "comments_modal_error": "Błąd podczas dodawania komentarza",
   "comments_modal_login_required": "Musisz być zalogowany, aby komentować",
+  "comments_modal_duplicate_error": "Już dodałeś taki sam komentarz",
   "comments_modal_delete_title": "Czy na pewno chcesz usunąć ten komentarz?",
   "comments_modal_delete_confirm": "Tak",
   "comments_modal_delete_cancel": "Nie",

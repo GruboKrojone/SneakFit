@@ -72,6 +72,21 @@ export default function CommentsModal({
       return;
     }
 
+    const isDuplicate = localComments.some(
+      (comment) =>
+        comment.content.trim().toLowerCase() ===
+          newComment.trim().toLowerCase() &&
+        Number(comment.authorId) === Number(user.id),
+    );
+
+    if (isDuplicate) {
+      toast.error(t("comments_modal_duplicate_error"), {
+        position: "top-center",
+        autoClose: 3000,
+      });
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       await CommentsService.addComment(dishId, newComment.trim());
