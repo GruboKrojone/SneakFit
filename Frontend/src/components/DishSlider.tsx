@@ -319,6 +319,104 @@ export default function DishSlider() {
     }
   };
 
+  const renderActionButtons = (disabled: boolean = false) => (
+    <div className="dish-actions">
+      <button
+        className="action-button btn-pass"
+        title="Pass"
+        disabled={disabled}
+        {...(!disabled && {
+          onPointerDown: (e: React.PointerEvent) => {
+            e.stopPropagation();
+            handleAction("pass");
+          },
+        })}
+      >
+        <ThumbDown className="action-button-icon" />
+      </button>
+      <button
+        className="action-button btn-smash"
+        title="Loved"
+        disabled={disabled}
+        {...(!disabled && {
+          onPointerDown: (e: React.PointerEvent) => {
+            e.stopPropagation();
+            handleAction("loved");
+          },
+        })}
+      >
+        <Favorite className="action-button-icon" />
+      </button>
+      <button
+        className="action-button btn-loved"
+        title="Smash"
+        disabled={disabled}
+        {...(!disabled && {
+          onPointerDown: (e: React.PointerEvent) => {
+            e.stopPropagation();
+            handleAction("smash");
+          },
+        })}
+      >
+        <ThumbUp className="action-button-icon" />
+      </button>
+    </div>
+  );
+
+  const renderDishImage = (dish: { mainImageId?: number; name: string }) => (
+    <div className="dish-image">
+      {!dish.mainImageId || dish.mainImageId <= 1 ? (
+        <RestaurantMenu className="restaurant-menu-icon" />
+      ) : (
+        <img alt={dish.name} />
+      )}
+    </div>
+  );
+
+  const renderActionOverlay = (type: ActionType) => {
+    if (!type) return null;
+    return (
+      <div className="action-overlay">
+        <span className={getActionClassName(type)}>
+          {type === "pass" && "PASS"}
+          {type === "smash" && "SMASH"}
+          {type === "loved" && "LOVED"}
+        </span>
+      </div>
+    );
+  };
+
+  const renderDragOverlay = () => {
+    if (!isDragging) return null;
+
+    const absX = Math.abs(dragOffset.x);
+    const absY = Math.abs(dragOffset.y);
+
+    if (absX > absY) {
+      if (dragOffset.x < -50) {
+        return (
+          <div className="drag-overlay">
+            <span className="drag-hint drag-pass">PASS</span>
+          </div>
+        );
+      }
+      if (dragOffset.x > 50) {
+        return (
+          <div className="drag-overlay">
+            <span className="drag-hint drag-smash">SMASH</span>
+          </div>
+        );
+      }
+    } else if (dragOffset.y < -50) {
+      return (
+        <div className="drag-overlay">
+          <span className="drag-hint drag-loved">LOVED</span>
+        </div>
+      );
+    }
+    return null;
+  };
+
   const getAddRecipeCard = (stackPosition: number) => {
     const cardKey = "add-recipe-card";
     const handlePointerDown =
@@ -376,13 +474,7 @@ export default function DishSlider() {
             ) as React.CSSProperties
           }
         >
-          <div className="dish-image">
-            {!dish.mainImageId || dish.mainImageId <= 1 ? (
-              <RestaurantMenu className="restaurant-menu-icon" />
-            ) : (
-              <img alt={dish.name} />
-            )}
-          </div>
+          {renderDishImage(dish)}
           <div className="dish-info">
             <div className="dish-header">
               <h2 className="dish-name">{dish.name}</h2>
@@ -397,17 +489,7 @@ export default function DishSlider() {
                 </span>
               ))}
             </div>
-            <div className="dish-actions">
-              <button className="action-button btn-pass" disabled>
-                <ThumbDown className="action-button-icon" />
-              </button>
-              <button className="action-button btn-smash" disabled>
-                <Favorite className="action-button-icon" />
-              </button>
-              <button className="action-button btn-loved" disabled>
-                <ThumbUp className="action-button-icon" />
-              </button>
-            </div>
+            {renderActionButtons(true)}
           </div>
         </div>,
       );
@@ -426,21 +508,10 @@ export default function DishSlider() {
         >
           <div className="dish-image"></div>
           <div className="dish-info">
-            <div className="dish-header">
-            </div>
+            <div className="dish-header"></div>
             <p className="dish-description"></p>
             <div className="dish-categories"></div>
-            <div className="dish-actions">
-              <button className="action-button btn-pass" disabled>
-                <ThumbDown className="action-button-icon" />
-              </button>
-              <button className="action-button btn-smash" disabled>
-                <Favorite className="action-button-icon" />
-              </button>
-              <button className="action-button btn-loved" disabled>
-                <ThumbUp className="action-button-icon" />
-              </button>
-            </div>
+            {renderActionButtons(true)}
           </div>
         </div>,
       );
@@ -481,50 +552,11 @@ export default function DishSlider() {
               }
             }}
           >
-            <div className="dish-image">
-              {!dish.mainImageId || dish.mainImageId <= 1 ? (
-                <RestaurantMenu className="restaurant-menu-icon" />
-              ) : (
-                <img alt={dish.name} />
-              )}
-              {originalIndex === animatingIndex && animationType && (
-                <div className="action-overlay">
-                  <span className={getActionClassName(animationType)}>
-                    {animationType === "pass" && "PASS"}
-                    {animationType === "smash" && "SMASH"}
-                    {animationType === "loved" && "LOVED"}
-                  </span>
-                </div>
-              )}
-              {isTopCard &&
-                isDragging &&
-                (() => {
-                  const absX = Math.abs(dragOffset.x);
-                  const absY = Math.abs(dragOffset.y);
-
-                  if (absX > absY) {
-                    if (dragOffset.x < -50)
-                      return (
-                        <div className="drag-overlay">
-                          <span className="drag-hint drag-pass">PASS</span>
-                        </div>
-                      );
-                    if (dragOffset.x > 50)
-                      return (
-                        <div className="drag-overlay">
-                          <span className="drag-hint drag-smash">SMASH</span>
-                        </div>
-                      );
-                  } else if (dragOffset.y < -50) {
-                    return (
-                      <div className="drag-overlay">
-                        <span className="drag-hint drag-loved">LOVED</span>
-                      </div>
-                    );
-                  }
-                  return null;
-                })()}
-            </div>
+            {renderDishImage(dish)}
+            {originalIndex === animatingIndex &&
+              animationType &&
+              renderActionOverlay(animationType)}
+            {isTopCard && renderDragOverlay()}
             <div className="dish-info">
               <div className="dish-header">
                 <h2 className="dish-name">{dish.name}</h2>
@@ -539,38 +571,7 @@ export default function DishSlider() {
                   </span>
                 ))}
               </div>
-              <div className="dish-actions">
-                <button
-                  className="action-button btn-pass"
-                  title="Pass"
-                  onPointerDown={(e) => {
-                    e.stopPropagation();
-                    handleAction("pass");
-                  }}
-                >
-                  <ThumbDown className="action-button-icon" />
-                </button>
-                <button
-                  className="action-button btn-smash"
-                  title="Loved"
-                  onPointerDown={(e) => {
-                    e.stopPropagation();
-                    handleAction("loved");
-                  }}
-                >
-                  <Favorite className="action-button-icon" />
-                </button>
-                <button
-                  className="action-button btn-loved"
-                  title="Smash"
-                  onPointerDown={(e) => {
-                    e.stopPropagation();
-                    handleAction("smash");
-                  }}
-                >
-                  <ThumbUp className="action-button-icon" />
-                </button>
-              </div>
+              {renderActionButtons(false)}
             </div>
           </div>
         );
@@ -589,8 +590,7 @@ export default function DishSlider() {
         >
           <div className="dish-image"></div>
           <div className="dish-info">
-            <div className="dish-header">
-            </div>
+            <div className="dish-header"></div>
             <p className="dish-description"></p>
             <div className="dish-categories"></div>
             <div className="dish-actions">
