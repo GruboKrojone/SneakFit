@@ -96,6 +96,28 @@ class AuthService {
     const token = this.getToken();
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
+
+  static getCurrentUser(): { id: number; email: string; name: string } | null {
+    const token = this.getToken();
+    if (!token) return null;
+
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+
+      const nameIdentifierClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
+      const emailClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
+      const nameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+      
+      return {
+        id: Number.parseInt(payload[nameIdentifierClaim] || payload.sub || payload.id || payload.userId),
+        email: payload[emailClaim] || payload.email || '',
+        name: payload[nameClaim] || payload.name || payload.unique_name || ''
+      };
+    } catch (error) {
+      console.error('Failed to decode token:', error);
+      return null;
+    }
+  }
 }
 
 export default AuthService;

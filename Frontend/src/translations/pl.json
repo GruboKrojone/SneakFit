@@ -2,6 +2,9 @@
   "no_categories": "Brak kategorii",
   "empty_description": "Brak dostępnego opisu",
   "dish_details": "Szczegóły dania",
+  "loading_dishes": "Ładowanie przepisów...",
+  "no_more_dishes": "Brak przepisów.",
+  "add_own_dish": "Dodaj własny przepis.",
 
   "register_page_title": "Rejestracja",
   "register_page_email_holder": "Adres e-mail",
@@ -17,10 +20,6 @@
   "login_page_login_button": "Zaloguj się",
   "login_page_forgot_password": "Zapomniałeś hasła?",
 
-  "loading_dishes": "Ładowanie przepisów...",
-  "no_more_dishes": "Brak przepisów.",
-  "add_own_dish": "Dodaj własny przepis.",
-
   "home_page_welcome_message": "Co dziś ugotujemy?",
 
   "dishes_page_loading": "Ładowanie przepisów...",
@@ -31,6 +30,11 @@
   "dish_details_page_back_button": "Nie dziś",
   "dish_details_page_start_button": "Zaczynamy",
   "dish_details_page_comments": "Komentarze",
+  "dish_details_page_comments_button": "Komentarze",
+  "dish_details_page_no_comments": "Brak komentarzy. Bądź pierwszy!",
+  "dish_details_page_add_comment_placeholder": "Napisz komentarz...",
+  "dish_details_page_add_comment": "Dodaj komentarz",
+  "dish_details_page_submitting": "Wysyłanie...",
   "dish_details_page_serving_size": "Wielkość porcji",
   "dish_details_page_no_dish_found": "Nie znaleziono dania",
 
@@ -80,5 +84,32 @@
   "create_dish_modal_submit_button": "Dodaj",
   "create_dish_modal_close_button": "Zamknij",
   "create_dish_modal_success": "✓ Danie dodane pomyślnie!",
-  "create_dish_modal_error": "Błąd przy dodawaniu dania"
+  "create_dish_modal_error": "Błąd przy dodawaniu dania",
+
+  "comments_modal_title": "Komentarze",
+  "comments_modal_close": "Zamknij",
+  "comments_modal_no_comments": "Brak komentarzy. Bądź pierwszy!",
+  "comments_modal_placeholder": "Napisz swój komentarz tutaj...",
+  "comments_modal_add_button": "Dodaj komentarz",
+  "comments_modal_submitting": "Wysyłanie...",
+  "comments_modal_too_long": "Komentarz jest za długi. Maksimum {0} znaków.",
+  "comments_modal_user": "Użytkownik",
+  "comments_modal_success": "✓ Komentarz dodany pomyślnie!",
+  "comments_modal_error": "Błąd podczas dodawania komentarza",
+  "comments_modal_login_required": "Musisz być zalogowany, aby komentować",
+  "comments_modal_duplicate_error": "Już dodałeś taki sam komentarz",
+  "comments_modal_delete_title": "Czy na pewno chcesz usunąć ten komentarz?",
+  "comments_modal_delete_confirm": "Tak",
+  "comments_modal_delete_cancel": "Nie",
+  "comments_modal_delete_success": "Komentarz usunięty",
+  "comments_modal_delete_error": "Nie udało się usunąć komentarza",
+  "comments_modal_edit_title": "Edytuj komentarz",
+  "comments_modal_edit_confirm": "Edytuj",
+  "comments_modal_edit_cancel": "Anuluj",
+  "comments_modal_edit_empty": "Komentarz nie może być pusty!",
+  "comments_modal_edit_too_long": "Komentarz jest za długi. Maksimum {0} znaków.",
+  "comments_modal_edit_success": "Komentarz zaktualizowany",
+  "comments_modal_edit_error": "Nie udało się zaktualizować komentarza",
+  "comments_modal_menu_edit": "Edytuj",
+  "comments_modal_menu_delete": "Usuń"
 }
