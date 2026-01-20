@@ -33,5 +33,20 @@ internal sealed class UserConfiguration : EntityBaseConfiguration<User>
 
         builder.HasIndex(x => x.Email)
             .IsUnique();
+
+        builder.HasMany(u => u.FavoriteDishes)
+        .WithMany(d => d.FavoritedByUsers)
+        .UsingEntity<Favorited>(
+            j => j.HasOne(f => f.Dish)
+                .WithMany()
+                .HasForeignKey(f => f.DishId),
+            j => j.HasOne(f => f.User)
+                .WithMany()
+                .HasForeignKey(f => f.UserId),
+            j =>
+            {
+                j.ToTable("Favorited");
+                j.HasKey(f => new { f.UserId, f.DishId });
+            });
     }
 }

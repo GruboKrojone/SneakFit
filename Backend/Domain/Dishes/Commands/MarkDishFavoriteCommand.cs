@@ -3,22 +3,24 @@ using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
 using Domain.Dishes.Repositories;
+using Domain.Users.Entities;
 using Domain.Users.Repositories;
 using MediatR;
 using Serilog;
 
 namespace Domain.Dishes.Commands;
 
-public record MarkDishFavouriteCommand(int Id) : ICommand<Unit>;
+public record MarkDishFavoriteCommand(int Id) : ICommand<Unit>;
 
-internal sealed class MarkDishAsFavouriteCommandHandler(
+internal sealed class MarkDishAsFavoriteCommandHandler(
     IDishRepository dishRepository,
     IUserRepository userRepository,
+    IFavoritedRepository favoritedRepository,
     IUserContext userContext,
     IUnitOfWork unitOfWork,
-    ILogger logger) : ICommandHandler<MarkDishFavouriteCommand, Unit>
+    ILogger logger) : ICommandHandler<MarkDishFavoriteCommand, Unit>
 {
-    public async Task<Unit> Handle(MarkDishFavouriteCommand command, CancellationToken cancellationToken)
+    public async Task<Unit> Handle(MarkDishFavoriteCommand command, CancellationToken cancellationToken)
     {
         var userId = userContext.UserId
             ?? throw new DomainException("User is not authenticated", (int)CommonErrorCode.Unauthorized);
@@ -35,10 +37,12 @@ internal sealed class MarkDishAsFavouriteCommandHandler(
             return Unit.Value;
         }
 
-        user.FavoriteDishes.Add(dish);
+        var favoriteDish = new Favorited(userId, dish.Id);
+
+        favoritedRepository.Add(favoriteDish);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        logger.Information("Successfully saved changes. Dish {DishId} marked as favourite for user {UserId}", command.Id, user.Id);
+        logger.Information("Successfully saved changes. Dish {DishId} marked as favorite for user {UserId}", command.Id, user.Id);
         logger.Information("New count: {Count} for userId: {UserId}", user.FavoriteDishes.Count, user.Id);
 
         return Unit.Value;
