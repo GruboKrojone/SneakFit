@@ -92,7 +92,7 @@
   "delete_dish_modal_cancel": "Anuluj",
   "delete_dish_modal_delete": "Usuń",
   "delete_dish_success": "Przepis został usunięty!",
-  "delete_dish_error": "Błąd podczas usuwania przepisu"
+  "delete_dish_error": "Błąd podczas usuwania przepisu",
   "comments_modal_title": "Komentarze",
   "comments_modal_close": "Zamknij",
   "comments_modal_no_comments": "Brak komentarzy. Bądź pierwszy!",

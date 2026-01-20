@@ -13,7 +13,6 @@ import MacroCircle from "../components/MacroCircle";
 import DeleteDishModal from "../components/DeleteDishModal";
 import { toast } from "react-toastify";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
-import MacroCircle from "../components/MacroCircle";
 import CommentsModal from "../components/CommentsModal";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
@@ -101,6 +100,8 @@ export default function DishDetails() {
       console.error("Error deleting dish:", error);
       toast.error(t("delete_dish_error"));
     }
+  };
+
   const handleCommentAdded = (comment: Comment) => {
     setComments((prevComments) => [...prevComments, comment]);
   };

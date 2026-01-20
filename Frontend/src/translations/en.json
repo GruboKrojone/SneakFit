@@ -21,8 +21,6 @@
   "login_page_forgot_password": "Forgot password?",
 
   "home_page_welcome_message": "What would you like to eat today?",
-  "no_more_dishes": "No more dishes available.",
-  "add_own_dish": "Add your own recipe.",
 
   "dishes_page_loading": "Loading dishes...",
   "dishes_page_title": "Recipes",
@@ -95,8 +93,6 @@
   "delete_dish_modal_delete": "Delete",
   "delete_dish_success": "Recipe deleted successfully!",
   "delete_dish_error": "Error deleting recipe",
-
-  "loading_dishes": "Loading dishes..."
 
   "comments_modal_title": "Comments",
   "comments_modal_close": "Close",

@@ -94,7 +94,6 @@
   "delete_dish_success": "Rezept erfolgreich gelöscht!",
   "delete_dish_error": "Fehler beim Löschen des Rezepts",
 
-  "loading_dishes": "Gerichte werden geladen..."
   "comments_modal_title": "Kommentare",
   "comments_modal_close": "Schließen",
   "comments_modal_no_comments": "Noch keine Kommentare. Sei der Erste!",
