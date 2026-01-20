@@ -67,7 +67,7 @@ namespace Domain.Migrations
 
                     b.HasIndex("FavoritedByUsersId");
 
-                    b.ToTable("UserFavouriteDishes", (string)null);
+                    b.ToTable("UserFavoriteDishes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Authentication.Entities.RefreshToken", b =>

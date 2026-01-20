@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import DishesService, { Dish } from "../services/DishesService";
+import CommentsService, { Comment } from "../services/CommentsService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import Undo from "@mui/icons-material/Undo";
 import PlayCircle from "@mui/icons-material/PlayCircle";
@@ -11,6 +12,9 @@ import Delete from "@mui/icons-material/Delete";
 import MacroCircle from "../components/MacroCircle";
 import DeleteDishModal from "../components/DeleteDishModal";
 import { toast } from "react-toastify";
+import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
+import MacroCircle from "../components/MacroCircle";
+import CommentsModal from "../components/CommentsModal";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
 
@@ -23,6 +27,8 @@ export default function DishDetails() {
   const [servings, setServings] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [comments, setComments] = useState<Comment[]>([]);
+  const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const hasFetched = useRef<number | null>(null);
   const totalImages = 5;
   const emptyCategories = t("no_categories");
@@ -73,6 +79,11 @@ export default function DishDetails() {
       setIsLoading(true);
       const data = await DishesService.getDishById(dishId);
       setDish(data);
+
+      // Load comments
+      const commentsData = await CommentsService.getCommentsByDishId(dishId);
+      setComments(commentsData);
+
       setIsLoading(false);
     };
     load();
@@ -90,6 +101,8 @@ export default function DishDetails() {
       console.error("Error deleting dish:", error);
       toast.error(t("delete_dish_error"));
     }
+  const handleCommentAdded = (comment: Comment) => {
+    setComments((prevComments) => [...prevComments, comment]);
   };
 
   if (isLoading)
@@ -286,9 +299,14 @@ export default function DishDetails() {
                   maxValue={100}
                 />
               </div>
-              <div className="comments-box">
-                {t("dish_details_page_comments")}
-              </div>
+              <button
+                className="comments-button"
+                onClick={() => setIsCommentsModalOpen(true)}
+              >
+                <ChatBubbleOutline className="comments-button-icon" />
+                <span>{t("dish_details_page_comments_button")}</span>
+                <span className="comments-count">({comments.length})</span>
+              </button>
             </div>
           </div>
         </div>
@@ -312,6 +330,16 @@ export default function DishDetails() {
         onClose={() => setIsDeleteModalOpen(false)}
         onConfirm={handleDeleteDish}
       />
+      {dish && (
+        <CommentsModal
+          isOpen={isCommentsModalOpen}
+          onClose={() => setIsCommentsModalOpen(false)}
+          dishId={dish.id}
+          dishName={dish.name}
+          comments={comments}
+          onCommentAdded={handleCommentAdded}
+        />
+      )}
     </div>
   );
 }

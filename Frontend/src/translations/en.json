@@ -2,6 +2,9 @@
   "no_categories": "No categories",
   "empty_description": "No description available",
   "dish_details": "Dish Details",
+  "loading_dishes": "Loading dishes...",
+  "no_more_dishes": "No more dishes available.",
+  "add_own_dish": "Add your own recipe.",
 
   "register_page_title": "Register",
   "register_page_email_holder": "Email",
@@ -29,6 +32,11 @@
   "dish_details_page_back_button": "Not today",
   "dish_details_page_start_button": "Let's start",
   "dish_details_page_comments": "Comments",
+  "dish_details_page_comments_button": "Comments",
+  "dish_details_page_no_comments": "No comments yet. Be the first to comment!",
+  "dish_details_page_add_comment_placeholder": "Write a comment...",
+  "dish_details_page_add_comment": "Add Comment",
+  "dish_details_page_submitting": "Submitting...",
   "dish_details_page_serving_size": "Serving Size",
   "dish_details_page_no_dish_found": "No dish found",
 
@@ -90,4 +98,30 @@
 
   "loading_dishes": "Loading dishes..."
 
+  "comments_modal_title": "Comments",
+  "comments_modal_close": "Close",
+  "comments_modal_no_comments": "No comments yet. Be the first to comment!",
+  "comments_modal_placeholder": "Write your comment here...",
+  "comments_modal_add_button": "Add Comment",
+  "comments_modal_submitting": "Submitting...",
+  "comments_modal_too_long": "Comment is too long. Maximum {0} characters allowed.",
+  "comments_modal_user": "User",
+  "comments_modal_success": "✓ Comment added successfully!",
+  "comments_modal_error": "Error adding comment",
+  "comments_modal_login_required": "You must be logged in to comment",
+  "comments_modal_duplicate_error": "You have already added this comment",
+  "comments_modal_delete_title": "Are you sure you want to delete this comment?",
+  "comments_modal_delete_confirm": "Yes",
+  "comments_modal_delete_cancel": "No",
+  "comments_modal_delete_success": "Comment deleted",
+  "comments_modal_delete_error": "Failed to delete comment",
+  "comments_modal_edit_title": "Edit comment",
+  "comments_modal_edit_confirm": "Edit",
+  "comments_modal_edit_cancel": "Cancel",
+  "comments_modal_edit_empty": "Comment cannot be empty!",
+  "comments_modal_edit_too_long": "Comment is too long. Maximum {0} characters.",
+  "comments_modal_edit_success": "Comment updated",
+  "comments_modal_edit_error": "Failed to update comment",
+  "comments_modal_menu_edit": "Edit",
+  "comments_modal_menu_delete": "Delete"
 }

@@ -12,15 +12,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(SneakFitDbContext))]
-    [Migration("20251209213643_VerifyNoChanges")]
-    partial class VerifyNoChanges
+    [Migration("20260116154205_Favorited")]
+    partial class Favorited
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.11")
+                .HasAnnotation("ProductVersion", "9.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -53,21 +53,6 @@ namespace Domain.Migrations
                     b.HasIndex("IngredientId");
 
                     b.ToTable("DishIngredients", (string)null);
-                });
-
-            modelBuilder.Entity("DishUser", b =>
-                {
-                    b.Property<int>("FavoriteDishesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("FavoritedByUsersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("FavoriteDishesId", "FavoritedByUsersId");
-
-                    b.HasIndex("FavoritedByUsersId");
-
-                    b.ToTable("UserFavoriteDishes", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Authentication.Entities.RefreshToken", b =>
@@ -125,7 +110,7 @@ namespace Domain.Migrations
                     b.ToTable("RefreshTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Dishes.Entities.Category", b =>
+            modelBuilder.Entity("Domain.Categories.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -157,6 +142,47 @@ namespace Domain.Migrations
                         .IsUnique();
 
                     b.ToTable("Categories", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Comments.Entities.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DishId")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("DishId");
+
+                    b.ToTable("Comments", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Dishes.Entities.Dish", b =>
@@ -262,6 +288,36 @@ namespace Domain.Migrations
                     b.ToTable("Ingredients", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Users.Entities.Favorited", b =>
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DishId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("UserId", "DishId");
+
+                    b.HasIndex("DishId");
+
+                    b.ToTable("Favorited", (string)null);
+                });
+
             modelBuilder.Entity("Domain.Users.Entities.User", b =>
                 {
                     b.Property<int>("Id")
@@ -317,7 +373,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("DishCategory", b =>
                 {
-                    b.HasOne("Domain.Dishes.Entities.Category", null)
+                    b.HasOne("Domain.Categories.Entities.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -345,19 +401,23 @@ namespace Domain.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DishUser", b =>
+            modelBuilder.Entity("Domain.Comments.Entities.Comment", b =>
                 {
-                    b.HasOne("Domain.Dishes.Entities.Dish", null)
-                        .WithMany()
-                        .HasForeignKey("FavoriteDishesId")
+                    b.HasOne("Domain.Users.Entities.User", "Author")
+                        .WithMany("Comments")
+                        .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Users.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("FavoritedByUsersId")
+                    b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
+                        .WithMany("Comments")
+                        .HasForeignKey("DishId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Dish");
                 });
 
             modelBuilder.Entity("Domain.Dishes.Entities.Dish", b =>
@@ -369,6 +429,35 @@ namespace Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
+                });
+
+            modelBuilder.Entity("Domain.Users.Entities.Favorited", b =>
+                {
+                    b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
+                        .WithMany()
+                        .HasForeignKey("DishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Users.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dish");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Dishes.Entities.Dish", b =>
+                {
+                    b.Navigation("Comments");
+                });
+
+            modelBuilder.Entity("Domain.Users.Entities.User", b =>
+                {
+                    b.Navigation("Comments");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,5 +1,4 @@
 ﻿using Core.Database;
-using Domain.Categories.Entities;
 using Domain.Dishes.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -38,24 +37,10 @@ internal sealed class DishConfiguration : EntityBaseConfiguration<Dish>
             .OnDelete(DeleteBehavior.Restrict);
 
         builder.HasMany(x => x.Categories)
-            .WithMany(x => x.Dishes)
-            .UsingEntity(
-                "DishCategory",
-                l => l.HasOne(typeof(Category)).WithMany().HasForeignKey("CategoryId"),
-                r => r.HasOne(typeof(Dish)).WithMany().HasForeignKey("DishId"),
-                j => j.ToTable("DishCategories"));
+            .WithMany(x => x.Dishes);
 
         builder.HasMany(x => x.Ingredients)
-            .WithMany(x => x.Dishes)
-            .UsingEntity(
-                "DishIngredient",
-                l => l.HasOne(typeof(Ingredient)).WithMany().HasForeignKey("IngredientId"),
-                r => r.HasOne(typeof(Dish)).WithMany().HasForeignKey("DishId"),
-                j => j.ToTable("DishIngredients"));
-
-        builder.HasMany(x => x.FavoritedByUsers)
-            .WithMany(x => x.FavoriteDishes)
-            .UsingEntity(j => j.ToTable("UserFavouriteDishes"));
+              .WithMany(x => x.Dishes);
 
         builder.HasIndex(x => x.IsPublic);
         builder.HasIndex(x => new { x.IsPublic, x.IsDeleted });

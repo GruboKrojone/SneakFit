@@ -169,7 +169,7 @@ namespace Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserFavouriteDishes",
+                name: "UserFavoriteDishes",
                 columns: table => new
                 {
                     FavoriteDishesId = table.Column<int>(type: "int", nullable: false),
@@ -177,15 +177,15 @@ namespace Domain.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserFavouriteDishes", x => new { x.FavoriteDishesId, x.FavoritedByUsersId });
+                    table.PrimaryKey("PK_UserFavoriteDishes", x => new { x.FavoriteDishesId, x.FavoritedByUsersId });
                     table.ForeignKey(
-                        name: "FK_UserFavouriteDishes_Dishes_FavoriteDishesId",
+                        name: "FK_UserFavoriteDishes_Dishes_FavoriteDishesId",
                         column: x => x.FavoriteDishesId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserFavouriteDishes_Users_FavoritedByUsersId",
+                        name: "FK_UserFavoriteDishes_Users_FavoritedByUsersId",
                         column: x => x.FavoritedByUsersId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -245,8 +245,8 @@ namespace Domain.Migrations
                 columns: new[] { "UserId", "IsRevoked", "ExpiresAt" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFavouriteDishes_FavoritedByUsersId",
-                table: "UserFavouriteDishes",
+                name: "IX_UserFavoriteDishes_FavoritedByUsersId",
+                table: "UserFavoriteDishes",
                 column: "FavoritedByUsersId");
 
             migrationBuilder.CreateIndex(
@@ -269,7 +269,7 @@ namespace Domain.Migrations
                 name: "RefreshTokens");
 
             migrationBuilder.DropTable(
-                name: "UserFavouriteDishes");
+                name: "UserFavoriteDishes");
 
             migrationBuilder.DropTable(
                 name: "Categories");
