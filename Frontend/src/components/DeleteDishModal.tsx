@@ -24,11 +24,18 @@ export default function DeleteDishModal({
     if (isOpen) {
       setIsVisible(true);
       // Trigger animation after render
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
+      let rafId2: number;
+
+      const rafId1 = requestAnimationFrame(() => {
+        rafId2 = requestAnimationFrame(() => {
           setShouldShow(true);
         });
       });
+
+      return () => {
+        if (rafId1) cancelAnimationFrame(rafId1);
+        if (rafId2) cancelAnimationFrame(rafId2);
+      };
     } else {
       setShouldShow(false);
       const timer = setTimeout(() => {
@@ -38,6 +45,19 @@ export default function DeleteDishModal({
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isVisible) {
+        onClose();
+      }
+    };
+
+    if (isVisible) {
+      document.addEventListener("keydown", handleEscape);
+      return () => document.removeEventListener("keydown", handleEscape);
+    }
+  }, [isVisible, onClose]);
 
   const handleConfirm = () => {
     if (isChecked) {
@@ -54,13 +74,11 @@ export default function DeleteDishModal({
   if (!isVisible) return null;
 
   return (
-    <div
-      className={`delete-modal-overlay ${shouldShow ? "show" : ""}`}
-      onClick={handleClose}
-    >
-      <div
+    <div className={`delete-modal-overlay ${shouldShow ? "show" : ""}`}>
+      <dialog
         className={`delete-modal-content ${shouldShow ? "show" : ""}`}
-        onClick={(e) => e.stopPropagation()}
+        aria-labelledby="delete-modal-title"
+        open
       >
         <button
           className="delete-modal-close-button"
@@ -70,7 +88,9 @@ export default function DeleteDishModal({
           <Close className="delete-modal-close-icon" />
         </button>
 
-        <h2 className="delete-modal-title">{t("delete_dish_modal_title")}</h2>
+        <h2 id="delete-modal-title" className="delete-modal-title">
+          {t("delete_dish_modal_title")}
+        </h2>
 
         <div className="delete-modal-checkbox-container">
           <label className="delete-modal-checkbox-label">
@@ -89,7 +109,7 @@ export default function DeleteDishModal({
         <div className="delete-modal-buttons">
           <button
             className={`delete-modal-button delete-modal-button-delete ${
-              !isChecked ? "disabled" : ""
+              isChecked ? "" : "disabled"
             }`}
             onClick={handleConfirm}
             disabled={!isChecked}
@@ -103,7 +123,7 @@ export default function DeleteDishModal({
             {t("delete_dish_modal_cancel")}
           </button>
         </div>
-      </div>
+      </dialog>
     </div>
   );
 }
