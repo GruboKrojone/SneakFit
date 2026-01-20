@@ -17,13 +17,17 @@ export default function DishSlider() {
   const { t } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const { dishes, isLoading, refetchDishes } = useFetchDishes();
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [lastAction, setLastAction] = useState<ActionType>(null);
-  const [actionCardIndex, setActionCardIndex] = useState<number | null>(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [usedIndices, setUsedIndices] = useState<Set<number>>(new Set());
+  const [passedCards, setPassedCards] = useState<number[]>([]);
+  const [newlyPassedCard, setNewlyPassedCard] = useState<number | null>(null);
+  const [enteringCard, setEnteringCard] = useState<number | null>(null);
+  const [shouldStartEntering, setShouldStartEntering] = useState(false);
+  const [showAddRecipeCard, setShowAddRecipeCard] = useState(false);
+  const [animatingIndex, setAnimatingIndex] = useState<number | null>(null);
+  const [animationType, setAnimationType] = useState<ActionType>(null);
   const [isAnimating, setIsAnimating] = useState(false);
   const [dragStart, setDragStart] = useState<{ x: number; y: number } | null>(
-    null
+    null,
   );
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -32,68 +36,76 @@ export default function DishSlider() {
   const navigate = useNavigate();
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  const visibleCards = dishes
+    .map((dish, index) => ({ dish, originalIndex: index }))
+    .filter(({ originalIndex }) => !usedIndices.has(originalIndex));
+
+  useEffect(() => {
+    if (visibleCards.length === 0 && !showAddRecipeCard) {
+      setShowAddRecipeCard(true);
+    }
+  }, [visibleCards.length, showAddRecipeCard]);
+
   useEffect(() => {
     const handleResize = () => setDimensions({ width: window.innerWidth });
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const handleActionTransitionEnd = (cardIndex: number) => () => {
-    if (cardIndex === actionCardIndex && lastAction) {
-      setLastAction(null);
+  useEffect(() => {
+    if (shouldStartEntering && enteringCard !== null) {
+      requestAnimationFrame(() => {
+        setEnteringCard(null);
+        setNewlyPassedCard(enteringCard);
+        setShouldStartEntering(false);
+      });
+    }
+  }, [shouldStartEntering, enteringCard]);
+
+  useEffect(() => {
+    if (newlyPassedCard !== null && !isAnimating) {
+      const timer = requestAnimationFrame(() => {
+        setTimeout(() => setNewlyPassedCard(null), 300);
+      });
+      return () => cancelAnimationFrame(timer);
+    }
+  }, [newlyPassedCard, isAnimating]);
+
+  const handleTransitionEnd = () => {
+    if (isAnimating && animatingIndex !== null) {
+      setUsedIndices((prev) => new Set(prev).add(animatingIndex));
+      if (animationType === "pass") {
+        setPassedCards((prev) => [...prev, animatingIndex]);
+        setEnteringCard(animatingIndex);
+        setShouldStartEntering(true);
+      }
+      setAnimatingIndex(null);
+      setAnimationType(null);
       setIsAnimating(false);
       setDragOffset({ x: 0, y: 0 });
-      setIsTransitioning(true);
-    }
-  };
-
-  const handleTransitionEnd = (cardIndex: number) => () => {
-    if (cardIndex === actionCardIndex && isTransitioning) {
-      setCurrentIndex(currentIndex + 1);
-
-      setTimeout(() => {
-        setLastAction(null);
-        setIsAnimating(false);
-        setIsTransitioning(false);
-        setActionCardIndex(null);
-        setDragOffset({ x: 0, y: 0 });
-      }, 30);
     }
   };
 
   const handleAction = (
     action: Exclude<ActionType, null>,
-    fromDrag: boolean = false
+    fromDrag: boolean = false,
   ) => {
-    if (
-      lastAction ||
-      isAnimating ||
-      isTransitioning ||
-      actionCardIndex !== null
-    ) {
-      return;
-    }
+    if (isAnimating || visibleCards.length === 0) return;
 
-    setActionCardIndex(currentIndex);
+    const cardIndex = visibleCards[0].originalIndex;
+    setAnimatingIndex(cardIndex);
+    setAnimationType(action);
     if (!fromDrag) {
       setDragOffset({ x: 0, y: 0 });
     }
-    setIsAnimating(false);
-    requestAnimationFrame(() => {
-      setIsAnimating(true);
-      requestAnimationFrame(() => {
-        setLastAction(action);
-      });
-    });
+    setIsAnimating(true);
   };
 
-  const handleDragStart = (e: React.PointerEvent, index: number) => {
+  const handleDragStart = (e: React.PointerEvent, cardIndex: number) => {
     if (
-      index !== currentIndex ||
-      lastAction ||
-      isTransitioning ||
       isAnimating ||
-      actionCardIndex !== null
+      visibleCards.length === 0 ||
+      visibleCards[0].originalIndex !== cardIndex
     )
       return;
     setIsDragging(true);
@@ -141,95 +153,76 @@ export default function DishSlider() {
     if (!actionTriggered && Math.abs(deltaX) < 5 && Math.abs(deltaY) < 5) {
       const target = e.target as HTMLElement;
       const isButton = target.closest("button") !== null;
-      if (!isButton) {
-        navigate("/" + locale + "/dish/" + dishes[currentIndex]?.id);
+      if (!isButton && visibleCards.length > 0) {
+        navigate("/" + locale + "/dish/" + visibleCards[0].dish.id);
       }
     }
   };
 
-  const getActionCardStyle = (action: ActionType) => {
-    let finalTransform = "";
-    if (action === "pass") {
-      finalTransform = "translateX(-200%) scale(0.8) rotate(-15deg)";
+  const getMainCardExitStyle = (action: ActionType) => {
+    if (action === "loved") {
+      return {
+        transform: "translateY(-200vh) scale(0.9) rotate(0deg)",
+        opacity: 0,
+        zIndex: 100,
+        transition:
+          "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-out",
+      };
     } else if (action === "smash") {
-      finalTransform = "translateX(200%) scale(0.8) rotate(15deg)";
-    } else if (action === "loved") {
-      finalTransform = "translateY(-200%) scale(0.9) rotate(0deg)";
+      return {
+        transform: "translateX(200%) scale(0.8) rotate(25deg)",
+        opacity: 0,
+        zIndex: 100,
+        transition:
+          "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-out",
+      };
+    } else {
+      return {
+        transform: "translateX(-200%) scale(0.8) rotate(-25deg)",
+        opacity: 0,
+        zIndex: 100,
+        transition:
+          "transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-out",
+      };
     }
-
-    return {
-      transform: finalTransform,
-      opacity: 0,
-      filter: "blur(0px)",
-      zIndex: 100,
-      transition: "transform 0.3s ease-in-out, opacity 0.3s ease-in-out",
-      willChange: "transform, opacity",
-    };
   };
 
-  const getDragStyle = () => {
-    const rotation = dragOffset.x * 0.1;
-    const opacity = Math.max(
-      0.5,
-      1 - Math.abs(dragOffset.x) / 300 - Math.abs(dragOffset.y) / 300
-    );
-    return {
-      transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${rotation}deg) scale(1)`,
-      opacity,
-      filter: "blur(0px)",
-      zIndex: 100,
-      transition: "none",
-    };
-  };
-
-  const getCardStyle = (index: number) => {
-    const offset = index - currentIndex;
-    const absOffset = Math.abs(offset);
-
+  const getCardDimensions = () => {
     const containerWidth = sliderRef.current?.offsetWidth || dimensions.width;
     const isMobile = dimensions.width <= 768;
     const cardWidth = isMobile
       ? containerWidth * 0.95
       : Math.min(containerWidth * 0.9, 400);
-
     const maxSafeTranslate = (containerWidth - cardWidth) / 2;
-    const baseTranslate = Math.min(isMobile ? 50 : 200, maxSafeTranslate / 3);
+    const baseTranslate = Math.min(isMobile ? 20 : 80, maxSafeTranslate / 3);
+    return { baseTranslate };
+  };
 
-    const translate =
-      offset > 0 ? absOffset * baseTranslate : -absOffset * baseTranslate;
+  const getCardStyle = (stackPosition: number, originalIndex: number) => {
+    if (originalIndex === animatingIndex && isAnimating && animationType) {
+      if (stackPosition === 0) {
+        return getMainCardExitStyle(animationType);
+      }
+    }
 
-    if (index === actionCardIndex && isAnimating && !lastAction) {
+    if (stackPosition === 0 && isDragging) {
       const rotation = dragOffset.x * 0.1;
+      const opacity = Math.max(
+        0.5,
+        1 - Math.abs(dragOffset.x) / 300 - Math.abs(dragOffset.y) / 300,
+      );
       return {
         transform: `translate(${dragOffset.x}px, ${dragOffset.y}px) rotate(${rotation}deg) scale(1)`,
-        opacity: 1,
+        opacity,
         filter: "blur(0px)",
         zIndex: 100,
         transition: "none",
       };
     }
 
-    if (index === actionCardIndex && lastAction) {
-      return getActionCardStyle(lastAction);
-    }
+    const { baseTranslate } = getCardDimensions();
 
-    if (index === actionCardIndex && isTransitioning) {
-      return {
-        transform: `translateX(${baseTranslate}px) translateY(0) scale(0.8) rotate(0deg)`,
-        opacity: 0,
-        filter: "blur(5px)",
-        zIndex: 0,
-        transition:
-          "transform 0.3s ease-in-out, opacity 0.3s ease-in-out, filter 0.3s ease-in-out",
-        pointerEvents: "none",
-      };
-    }
-
-    if (offset === 0 && isDragging) {
-      return getDragStyle();
-    }
-
-    switch (absOffset) {
+    switch (stackPosition) {
       case 0:
         return {
           transform: "translateX(0) translateY(0) scale(1) rotate(0deg)",
@@ -241,24 +234,74 @@ export default function DishSlider() {
         };
       case 1:
         return {
-          transform: `translateX(${translate}px) scale(0.8)`,
-          opacity: 0.6,
-          filter: "blur(5px)",
+          transform: `translateX(${baseTranslate}px) scale(0.95)`,
+          opacity: 0.7,
+          filter: "blur(2px)",
           zIndex: 5,
+          transition:
+            "transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out",
         };
       case 2:
         return {
-          transform: `translateX(${translate}px) scale(0.6)`,
-          opacity: 0.3,
-          filter: "blur(8px)",
+          transform: `translateX(${baseTranslate * 2}px) scale(0.9)`,
+          opacity: 0.4,
+          filter: "blur(4px)",
           zIndex: 2,
+          transition:
+            "transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out",
         };
       default:
         return {
-          transform: `translateX(${translate}px) scale(0.5)`,
+          transform: `translateX(${baseTranslate * 3}px) scale(0.85)`,
           opacity: 0,
-          filter: "blur(10px)",
+          filter: "blur(6px)",
           zIndex: 1,
+          transition:
+            "transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out",
+        };
+    }
+  };
+
+  const getLeftCardStyle = (stackPosition: number, originalIndex?: number) => {
+    const { baseTranslate } = getCardDimensions();
+
+    if (originalIndex === enteringCard) {
+      return {
+        transform: "translateX(0) scale(1)",
+        opacity: 0,
+        filter: "blur(0px)",
+        zIndex: 4,
+        transition: "none",
+      };
+    }
+
+    switch (stackPosition) {
+      case 0:
+        return {
+          transform: `translateX(-${baseTranslate}px) scale(0.95)`,
+          opacity: 0.7,
+          filter: "blur(2px)",
+          zIndex: 5,
+          transition:
+            "transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out",
+        };
+      case 1:
+        return {
+          transform: `translateX(-${baseTranslate * 2}px) scale(0.9)`,
+          opacity: 0.4,
+          filter: "blur(4px)",
+          zIndex: 2,
+          transition:
+            "transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out",
+        };
+      default:
+        return {
+          transform: `translateX(-${baseTranslate * 3}px) scale(0.85)`,
+          opacity: 0,
+          filter: "blur(6px)",
+          zIndex: 1,
+          transition:
+            "transform 0.3s ease-out, opacity 0.3s ease-out, filter 0.3s ease-out",
         };
     }
   };
@@ -276,23 +319,115 @@ export default function DishSlider() {
     }
   };
 
-  const dishesToRender = Array.from(
-    { length: 7 },
-    (_, i) => currentIndex - 3 + i
+  const renderActionButtons = (disabled: boolean = false) => (
+    <div className="dish-actions">
+      <button
+        className="action-button btn-pass"
+        title="Pass"
+        disabled={disabled}
+        {...(!disabled && {
+          onPointerDown: (e: React.PointerEvent) => {
+            e.stopPropagation();
+            handleAction("pass");
+          },
+        })}
+      >
+        <ThumbDown className="action-button-icon" />
+      </button>
+      <button
+        className="action-button btn-smash"
+        title="Loved"
+        disabled={disabled}
+        {...(!disabled && {
+          onPointerDown: (e: React.PointerEvent) => {
+            e.stopPropagation();
+            handleAction("loved");
+          },
+        })}
+      >
+        <Favorite className="action-button-icon" />
+      </button>
+      <button
+        className="action-button btn-loved"
+        title="Smash"
+        disabled={disabled}
+        {...(!disabled && {
+          onPointerDown: (e: React.PointerEvent) => {
+            e.stopPropagation();
+            handleAction("smash");
+          },
+        })}
+      >
+        <ThumbUp className="action-button-icon" />
+      </button>
+    </div>
   );
 
-  const getAddRecipeCard = (index: number) => {
-    const cardKey = "add-recipe-" + index;
-    const offset = index - currentIndex;
+  const renderDishImage = (dish: { mainImageId?: number; name: string }) => (
+    <div className="dish-image">
+      {!dish.mainImageId || dish.mainImageId <= 1 ? (
+        <RestaurantMenu className="restaurant-menu-icon" />
+      ) : (
+        <img alt={dish.name} />
+      )}
+    </div>
+  );
+
+  const renderActionOverlay = (type: ActionType) => {
+    if (!type) return null;
+    return (
+      <div className="action-overlay">
+        <span className={getActionClassName(type)}>
+          {type === "pass" && "PASS"}
+          {type === "smash" && "SMASH"}
+          {type === "loved" && "LOVED"}
+        </span>
+      </div>
+    );
+  };
+
+  const renderDragOverlay = () => {
+    if (!isDragging) return null;
+
+    const absX = Math.abs(dragOffset.x);
+    const absY = Math.abs(dragOffset.y);
+
+    if (absX > absY) {
+      if (dragOffset.x < -50) {
+        return (
+          <div className="drag-overlay">
+            <span className="drag-hint drag-pass">PASS</span>
+          </div>
+        );
+      }
+      if (dragOffset.x > 50) {
+        return (
+          <div className="drag-overlay">
+            <span className="drag-hint drag-smash">SMASH</span>
+          </div>
+        );
+      }
+    } else if (dragOffset.y < -50) {
+      return (
+        <div className="drag-overlay">
+          <span className="drag-hint drag-loved">LOVED</span>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  const getAddRecipeCard = (stackPosition: number) => {
+    const cardKey = "add-recipe-card";
     const handlePointerDown =
-      offset === 0 ? () => setIsModalOpen(true) : undefined;
-    const clickableClass = offset === 0 ? "clickable" : "";
+      stackPosition === 0 ? () => setIsModalOpen(true) : undefined;
+    const clickableClass = stackPosition === 0 ? "clickable" : "";
 
     return (
       <div
         key={cardKey}
         className={`dish-card add-recipe-card ${clickableClass}`}
-        style={getCardStyle(index) as React.CSSProperties}
+        style={getCardStyle(stackPosition, -1) as React.CSSProperties}
         onPointerDown={handlePointerDown}
       >
         <div className="add-recipe-card-info">
@@ -316,98 +451,30 @@ export default function DishSlider() {
       );
     }
 
-    if (dishes.length === 0) {
-      return getAddRecipeCard(0);
-    }
+    const maxPassedCards = 3;
+    const recentPassedCards = passedCards.slice(-maxPassedCards).reverse();
 
-    return dishesToRender.map((index) => {
-      let actualIndex = index;
-      if (index < 0) actualIndex = dishes.length + index;
-      else if (index >= dishes.length) return getAddRecipeCard(index);
+    const leftCards = [];
 
-      if (actualIndex < 0 || actualIndex >= dishes.length) return null;
+    recentPassedCards.forEach((originalIndex, i) => {
+      const dish = dishes[originalIndex];
+      if (!dish) return;
 
-      const dish = dishes[actualIndex];
-      const offset = index - currentIndex;
-      const cardKey = dish.id + "-" + index;
-      const frontCardClass = offset === 0 ? "front-card" : "";
-      const classNames = "dish-card " + frontCardClass;
-      const cardTitle = offset === 0 ? t("dish_details") : "";
+      const cardKey = "passed-" + dish.id + "-" + originalIndex;
+      const stackPosition = i;
 
-      return (
+      leftCards.push(
         <div
           key={cardKey}
-          className={classNames}
-          title={cardTitle}
-          style={getCardStyle(index) as React.CSSProperties}
-          onPointerDown={(e) => {
-            if (offset === 0) {
-              handleDragStart(e, index);
-            }
-          }}
-          onPointerMove={handleDragMove}
-          onPointerUp={handleDragEnd}
-          onPointerCancel={handleDragEnd}
-          onTransitionEnd={(e) => {
-            if (e.propertyName !== "transform") return;
-
-            e.stopPropagation();
-
-            if (index === actionCardIndex && lastAction && !isTransitioning) {
-              handleActionTransitionEnd(index)();
-            } else if (
-              index === actionCardIndex &&
-              isTransitioning &&
-              !lastAction
-            ) {
-              handleTransitionEnd(index)();
-            }
-          }}
+          className="dish-card passed-card"
+          style={
+            getLeftCardStyle(
+              stackPosition,
+              originalIndex,
+            ) as React.CSSProperties
+          }
         >
-          <div className="dish-image">
-            {!dish.mainImageId || dish.mainImageId <= 1 ? (
-              <RestaurantMenu className="restaurant-menu-icon" />
-            ) : (
-              <img alt={dish.name} />
-            )}
-            {index === actionCardIndex && lastAction && (
-              <div className="action-overlay">
-                <span className={getActionClassName(lastAction)}>
-                  {lastAction === "pass" && "PASS"}
-                  {lastAction === "smash" && "SMASH"}
-                  {lastAction === "loved" && "LOVED"}
-                </span>
-              </div>
-            )}
-            {offset === 0 &&
-              isDragging &&
-              (() => {
-                const absX = Math.abs(dragOffset.x);
-                const absY = Math.abs(dragOffset.y);
-
-                if (absX > absY) {
-                  if (dragOffset.x < -50)
-                    return (
-                      <div className="drag-overlay">
-                        <span className="drag-hint drag-pass">PASS</span>
-                      </div>
-                    );
-                  if (dragOffset.x > 50)
-                    return (
-                      <div className="drag-overlay">
-                        <span className="drag-hint drag-smash">SMASH</span>
-                      </div>
-                    );
-                } else if (dragOffset.y < -50) {
-                  return (
-                    <div className="drag-overlay">
-                      <span className="drag-hint drag-loved">LOVED</span>
-                    </div>
-                  );
-                }
-                return null;
-              })()}
-          </div>
+          {renderDishImage(dish)}
           <div className="dish-info">
             <div className="dish-header">
               <h2 className="dish-name">{dish.name}</h2>
@@ -422,42 +489,141 @@ export default function DishSlider() {
                 </span>
               ))}
             </div>
+            {renderActionButtons(true)}
+          </div>
+        </div>,
+      );
+    });
+
+    const emptyCardsCount = maxPassedCards - recentPassedCards.length;
+    for (let i = 0; i < emptyCardsCount; i++) {
+      const stackPosition = recentPassedCards.length + i;
+      const cardKey = "empty-left-" + i;
+
+      leftCards.push(
+        <div
+          key={cardKey}
+          className="dish-card empty-placeholder-card"
+          style={getLeftCardStyle(stackPosition) as React.CSSProperties}
+        >
+          <div className="dish-image"></div>
+          <div className="dish-info">
+            <div className="dish-header"></div>
+            <p className="dish-description"></p>
+            <div className="dish-categories"></div>
+            {renderActionButtons(true)}
+          </div>
+        </div>,
+      );
+    }
+
+    const maxVisibleCards = 4;
+    const dishCards = visibleCards
+      .slice(0, maxVisibleCards)
+      .map(({ dish, originalIndex }, stackPosition) => {
+        const cardKey = dish.id + "-" + originalIndex;
+        const isTopCard = stackPosition === 0;
+        const frontCardClass = isTopCard ? "front-card" : "";
+        const classNames = "dish-card " + frontCardClass;
+        const cardTitle = isTopCard ? t("dish_details") : "";
+
+        return (
+          <div
+            key={cardKey}
+            className={classNames}
+            title={cardTitle}
+            style={
+              getCardStyle(stackPosition, originalIndex) as React.CSSProperties
+            }
+            onPointerDown={(e) => {
+              if (isTopCard) {
+                handleDragStart(e, originalIndex);
+              }
+            }}
+            onPointerMove={handleDragMove}
+            onPointerUp={handleDragEnd}
+            onPointerCancel={handleDragEnd}
+            onTransitionEnd={(e) => {
+              if (e.propertyName !== "transform") return;
+              e.stopPropagation();
+
+              if (originalIndex === animatingIndex && isAnimating) {
+                handleTransitionEnd();
+              }
+            }}
+          >
+            {renderDishImage(dish)}
+            {originalIndex === animatingIndex &&
+              animationType &&
+              renderActionOverlay(animationType)}
+            {isTopCard && renderDragOverlay()}
+            <div className="dish-info">
+              <div className="dish-header">
+                <h2 className="dish-name">{dish.name}</h2>
+              </div>
+              <p className="dish-description">
+                {dish.description || t("empty_description")}
+              </p>
+              <div className="dish-categories">
+                {dish.categories.map((cat) => (
+                  <span key={cat.id} className="category-tag">
+                    {cat.name}
+                  </span>
+                ))}
+              </div>
+              {renderActionButtons(false)}
+            </div>
+          </div>
+        );
+      });
+
+    const emptyRightCardsCount = Math.max(0, 4 - visibleCards.length);
+    for (let i = 0; i < emptyRightCardsCount; i++) {
+      const stackPosition = visibleCards.length + i;
+      const cardKey = "empty-right-" + i;
+
+      dishCards.push(
+        <div
+          key={cardKey}
+          className="dish-card empty-placeholder-card"
+          style={getCardStyle(stackPosition, -2 - i) as React.CSSProperties}
+        >
+          <div className="dish-image"></div>
+          <div className="dish-info">
+            <div className="dish-header"></div>
+            <p className="dish-description"></p>
+            <div className="dish-categories"></div>
             <div className="dish-actions">
-              <button
-                className="action-button btn-pass"
-                title="Pass"
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  handleAction("pass");
-                }}
-              >
+              <button className="action-button btn-pass" disabled>
                 <ThumbDown className="action-button-icon" />
               </button>
-              <button
-                className="action-button btn-smash"
-                title="Loved"
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  handleAction("loved");
-                }}
-              >
+              <button className="action-button btn-smash" disabled>
                 <Favorite className="action-button-icon" />
               </button>
-              <button
-                className="action-button btn-loved"
-                title="Smash"
-                onPointerDown={(e) => {
-                  e.stopPropagation();
-                  handleAction("smash");
-                }}
-              >
+              <button className="action-button btn-loved" disabled>
                 <ThumbUp className="action-button-icon" />
               </button>
             </div>
           </div>
-        </div>
+        </div>,
       );
-    });
+    }
+
+    if (visibleCards.length === 0) {
+      const addRecipeCard = getAddRecipeCard(0);
+      const cardWithAnimation = {
+        ...addRecipeCard,
+        props: {
+          ...addRecipeCard.props,
+          className: `${addRecipeCard.props.className} ${showAddRecipeCard ? "fade-in-card" : ""}`,
+        },
+      };
+      return [cardWithAnimation];
+    }
+
+    const allCards = [...leftCards, ...dishCards];
+
+    return allCards;
   };
 
   return (
