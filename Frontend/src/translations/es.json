@@ -78,5 +78,13 @@
   "create_dish_modal_success": "✓ ¡Plato agregado exitosamente!",
   "create_dish_modal_error": "Error al agregar el plato",
 
+  "delete_dish_modal_title": "¿Estás seguro de que quieres eliminar esta receta?",
+  "delete_dish_modal_checkbox": "Sí, estoy seguro",
+  "delete_dish_modal_checkbox_required": "Debes marcar la casilla para eliminar la receta",
+  "delete_dish_modal_cancel": "Cancelar",
+  "delete_dish_modal_delete": "Eliminar",
+  "delete_dish_success": "¡Receta eliminada exitosamente!",
+  "delete_dish_error": "Error al eliminar la receta",
+
   "loading_dishes": "Cargando platos..."
 }

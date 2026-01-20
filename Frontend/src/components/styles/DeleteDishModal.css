@@ -1,0 +1,159 @@
+.delete-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  transition: background-color 0.3s ease;
+}
+
+.delete-modal-overlay.show {
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.delete-modal-content {
+  background: linear-gradient(180deg, #949494 0%, #383838 100%);
+  border-radius: 1.25rem;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  transform: scale(0.7) translateY(50px);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), 
+              opacity 0.35s ease;
+}
+
+.delete-modal-content.show {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.delete-modal-close-button {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3125rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.delete-modal-close-button:hover {
+  color: #667eea;
+  transform: rotate(90deg);
+}
+
+.delete-modal-close-icon {
+  font-size: 2rem;
+}
+
+.delete-modal-title {
+  margin: 0 0 2rem 0;
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #fff;
+  text-align: center;
+  line-height: 1.4;
+  padding-right: 2rem;
+}
+
+.delete-modal-checkbox-container {
+  margin-bottom: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+.delete-modal-checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.delete-modal-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: #667eea;
+}
+
+.delete-modal-checkbox-text {
+  font-size: 1rem;
+  color: #fff;
+  font-weight: 500;
+}
+
+.delete-modal-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+}
+
+.delete-modal-button {
+  flex: 1;
+  padding: 0.875rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.delete-modal-button-delete {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+  color: white;
+}
+
+.delete-modal-button-delete:not(.disabled):hover {
+  background: linear-gradient(135deg, #ff5252 0%, #d84a41 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(238, 90, 82, 0.4);
+}
+
+.delete-modal-button-delete.disabled {
+  background: #666;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.delete-modal-button-cancel {
+  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  color: white;
+}
+
+.delete-modal-button-cancel:hover {
+  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(75, 85, 99, 0.4);
+}
+
+@media (max-width: 600px) {
+  .delete-modal-content {
+    padding: 1.5rem;
+  }
+
+  .delete-modal-title {
+    font-size: 1.25rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .delete-modal-buttons {
+    flex-direction: column-reverse;
+  }
+
+  .delete-modal-button {
+    width: 100%;
+  }
+}
