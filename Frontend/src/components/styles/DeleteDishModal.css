@@ -16,6 +16,7 @@
 .delete-modal-content {
   background: linear-gradient(180deg, #949494 0%, #383838 100%);
   border-radius: 1.25rem;
+  border: none;
   padding: 2rem;
   max-width: 500px;
   width: 90%;
