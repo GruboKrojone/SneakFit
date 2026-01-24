@@ -1,4 +1,5 @@
-﻿using Domain.AI.Queries;
+﻿using Domain.AI.Dto;
+using Domain.AI.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,8 +9,8 @@ namespace API.Controllers;
 [Route("ai")]
 public class AiController(IMediator mediator) : ControllerBase
 {
-    [HttpGet]
-    [Route("send")]
-    public async Task<string> GetAiResponse(string message, CancellationToken cancellationToken)
-        => await mediator.Send(new GetAiResponseQuery(message), cancellationToken);
+    [HttpPost]
+    [Route("ask")]
+    public async Task<string> GetAiResponse([FromBody] AiGeneratedDishProperties props, CancellationToken cancellationToken)
+        => await mediator.Send(new GetAiResponseQuery(props), cancellationToken);
 }
