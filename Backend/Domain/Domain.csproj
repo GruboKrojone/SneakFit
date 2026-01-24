@@ -25,6 +25,7 @@
     <ItemGroup>
         <ProjectReference Include="..\Algorithm\Algorithm.csproj" />
         <ProjectReference Include="..\Core\Core.csproj" />
+        <ProjectReference Include="..\Domain.Integrations.Gemini\Domain.Integrations.Gemini.csproj" />
     </ItemGroup>
 
 </Project>

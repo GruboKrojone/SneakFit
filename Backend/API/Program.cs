@@ -6,6 +6,7 @@ using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Core.Authentication;
 using Core.Configuration;
+using Core.Configuration.AI;
 using Core.Configuration.Azure;
 using Core.Configuration.JWT;
 using Core.Middlewares.Exceptions;
@@ -51,8 +52,10 @@ internal static class Program
 
             var authenticationSettings = new AuthenticationSettings();
             var azureConfig = new AzureConfig();
+            var aiConfig = new AiConfig();
             builder.Configuration.GetSection("App:Authentication").Bind(authenticationSettings);
             builder.Configuration.GetSection("App:Azure").Bind(azureConfig);
+            builder.Configuration.GetSection("App:AI").Bind(aiConfig);
 
             ConfigureServices(builder, authenticationSettings, azureConfig);
 
