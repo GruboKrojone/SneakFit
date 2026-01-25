@@ -23,6 +23,6 @@ internal class GetMainImageQueryHandler(
         var image = await imageRepository.FindAsync(dish.MainPictureId.Value, cancellationToken)
             ?? throw new DomainException($"Image with ID {dish.MainPictureId} not found.", (int)CommonErrorCode.EntityNotFound);
 
-        return new ImageDto(image.Id, image.OwnerId, image.Url);
+        return new ImageDto(image.Id, image.OwnerId, image.Url, ImagePosition.Main);
     }
 }

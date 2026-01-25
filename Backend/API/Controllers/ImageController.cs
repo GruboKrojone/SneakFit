@@ -31,4 +31,9 @@ public class ImageController(IMediator mediator) : ControllerBase
     [Route("{dishId}/main")]
     public async Task<ImageDto> GetMainImage(int dishId, CancellationToken cancellationToken)
         => await mediator.Send(new GetMainImageQuery(dishId), cancellationToken);
+
+    [HttpGet]
+    [Route("{dishId}/all")]
+    public async Task<List<ImageDto>> GetAllImages(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new GetAllImagesQuery(dishId), cancellationToken);
 }
