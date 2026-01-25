@@ -1,4 +1,6 @@
 ﻿using Domain.Images.Commands;
+using Domain.Images.Dto;
+using Domain.Images.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,5 +22,13 @@ public class ImageController(IMediator mediator) : ControllerBase
         return Ok(new { url = imageUrl });
     }
 
+    [HttpPut]
+    [Route("{dishId}/assign")]
+    public async Task<Unit> AssignImagesToDish(int dishId, int mainId, int? secondId, int? thirdId, CancellationToken cancellationToken)
+        => await mediator.Send(new AssignImagesToDishCommand(dishId, mainId, secondId, thirdId), cancellationToken);
 
+    [HttpGet]
+    [Route("{dishId}/main")]
+    public async Task<ImageDto> GetMainImage(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new GetMainImageQuery(dishId), cancellationToken);
 }

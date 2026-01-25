@@ -17,6 +17,7 @@ internal sealed class ImageConfiguration : EntityBaseConfiguration<Image>
 
         builder.HasOne(image => image.Owner)
             .WithMany()
-            .HasForeignKey(image => image.OwnerId);
+            .HasForeignKey(image => image.OwnerId)
+            .OnDelete(DeleteBehavior.NoAction);
     }
 }

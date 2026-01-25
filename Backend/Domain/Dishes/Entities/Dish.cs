@@ -23,8 +23,8 @@ public sealed class Dish : EntityBase
     public Image? MainPicture { get; set; }
     public int? SecondaryPictureId { get; set; }
     public Image? SecondaryPicture { get; set; }
-    public int? ThirdPicture { get; set; }
-    public Image? ThirdPictureImage { get; set; }
+    public int? ThirdPictureId { get; set; }
+    public Image? ThirdPicture { get; set; }
     public ICollection<Category> Categories { get; private set; }
     public ICollection<Ingredient> Ingredients { get; private set; }
     public ICollection<User> FavoritedByUsers { get; private set; }
@@ -92,6 +92,14 @@ public sealed class Dish : EntityBase
     public void UpdateRating(decimal newRating)
     {
         Rates = newRating;
+        MarkAsUpdated();
+    }
+
+    public void AssignImages(int? mainId, int? secondId, int? thirdId)
+    {
+        MainPictureId = mainId;
+        SecondaryPictureId = secondId;
+        ThirdPictureId = thirdId;
         MarkAsUpdated();
     }
 }

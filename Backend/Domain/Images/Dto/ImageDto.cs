@@ -1,3 +1,3 @@
 ﻿namespace Domain.Images.Dto;
 
-internal record ImageDto(int ImageId, string Url);
+public record ImageDto(int ImageId, int OwnerId, string Url);

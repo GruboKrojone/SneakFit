@@ -240,10 +240,7 @@ namespace Domain.Migrations
                     b.Property<int?>("SecondaryPictureId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("ThirdPicture")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("ThirdPictureImageId")
+                    b.Property<int?>("ThirdPictureId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -259,7 +256,7 @@ namespace Domain.Migrations
 
                     b.HasIndex("SecondaryPictureId");
 
-                    b.HasIndex("ThirdPictureImageId");
+                    b.HasIndex("ThirdPictureId");
 
                     b.HasIndex("IsPublic", "IsDeleted");
 
@@ -475,7 +472,8 @@ namespace Domain.Migrations
                 {
                     b.HasOne("Domain.Images.Entities.Image", "MainPicture")
                         .WithMany()
-                        .HasForeignKey("MainPictureId");
+                        .HasForeignKey("MainPictureId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("Domain.Users.Entities.User", "Owner")
                         .WithMany()
@@ -485,11 +483,13 @@ namespace Domain.Migrations
 
                     b.HasOne("Domain.Images.Entities.Image", "SecondaryPicture")
                         .WithMany()
-                        .HasForeignKey("SecondaryPictureId");
+                        .HasForeignKey("SecondaryPictureId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                    b.HasOne("Domain.Images.Entities.Image", "ThirdPictureImage")
+                    b.HasOne("Domain.Images.Entities.Image", "ThirdPicture")
                         .WithMany()
-                        .HasForeignKey("ThirdPictureImageId");
+                        .HasForeignKey("ThirdPictureId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("MainPicture");
 
@@ -497,7 +497,7 @@ namespace Domain.Migrations
 
                     b.Navigation("SecondaryPicture");
 
-                    b.Navigation("ThirdPictureImage");
+                    b.Navigation("ThirdPicture");
                 });
 
             modelBuilder.Entity("Domain.Images.Entities.Image", b =>
@@ -505,7 +505,7 @@ namespace Domain.Migrations
                     b.HasOne("Domain.Users.Entities.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Owner");
