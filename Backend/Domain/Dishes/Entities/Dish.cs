@@ -2,6 +2,7 @@ using Core.Database;
 using Domain.Categories.Entities;
 using Domain.Comments.Entities;
 using Domain.Dishes.Dto;
+using Domain.Images.Entities;
 using Domain.Users.Entities;
 
 namespace Domain.Dishes.Entities;
@@ -18,6 +19,12 @@ public sealed class Dish : EntityBase
     public decimal Rates { get; private set; }
     public int OwnerId { get; private set; }
     public User? Owner { get; }
+    public int? MainPictureId { get; set; }
+    public Image? MainPicture { get; set; }
+    public int? SecondaryPictureId { get; set; }
+    public Image? SecondaryPicture { get; set; }
+    public int? ThirdPicture { get; set; }
+    public Image? ThirdPictureImage { get; set; }
     public ICollection<Category> Categories { get; private set; }
     public ICollection<Ingredient> Ingredients { get; private set; }
     public ICollection<User> FavoritedByUsers { get; private set; }

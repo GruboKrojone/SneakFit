@@ -19,4 +19,6 @@ public class ImageController(IMediator mediator) : ControllerBase
 
         return Ok(new { url = imageUrl });
     }
+
+
 }

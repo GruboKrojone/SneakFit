@@ -5,6 +5,7 @@ using Domain.Authentication.Entities;
 using Domain.Categories.Entities;
 using Domain.Comments.Entities;
 using Domain.Dishes.Entities;
+using Domain.Images.Entities;
 using Domain.Users.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,10 +16,11 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
     internal DbSet<User> Users => Set<User>();
     internal DbSet<Dish> Dishes => Set<Dish>();
     internal DbSet<Favorited> Favorited => Set<Favorited>();
+    internal DbSet<Image> Images => Set<Image>();
     internal DbSet<Ingredient> Ingredients => Set<Ingredient>();
     internal DbSet<Category> Categories => Set<Category>();
     internal DbSet<Comment> Comments => Set<Comment>();
-    public DbSet<RefreshToken> RefreshTokens { get; set; }
+    internal DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -33,6 +35,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
         modelBuilder.Entity<Category>().HasQueryFilter(c => !c.IsDeleted);
         modelBuilder.Entity<Comment>().HasQueryFilter(c => !c.IsDeleted);
         modelBuilder.Entity<Favorited>().HasQueryFilter(f => !f.IsDeleted);
+        modelBuilder.Entity<Image>().HasQueryFilter(f => !f.IsDeleted);
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
     }
 
