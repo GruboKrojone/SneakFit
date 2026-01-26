@@ -69,7 +69,7 @@ export default function CreateDishModal({
   };
 
   const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = e.target;
 
@@ -249,7 +249,10 @@ export default function CreateDishModal({
             </div>
           </div>
 
-          <div className="form-group-description">
+          <div
+            className="form-group-description"
+            style={{ position: "relative" }}
+          >
             <label htmlFor="description">
               {t("create_dish_modal_description")}
             </label>
@@ -259,7 +262,21 @@ export default function CreateDishModal({
               value={formData.description}
               onChange={handleInputChange}
               placeholder={t("create_dish_modal_description_placeholder")}
+              maxLength={500}
+              style={{ paddingBottom: "2.2rem" }}
             />
+            <div
+              style={{
+                position: "absolute",
+                bottom: "0.5rem",
+                right: "1rem",
+                fontSize: "0.95rem",
+                color: "#888",
+                pointerEvents: "none",
+              }}
+            >
+              {formData.description.length}/500
+            </div>
             {errors.description && (
               <span className="error-text">{errors.description}</span>
             )}

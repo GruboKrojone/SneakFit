@@ -4,8 +4,8 @@
   top: 0;
   width: 6dvw;
   height: 100dvh;
-  background: linear-gradient(180deg, #696969, #3b3b3b);
-  color: #fff;
+  background: var(--gradient);
+  color: #ffffff;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -24,7 +24,8 @@
 .nav-profile-icon svg {
   width: min(5dvw, 5dvh);
   height: min(5dvw, 5dvh);
-  color: #aaaaaa;
+  color: #ffffff;
+  opacity: 0.9;
 }
 
 .nav-list {
@@ -53,14 +54,14 @@
 }
 
 .nav-list a:hover {
-  color: #fff;
+  color: #ffffff;
 }
 
 .nav-list a.active {
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.2);
-  box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
-  color: #fff;
+  background-color: #ffffff33;
+  box-shadow: 0 0 25px #ffffff99;
+  color: #ffffff;
 }
 
 .nav-list a svg {
@@ -84,7 +85,7 @@
   height: 48px;
   border: none;
   background: transparent;
-  color: white;
+  color: #ffffff;
   border-radius: 10px;
   cursor: pointer;
   display: flex;

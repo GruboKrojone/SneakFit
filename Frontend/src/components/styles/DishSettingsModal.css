@@ -1,0 +1,370 @@
+.dish-settings-modal-close-btn:hover .dish-settings-modal-close-icon {
+  color: orange;
+}
+
+.dish-settings-modal-group {
+  background: #F5F5F0;
+  border-radius: 1.1rem;
+  padding: 1.5rem 1.3rem 1.3rem 1.3rem;
+  margin-bottom: 2.1rem;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dish-settings-modal-group-title {
+  font-size: 1.18rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 1.1rem;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+}
+
+.dish-settings-modal-group-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dish-settings-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(.4,0,.2,1), background-color 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.dish-settings-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.dish-settings-modal-content {
+  background: #fff;
+  border: 1px solid #d1d1d1;
+  border-radius: 20px 20px 0 0;
+  padding: 2.5rem 2rem 2rem 2rem;
+  width: 98vw;
+  max-width: 700px;
+  min-height: 100vh;
+  height: 100vh;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.dish-settings-modal-overlay.open .dish-settings-modal-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+
+.dish-settings-modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+
+.dish-settings-modal-close-btn:hover {
+  color: var(--accent);
+  background: rgba(255, 107, 53, 0.1);
+}
+
+.dish-settings-modal-close-icon {
+  font-size: 2rem;
+}
+
+.dish-settings-modal-title {
+  margin: 0 0 2.2rem 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #222;
+  width: 100%;
+  text-align: center;
+}
+
+.dish-settings-modal-settings-group {
+  display: flex;
+  align-items: center;
+  gap: 1.1rem;
+  margin-bottom: 1.5rem;
+  justify-content: center;
+  width: 100%;
+}
+
+.dish-settings-modal-settings-label {
+  font-size: 1.18rem;
+  color: #444;
+  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+}
+
+.dish-settings-modal-settings-switch {
+  width: 22px;
+  height: 22px;
+  accent-color: #ff8c00;
+  cursor: pointer;
+}
+
+/* Select styles */
+.dish-settings-modal-select {
+  background: var(--card);
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.dish-settings-modal-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.dish-settings-modal-select:hover {
+  border-color: var(--accent);
+}
+
+/* Edit Description Modal Styles */
+.edit-description-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.edit-description-modal-content {
+  background: var(--bg);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.edit-description-modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.edit-description-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.edit-description-textarea {
+  width: 100%;
+  min-height: 200px;
+  padding: 1rem;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: var(--card);
+  resize: vertical;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.edit-description-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+.edit-description-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.edit-description-cancel-btn,
+.edit-description-save-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.edit-description-cancel-btn {
+  background: var(--border);
+  color: var(--text);
+}
+
+.edit-description-cancel-btn:hover {
+  background: #ddd;
+}
+
+.edit-description-save-btn {
+  background: var(--gradient);
+  color: white;
+}
+
+.edit-description-save-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.dish-settings-modal-edit-btn {
+  background: var(--gradient);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dish-settings-modal-edit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+/* Swal custom styles for edit description */
+.swal2-textarea-custom {
+  min-height: 200px !important;
+  resize: vertical !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+}
+
+.swal-character-counter {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+/* Edit Description Popup Styles */
+.edit-description-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 2rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.edit-description-popup-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.edit-description-popup-content {
+  background: var(--bg);
+  border-radius: 20px;
+  padding: 2.5rem;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border: 1px solid var(--border);
+  transform: scale(0.9) translateY(20px);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.edit-description-popup-overlay.show .edit-description-popup-content {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.edit-description-popup-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 2rem 0;
+  text-align: center;
+}
+
+.edit-description-popup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.textarea-container {
+  position: relative;
+}
+.character-counter {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.edit-description-popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}

@@ -13,7 +13,9 @@ export default function HomePage() {
         <DishSlider />
       </div>
       <div className="page-footer">
-        <HistoryIcon id="history-icon" />
+        <button className="history-btn">
+          <HistoryIcon className="history-icon" />
+        </button>
       </div>
     </>
   );

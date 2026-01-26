@@ -5,7 +5,7 @@
   "loading_dishes": "Cargando platos...",
   "no_more_dishes": "No hay más platos disponibles.",
   "add_own_dish": "Agrega tu propia receta.",
-
+  
   "register_page_title": "Registrarse",
   "register_page_email_holder": "Correo electrónico",
   "register_page_name_holder": "Nombre",
@@ -13,7 +13,7 @@
   "register_page_confirm_password_holder": "Confirmar contraseña",
   "register_page_register_button": "Registrarse",
   "register_page_clear_button": "Limpiar",
-
+  
   "login_page_title": "SneakFit",
   "login_page_email_holder": "Correo electrónico",
   "login_page_password_holder": "Contraseña",
@@ -37,12 +37,12 @@
   "dish_details_page_submitting": "Enviando...",
   "dish_details_page_serving_size": "Tamaño de la Porción",
   "dish_details_page_no_dish_found": "No se encontró el plato",
-
+  
   "dish_details_macro_circle_calories": "Kcal",
   "dish_details_macro_circle_proteins": "Proteínas",
   "dish_details_macro_circle_fats": "Grasas",
   "dish_details_macro_circle_carbs": "Carbohidratos",
-
+  
   "profile": "Perfil",
   "profile_settings_title": "Configuración del perfil",
   "profile_settings_name": "Nombre",
@@ -57,7 +57,7 @@
   "profile_settings_close": "Cerrar",
   "profile_settings_success": "✓ ¡Perfil actualizado exitosamente!",
   "profile_settings_error": "Error al actualizar el perfil",
-
+  
   "create_dish_modal_title": "Agregar Nuevo Plato",
   "create_dish_modal_name": "Nombre",
   "create_dish_modal_name_placeholder": "Ingresa el nombre del plato",
@@ -85,7 +85,7 @@
   "create_dish_modal_close_button": "Cerrar",
   "create_dish_modal_success": "✓ ¡Plato agregado exitosamente!",
   "create_dish_modal_error": "Error al agregar el plato",
-
+  
   "comments_modal_title": "Comentarios",
   "comments_modal_close": "Cerrar",
   "comments_modal_no_comments": "¡Aún no hay comentarios. Sé el primero!",
@@ -111,5 +111,18 @@
   "comments_modal_edit_success": "Comentario actualizado",
   "comments_modal_edit_error": "No se pudo actualizar el comentario",
   "comments_modal_menu_edit": "Editar",
-  "comments_modal_menu_delete": "Eliminar"
+  "comments_modal_menu_delete": "Eliminar",
+  "dish_details_page_settings_title": "Configuración del plato",
+  "dish_settings_modal_close_title": "Cerrar",
+  "dish_settings_modal_title": "Configuración de la receta",
+  "dish_settings_modal_privacy_title": "Privacidad de la receta",
+  "dish_settings_modal_current_privacy": "Privacidad actual de la receta:",
+  "dish_settings_modal_public": "Público",
+  "dish_settings_modal_private": "Privado",
+  "dish_settings_modal_confirm_change_title": "Confirmar cambio",
+  "dish_settings_modal_confirm_change_message": "¿Estás seguro de que quieres cambiar la privacidad de la receta?",
+  "dish_settings_modal_confirm_yes": "Sí",
+  "dish_settings_modal_confirm_no": "No",
+  "dish_settings_modal_privacy_updated": "La privacidad de la receta ha sido actualizada",
+  "dish_settings_modal_privacy_update_error": "Error al actualizar la privacidad de la receta"
 }

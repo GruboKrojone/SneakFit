@@ -13,17 +13,18 @@
   width: min(30dvw, 30dvh);
   height: min(30dvw, 30dvh);
   background: transparent !important;
-  border-radius: 3rem;
+  border-radius: 20px;
 }
 
 h1 {
-  background: linear-gradient(180deg, #9f9f9f, #999999);
+  font-family: 'Playfair Display', serif;
+  background: var(--gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
   margin-top: 0;
-  font-size: 2.5rem;
-  font-weight: bold;
+  font-size: 2.8rem;
+  font-weight: 700;
 }
 
 #view-mode {
@@ -51,7 +52,12 @@ form {
 
 #spacer {
   a {
-    color: #a7a7a7;
-    font-size: min(2dvw, 2dvh);
+    color: var(--text-light);
+    font-size: 1rem;
+    transition: color 0.3s ease;
+  }
+  
+  a:hover {
+    color: var(--accent);
   }
 }

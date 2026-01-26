@@ -10,12 +10,16 @@ export default function ProfilePage() {
 
   return (
     <div className="profile-page">
-      <div className="profile-header">
-        <div className="page-title">{useTranslation().t("profile")}</div>
-        <SettingsIcon id="settings-icon" onClick={() => setIsModalOpen(true)} />
-      </div>
+      <div className="page-title">{useTranslation().t("profile")}</div>
+      <button
+        className="settings-gear-btn"
+        onClick={() => setIsModalOpen(true)}
+        title={useTranslation().t("profile_settings_title")}
+      >
+        <SettingsIcon className="settings-gear-icon" />
+      </button>
 
-      <div className="profile-content">
+      <div>
         <p>User profile content</p>
       </div>
 

@@ -1,3 +1,10 @@
+.swal2-confirm-btn-custom.swal2-confirm-delete {
+  background: #d32f2f !important;
+  color: #fff !important;
+}
+.swal2-confirm-btn-custom.swal2-confirm-delete:hover {
+  background: #b71c1c !important;
+}
 .comments-modal-overlay {
   position: fixed;
   inset: 0;
@@ -20,12 +27,13 @@
 .comments-modal-overlay.open {
   opacity: 1;
   pointer-events: auto;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .comments-modal-content {
-  background: linear-gradient(180deg, #949494 0%, #383838 100%);
-  border-radius: 1.25rem 1.25rem 0 0;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 20px 20px 0 0;
   padding: 2.5rem 2rem 2rem 2rem;
   width: 90vw;
   max-width: 1200px;
@@ -36,6 +44,7 @@
   transition: transform 0.4s ease;
   position: relative;
   overflow: hidden;
+  box-shadow: 0 -8px 32px var(--shadow);
 }
 
 .comments-modal-overlay.open .comments-modal-content {
@@ -44,34 +53,37 @@
 
 .comments-close-button {
   position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
+  top: 1rem;
+  right: 1rem;
   background: none;
   border: none;
   cursor: pointer;
-  color: #1a1a1a;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0.3125rem;
-  transition: all 0.2s ease;
+  padding: 0.5rem;
+  transition: all 0.3s ease;
   z-index: 10;
+  border-radius: 50%;
 }
 
 .comments-close-button:hover {
-  color: #000000;
-  transform: scale(1.1);
+  color: var(--accent);
+  background: rgba(255, 107, 53, 0.1);
+  transform: none;
 }
 
 .comments-close-icon {
-  font-size: 2.5rem !important;
+  font-size: 2rem !important;
 }
 
 .comments-modal-title {
   margin: 0 0 1.5rem 0;
+  font-family: 'Playfair Display', serif;
   font-size: 2rem;
-  font-weight: bold;
-  color: #1a1a1a;
+  font-weight: 700;
+  color: var(--text);
   text-align: center;
   padding-right: 3rem;
 }
@@ -81,9 +93,9 @@
   flex-direction: column;
   gap: 1rem;
   padding: 1.5rem;
-  background-color: rgba(0, 0, 0, 0.2);
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  background: var(--bg);
+  border-radius: 16px;
+  border: 1px solid var(--border);
   margin-bottom: 1.5rem;
   width: 100%;
   max-width: 100%;
@@ -101,11 +113,12 @@
   flex-direction: column;
   gap: 1.25rem;
   padding: 1.5rem;
-  background-color: rgba(255, 255, 255, 0.05);
-  border-radius: 1rem;
+  background: var(--bg);
+  border-radius: 16px;
   min-height: 0;
   width: 100%;
   max-width: 100%;
+  scrollbar-color: var(--border) var(--bg);
 }
 
 .comments-modal-list::-webkit-scrollbar {
@@ -113,34 +126,30 @@
 }
 
 .comments-modal-list::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.2);
+  background: var(--bg);
   border-radius: 0.25rem;
 }
 
 .comments-modal-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.3);
+  background: var(--border);
   border-radius: 0.25rem;
 }
 
 .comments-modal-list::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--accent);
 }
 
 .comments-modal-item {
-  background-color: rgba(0, 0, 0, 0.35);
-  border-radius: 0.75rem;
+  background: var(--card);
+  border-radius: 14px;
   padding: 1.25rem 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  transition: all 0.2s ease;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.comments-modal-item:hover {
-  background-color: rgba(0, 0, 0, 0.45);
-  border-color: rgba(255, 255, 255, 0.25);
-}
+  transition: all 0.3s ease;
+  border: 1px solid var(--border);
+  box-shadow: 0 2px 8px var(--shadow);
+  }
 
 .comments-modal-header {
   display: flex;
@@ -157,21 +166,21 @@
 .comments-modal-menu-button {
   background: none;
   border: none;
-  color: #d0d0d0;
+  color: var(--text);
   cursor: pointer;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   border-radius: 50%;
   min-width: 2.5rem;
   min-height: 2.5rem;
 }
 
 .comments-modal-menu-button:hover {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #727272;
+  background: rgba(255, 107, 53, 0.1);
+  color: var(--accent);
 }
 
 .comments-modal-menu-icon {
@@ -182,13 +191,13 @@
   position: absolute;
   top: 100%;
   right: 0;
-  background-color: #2a2a2a;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
   overflow: hidden;
   z-index: 100;
   min-width: 120px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 8px 32px var(--shadow);
   margin-top: 0.25rem;
 }
 
@@ -197,36 +206,36 @@
   padding: 0.75rem 1rem;
   background: none;
   border: none;
-  color: #e0e0e0;
+  color: var(--text);
   text-align: left;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   font-size: 0.95rem;
 }
 
 .comments-modal-menu-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #2e2e2e;
+  background: rgba(255, 107, 53, 0.1);
+  color: var(--accent);
 }
 
 .comments-modal-menu-item:not(:last-child) {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border);
 }
 
 .comments-modal-user-icon {
   font-size: 2.5rem !important;
-  color: #d0d0d0;
+  color: var(--text);
 }
 
 .comments-modal-author {
   font-size: 1.1rem;
   font-weight: 700;
-  color: #e0e0e0;
+  color: var(--text);
 }
 
 .comments-modal-text {
   font-size: 1rem;
-  color: #ffffff;
+  color: var(--text-light);
   line-height: 1.6;
   word-wrap: break-word;
   white-space: pre-wrap;
@@ -238,7 +247,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  color: #b3b3b3;
+  color: var(--text-light);
 }
 
 .comments-modal-empty p {
@@ -249,28 +258,28 @@
 .comments-modal-input {
   width: 100%;
   max-width: 100%;
-  background-color: rgba(0, 0, 0, 0.4);
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  border-radius: 0.75rem;
+  background: #ffffff;
+  border: 1px solid var(--border);
+  border-radius: 14px;
   padding: 1rem 1.25rem;
-  color: #f0f0f0;
+  color: var(--text);
   font-size: 1rem;
-  font-family: inherit;
+  font-family: 'Inter', sans-serif;
   resize: vertical;
   min-height: 80px;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   line-height: 1.5;
 }
 
 .comments-modal-input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.5);
-  background-color: rgba(0, 0, 0, 0.5);
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
 .comments-modal-input::placeholder {
-  color: #888888;
+  color: var(--text-light);
+  opacity: 0.6;
 }
 
 .comments-modal-counter {
@@ -278,45 +287,41 @@
   bottom: 0.75rem;
   right: 1rem;
   font-size: 0.85rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: var(--text-light);
   pointer-events: none;
 }
 
 .comments-modal-submit {
   align-self: center;
-  background-color: #2a2a2a;
-  color: #e0e0e0;
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.75rem;
+  background: var(--gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: 50px;
   padding: 0.75rem 2.5rem;
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px var(--shadow);
   flex-shrink: 0;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .comments-modal-submit:hover:not(:disabled) {
-  background-color: #3a3a3a;
-  border-color: rgba(255, 255, 255, 0.4);
-  color: #ffffff;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 24px rgba(255, 107, 53, 0.4);
 }
 
 .comments-modal-submit:active:not(:disabled) {
   transform: translateY(0);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 2px 8px var(--shadow);
 }
 
 .comments-modal-submit:disabled {
-  opacity: 0.4;
+  opacity: 0.5;
   cursor: not-allowed;
-  background-color: #1a1a1a;
-  color: #999999;
-  border-color: rgba(255, 255, 255, 0.1);
+  transform: none;
 }
 
 @media (max-width: 768px) {
@@ -347,6 +352,40 @@
 
 .swal2-popup-custom {
   font-family: inherit !important;
+  background: var(--card) !important;
+  color: var(--text) !important;
+  border-radius: 16px !important;
+  border: 1px solid var(--border) !important;
+  box-shadow: 0 8px 32px var(--shadow) !important;
+}
+.swal2-confirm-btn-custom {
+  background: #2196f3 !important;
+  color: #ffffff !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  padding: 0.5rem 1.5rem !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.15) !important;
+  transition: background 0.2s;
+}
+.swal2-confirm-btn-custom:hover {
+  background: #1976d2 !important;
+}
+.swal2-cancel-btn-custom {
+  background: #e0e0e0 !important;
+  color: #222222 !important;
+  border-radius: 8px !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  padding: 0.5rem 1.5rem !important;
+  border: none !important;
+  margin-left: 0.5rem !important;
+  box-shadow: 0 2px 8px rgba(90,90,90,0.10) !important;
+  transition: background 0.2s;
+}
+.swal2-cancel-btn-custom:hover {
+  background: #bdbdbd !important;
 }
 
 .swal2-textarea-custom {  
@@ -362,8 +401,8 @@
 
 .swal2-textarea-custom:focus {
   outline: none !important;
-  border-color: #5a5a5a !important;
-  box-shadow: 0 0 0 3px rgba(90, 90, 90, 0.2) !important;
+  border-color: #ff8c00 !important;
+  box-shadow: 0 0 0 3px #ff8c0033 !important;
 }
 
 .swal2-character-counter {

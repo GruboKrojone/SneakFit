@@ -1,16 +1,24 @@
 .auth-input {
   width: 50dvw;
   height: 6dvh;
-  border-radius: 3rem;
+  border-radius: 50px;
   text-align: center;
   margin: 0.5rem;
-  background-color: #a3a3a3;
-  color: #ffffff;
-  border: none;
-  font-size: min(2.5dvw, 2.5dvh);
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  transition: all 0.3s ease;
+}
+
+.auth-input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
 }
 
 .auth-input::placeholder {
-  color: #000000;
-  opacity: 0.4;
+  color: var(--text-light);
+  opacity: 0.6;
 }

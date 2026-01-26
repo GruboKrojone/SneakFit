@@ -3,11 +3,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import DishesService, { Dish } from "../services/DishesService";
 import CommentsService, { Comment } from "../services/CommentsService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
+import SettingsIcon from "@mui/icons-material/Settings";
+import DishSettingsModal from "../components/DishSettingsModal";
 import Undo from "@mui/icons-material/Undo";
 import PlayCircle from "@mui/icons-material/PlayCircle";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
-import EditSquare from "@mui/icons-material/EditSquare";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import MacroCircle from "../components/MacroCircle";
 import CommentsModal from "../components/CommentsModal";
@@ -27,6 +28,8 @@ export default function DishDetails() {
   const hasFetched = useRef<number | null>(null);
   const totalImages = 5;
   const emptyCategories = t("no_categories");
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isPublic, setIsPublic] = useState(false);
 
   const getImageStyle = (index: number) => {
     let offset = index - currentImageIndex;
@@ -75,7 +78,6 @@ export default function DishDetails() {
       const data = await DishesService.getDishById(dishId);
       setDish(data);
 
-      // Load comments
       const commentsData = await CommentsService.getCommentsByDishId(dishId);
       setComments(commentsData);
 
@@ -103,6 +105,13 @@ export default function DishDetails() {
 
   return (
     <div className="dish-details-content">
+      <button
+        className="settings-gear-btn"
+        onClick={() => setSettingsOpen(true)}
+        title={t("dish_details_page_settings_title")}
+      >
+        <SettingsIcon className="settings-gear-icon" />
+      </button>
       <div className="dish-grid">
         <div className="grid-item grid-1">
           <div className="dish-image-box">
@@ -111,7 +120,7 @@ export default function DishDetails() {
                 className="carousel-arrow carousel-arrow-left"
                 onClick={() =>
                   setCurrentImageIndex((prev) =>
-                    prev === 0 ? totalImages - 1 : prev - 1
+                    prev === 0 ? totalImages - 1 : prev - 1,
                   )
                 }
                 aria-label="Previous image"
@@ -124,7 +133,6 @@ export default function DishDetails() {
                   {Array.from({ length: totalImages }).map((_, index) => {
                     const { scale, opacity, zIndex, translateX } =
                       getImageStyle(index);
-                    const isCenter = index === currentImageIndex;
 
                     return (
                       <div
@@ -141,11 +149,6 @@ export default function DishDetails() {
                         ) : (
                           <img alt={`${dish.name} view ${index + 1}`} />
                         )}
-                        {isCenter && (
-                          <div className="edit-icon-overlay">
-                            <EditSquare className="edit-icon-overlay-icon" />
-                          </div>
-                        )}
                       </div>
                     );
                   })}
@@ -156,7 +159,7 @@ export default function DishDetails() {
                 className="carousel-arrow carousel-arrow-right"
                 onClick={() =>
                   setCurrentImageIndex((prev) =>
-                    prev === totalImages - 1 ? 0 : prev + 1
+                    prev === totalImages - 1 ? 0 : prev + 1,
                   )
                 }
                 aria-label="Next image"
@@ -191,16 +194,10 @@ export default function DishDetails() {
         <div className="grid-item grid-2">
           <div className="dish-name-container">
             <h1 className="dish-name-box">{dish.name}</h1>
-            <div className="dish-name-icon">
-              <EditSquare className="edit-square-icon" />
-            </div>
           </div>
           <div className="description-container">
             <div className="description-box">
               <p>{dish.description ?? t("empty_description")}</p>
-            </div>
-            <div className="description-icon">
-              <EditSquare className="edit-square-icon" />
             </div>
           </div>
         </div>
@@ -250,30 +247,32 @@ export default function DishDetails() {
                 </div>
               </div>
 
-              <div className="macros-grid">
-                <div className="kcal-box">
-                  <div className="kcal-value">
-                    {Math.round((dish.calories ?? 0) * servings)}
+              <div className="macros-container">
+                <div className="macros-grid">
+                  <div className="kcal-box">
+                    <div className="kcal-value">
+                      {Math.round((dish.calories ?? 0) * servings)}
+                    </div>
+                    <div className="kcal-label">
+                      {t("dish_details_macro_circle_calories")}
+                    </div>
                   </div>
-                  <div className="kcal-label">
-                    {t("dish_details_macro_circle_calories")}
-                  </div>
+                  <MacroCircle
+                    value={Math.round((dish.protein ?? 0) * servings)}
+                    label={t("dish_details_macro_circle_proteins")}
+                    maxValue={100}
+                  />
+                  <MacroCircle
+                    value={Math.round((dish.carbs ?? 0) * servings)}
+                    label={t("dish_details_macro_circle_carbs")}
+                    maxValue={100}
+                  />
+                  <MacroCircle
+                    value={Math.round((dish.fat ?? 0) * servings)}
+                    label={t("dish_details_macro_circle_fats")}
+                    maxValue={100}
+                  />
                 </div>
-                <MacroCircle
-                  value={Math.round((dish.protein ?? 0) * servings)}
-                  label={t("dish_details_macro_circle_proteins")}
-                  maxValue={100}
-                />
-                <MacroCircle
-                  value={Math.round((dish.carbs ?? 0) * servings)}
-                  label={t("dish_details_macro_circle_carbs")}
-                  maxValue={100}
-                />
-                <MacroCircle
-                  value={Math.round((dish.fat ?? 0) * servings)}
-                  label={t("dish_details_macro_circle_fats")}
-                  maxValue={100}
-                />
               </div>
               <button
                 className="comments-button"
@@ -311,6 +310,13 @@ export default function DishDetails() {
           onCommentAdded={handleCommentAdded}
         />
       )}
+      <DishSettingsModal
+        isOpen={settingsOpen}
+        onClose={() => setSettingsOpen(false)}
+        isPublic={isPublic}
+        onChangePublic={setIsPublic}
+        dishId={dish.id}
+      />
     </div>
   );
 }
