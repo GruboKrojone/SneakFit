@@ -62,23 +62,23 @@ export default function DishSettingsModal({
 
   const handleEditDescription = async () => {
     const { value: newDescription } = await Swal.fire({
-      title: "Edytuj opis",
+      title: t("dish_settings_modal_edit_description"),
       input: "textarea",
       inputValue: description,
-      inputPlaceholder: "Wpisz opis dania...",
+      inputPlaceholder: t("dish_settings_modal_edit_description_placeholder"),
       inputAttributes: {
-        "aria-label": "Wpisz opis dania",
+        "aria-label": t("dish_settings_modal_edit_description_aria_label"),
         maxlength: "500",
       },
       inputValidator: (value) => {
         if (value && value.length > 500) {
-          return "Opis nie może przekraczać 500 znaków!";
+          return t("dish_settings_modal_edit_description_validation");
         }
         return null;
       },
       showCancelButton: true,
-      confirmButtonText: "Zapisz",
-      cancelButtonText: "Anuluj",
+      confirmButtonText: t("dish_settings_modal_edit_description_save"),
+      cancelButtonText: t("dish_settings_modal_edit_description_cancel"),
       width: "700px",
       padding: "2.5rem",
       customClass: {
@@ -93,7 +93,6 @@ export default function DishSettingsModal({
           textarea.style.minHeight = "500px";
           textarea.style.resize = "vertical";
 
-          // Add character counter
           const counter = document.createElement("div");
           counter.className = "swal-character-counter";
           counter.textContent = `${textarea.value.length}/500`;
@@ -110,10 +109,10 @@ export default function DishSettingsModal({
       try {
         await DishesService.updateDish(dishId, { description: newDescription });
         setDescription(newDescription);
-        toast.success("Opis został zaktualizowany");
+        toast.success(t("dish_settings_modal_edit_description_success"));
       } catch (error) {
         console.error("Error updating dish description:", error);
-        toast.error("Nie udało się zaktualizować opisu");
+        toast.error(t("dish_settings_modal_edit_description_error"));
       }
     }
   };
@@ -138,70 +137,112 @@ export default function DishSettingsModal({
           {t("dish_settings_modal_title")}
         </h2>
 
-        <div className="dish-settings-modal-group">
-          <div className="dish-settings-modal-group-title">
-            {t("dish_settings_modal_privacy_title")}
+        <div className="dish-settings-modal-grid">
+          <div className="dish-settings-modal-group">
+            <div className="dish-settings-modal-group-title">
+              {t("dish_settings_modal_privacy_title")}
+            </div>
+            <div className="dish-settings-modal-settings-group">
+              <p>{t("dish_settings_modal_current_privacy")}</p>
+              <select
+                className="dish-settings-modal-select"
+                value={tempPrivacy ? "public" : "private"}
+                onChange={(e) => {
+                  const newValue = e.target.value === "public";
+                  handlePrivacyChange(newValue);
+                }}
+              >
+                {tempPrivacy ? (
+                  <>
+                    <option value="public">
+                      {t("dish_settings_modal_public")}
+                    </option>
+                    <option value="private">
+                      {t("dish_settings_modal_private")}
+                    </option>
+                  </>
+                ) : (
+                  <>
+                    <option value="private">
+                      {t("dish_settings_modal_private")}
+                    </option>
+                    <option value="public">
+                      {t("dish_settings_modal_public")}
+                    </option>
+                  </>
+                )}
+              </select>
+            </div>
           </div>
-          <div className="dish-settings-modal-settings-group">
-            <p>{t("dish_settings_modal_current_privacy")}</p>
-            <select
-              className="dish-settings-modal-select"
-              value={tempPrivacy ? "public" : "private"}
-              onChange={(e) => {
-                const newValue = e.target.value === "public";
-                handlePrivacyChange(newValue);
-              }}
-            >
-              {tempPrivacy ? (
-                <>
-                  <option value="public">
-                    {t("dish_settings_modal_public")}
-                  </option>
-                  <option value="private">
-                    {t("dish_settings_modal_private")}
-                  </option>
-                </>
-              ) : (
-                <>
-                  <option value="private">
-                    {t("dish_settings_modal_private")}
-                  </option>
-                  <option value="public">
-                    {t("dish_settings_modal_public")}
-                  </option>
-                </>
-              )}
-            </select>
-          </div>
-        </div>
 
-        <div className="dish-settings-modal-group">
-          <div className="dish-settings-modal-group-title">Edytuj opis</div>
-          <div className="dish-settings-modal-group-content">
-            <button
-              className="dish-settings-modal-edit-btn"
-              onClick={handleEditDescription}
-            >
-              Edytuj opis
-            </button>
+          <div className="dish-settings-modal-group">
+            <div className="dish-settings-modal-group-title">
+              {t("dish_settings_modal_edit_photos")}
+            </div>
+            <div className="dish-settings-modal-group-content">
+              <button
+                className="dish-settings-modal-edit-btn"
+                onClick={() => {}}
+              >
+                {t("dish_settings_modal_edit_photos")}
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div className="dish-settings-modal-group">
-          <div className="dish-settings-modal-group-title">
-            Edytuj kategorie
+          <div className="dish-settings-modal-group">
+            <div className="dish-settings-modal-group-title">
+              {t("dish_settings_modal_edit_categories")}
+            </div>
+            <div className="dish-settings-modal-group-content">
+              <button
+                className="dish-settings-modal-edit-btn"
+                onClick={() => {}}
+              >
+                {t("dish_settings_modal_edit_categories")}
+              </button>
+            </div>
           </div>
-          <div className="dish-settings-modal-group-content">
-            {/* Tutaj pole do edycji kategorii */}
-          </div>
-        </div>
 
-        <div className="dish-settings-modal-group">
-          <div className="dish-settings-modal-group-title">
-            Edytuj makroskładniki
+          <div className="dish-settings-modal-group">
+            <div className="dish-settings-modal-group-title">
+              {t("dish_settings_modal_edit_description")}
+            </div>
+            <div className="dish-settings-modal-group-content">
+              <button
+                className="dish-settings-modal-edit-btn"
+                onClick={handleEditDescription}
+              >
+                {t("dish_settings_modal_edit_description")}
+              </button>
+            </div>
           </div>
-          <div className="dish-settings-modal-group-content">
-            {/* Tutaj pole do edycji makroskładników */}
+
+          <div className="dish-settings-modal-group">
+            <div className="dish-settings-modal-group-title">
+              {t("dish_settings_modal_edit_ingredients")}
+            </div>
+            <div className="dish-settings-modal-group-content">
+              <button
+                className="dish-settings-modal-edit-btn"
+                onClick={() => {}}
+              >
+                {t("dish_settings_modal_edit_ingredients")}
+              </button>
+            </div>
+          </div>
+
+          <div className="dish-settings-modal-group">
+            <div className="dish-settings-modal-group-title">
+              {t("dish_settings_modal_edit_macronutrients")}
+            </div>
+            <div className="dish-settings-modal-group-content">
+              <button
+                className="dish-settings-modal-edit-btn"
+                onClick={() => {}}
+              >
+                {t("dish_settings_modal_edit_macronutrients")}
+              </button>
+            </div>
           </div>
         </div>
       </div>

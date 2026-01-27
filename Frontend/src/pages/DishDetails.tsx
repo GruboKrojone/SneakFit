@@ -93,7 +93,7 @@ export default function DishDetails() {
   if (isLoading)
     return (
       <div className="loading-container">
-        <p>Loading...</p>
+        <p>{t("loading")}</p>
       </div>
     );
   if (!dish)
@@ -123,7 +123,7 @@ export default function DishDetails() {
                     prev === 0 ? totalImages - 1 : prev - 1,
                   )
                 }
-                aria-label="Previous image"
+                aria-label={t("carousel_previous_image")}
               >
                 <ChevronLeft className="carousel-arrow-icon" />
               </button>
@@ -162,7 +162,7 @@ export default function DishDetails() {
                     prev === totalImages - 1 ? 0 : prev + 1,
                   )
                 }
-                aria-label="Next image"
+                aria-label={t("carousel_next_image")}
               >
                 <ChevronRight className="carousel-arrow-icon" />
               </button>
@@ -176,7 +176,7 @@ export default function DishDetails() {
                     index === currentImageIndex ? "active" : ""
                   }`}
                   onClick={() => setCurrentImageIndex(index)}
-                  aria-label={`Go to image ${index + 1}`}
+                  aria-label={`${t("carousel_go_to_image")} ${index + 1}`}
                   type="button"
                 />
               ))}

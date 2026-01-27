@@ -407,9 +407,12 @@
 
 .swal2-character-counter {
   position: absolute;
-  bottom: 0.75rem;
-  right: 1rem;
-  color: rgba(0, 0, 0, 0.6);
+  bottom: 0.5rem;
+  right: 0.5rem;
+  color: #ffffff;
+  padding: 0.25rem 0.5rem;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.7);
   font-size: 14px;
   pointer-events: none;
 }
