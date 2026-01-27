@@ -125,21 +125,21 @@ export default function DishSettingsModal({
   const settingOptions: SettingOption[] = [
     { titleKey: "dish_settings_modal_edit_photos", onClick: () => {} },
     { titleKey: "dish_settings_modal_edit_categories", onClick: () => {} },
-    { titleKey: "dish_settings_modal_edit_description", onClick: handleEditDescription },
+    {
+      titleKey: "dish_settings_modal_edit_description",
+      onClick: () => {
+        handleEditDescription();
+      },
+    },
     { titleKey: "dish_settings_modal_edit_ingredients", onClick: () => {} },
     { titleKey: "dish_settings_modal_edit_macronutrients", onClick: () => {} },
   ];
 
   const renderSettingGroup = ({ titleKey, onClick }: SettingOption) => (
     <div className="dish-settings-modal-group" key={titleKey}>
-      <div className="dish-settings-modal-group-title">
-        {t(titleKey)}
-      </div>
+      <div className="dish-settings-modal-group-title">{t(titleKey)}</div>
       <div className="dish-settings-modal-group-content">
-        <button
-          className="dish-settings-modal-edit-btn"
-          onClick={onClick}
-        >
+        <button className="dish-settings-modal-edit-btn" onClick={onClick}>
           {t(titleKey)}
         </button>
       </div>
