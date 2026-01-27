@@ -14,6 +14,17 @@ interface DishSettingsModalProps {
   readonly dishId: number;
 }
 
+const SWAL_CUSTOM_CLASS = {
+  popup: "swal2-popup-custom",
+  confirmButton: "swal2-confirm-btn-custom",
+  cancelButton: "swal2-cancel-btn-custom",
+};
+
+interface SettingOption {
+  titleKey: string;
+  onClick: () => void;
+}
+
 export default function DishSettingsModal({
   isOpen,
   onClose,
@@ -37,11 +48,7 @@ export default function DishSettingsModal({
       showCancelButton: true,
       confirmButtonText: t("dish_settings_modal_confirm_yes"),
       cancelButtonText: t("dish_settings_modal_confirm_no"),
-      customClass: {
-        popup: "swal2-popup-custom",
-        confirmButton: "swal2-confirm-btn-custom",
-        cancelButton: "swal2-cancel-btn-custom",
-      },
+      customClass: SWAL_CUSTOM_CLASS,
     });
 
     if (result.isConfirmed) {
@@ -82,9 +89,7 @@ export default function DishSettingsModal({
       width: "700px",
       padding: "2.5rem",
       customClass: {
-        popup: "swal2-popup-custom",
-        confirmButton: "swal2-confirm-btn-custom",
-        cancelButton: "swal2-cancel-btn-custom",
+        ...SWAL_CUSTOM_CLASS,
         input: "swal2-textarea-custom",
       },
       didOpen: () => {
@@ -116,6 +121,30 @@ export default function DishSettingsModal({
       }
     }
   };
+
+  const settingOptions: SettingOption[] = [
+    { titleKey: "dish_settings_modal_edit_photos", onClick: () => {} },
+    { titleKey: "dish_settings_modal_edit_categories", onClick: () => {} },
+    { titleKey: "dish_settings_modal_edit_description", onClick: handleEditDescription },
+    { titleKey: "dish_settings_modal_edit_ingredients", onClick: () => {} },
+    { titleKey: "dish_settings_modal_edit_macronutrients", onClick: () => {} },
+  ];
+
+  const renderSettingGroup = ({ titleKey, onClick }: SettingOption) => (
+    <div className="dish-settings-modal-group" key={titleKey}>
+      <div className="dish-settings-modal-group-title">
+        {t(titleKey)}
+      </div>
+      <div className="dish-settings-modal-group-content">
+        <button
+          className="dish-settings-modal-edit-btn"
+          onClick={onClick}
+        >
+          {t(titleKey)}
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <div
@@ -152,98 +181,17 @@ export default function DishSettingsModal({
                   handlePrivacyChange(newValue);
                 }}
               >
-                {tempPrivacy ? (
-                  <>
-                    <option value="public">
-                      {t("dish_settings_modal_public")}
-                    </option>
-                    <option value="private">
-                      {t("dish_settings_modal_private")}
-                    </option>
-                  </>
-                ) : (
-                  <>
-                    <option value="private">
-                      {t("dish_settings_modal_private")}
-                    </option>
-                    <option value="public">
-                      {t("dish_settings_modal_public")}
-                    </option>
-                  </>
-                )}
+                <option value="public">
+                  {t("dish_settings_modal_public")}
+                </option>
+                <option value="private">
+                  {t("dish_settings_modal_private")}
+                </option>
               </select>
             </div>
           </div>
 
-          <div className="dish-settings-modal-group">
-            <div className="dish-settings-modal-group-title">
-              {t("dish_settings_modal_edit_photos")}
-            </div>
-            <div className="dish-settings-modal-group-content">
-              <button
-                className="dish-settings-modal-edit-btn"
-                onClick={() => {}}
-              >
-                {t("dish_settings_modal_edit_photos")}
-              </button>
-            </div>
-          </div>
-
-          <div className="dish-settings-modal-group">
-            <div className="dish-settings-modal-group-title">
-              {t("dish_settings_modal_edit_categories")}
-            </div>
-            <div className="dish-settings-modal-group-content">
-              <button
-                className="dish-settings-modal-edit-btn"
-                onClick={() => {}}
-              >
-                {t("dish_settings_modal_edit_categories")}
-              </button>
-            </div>
-          </div>
-
-          <div className="dish-settings-modal-group">
-            <div className="dish-settings-modal-group-title">
-              {t("dish_settings_modal_edit_description")}
-            </div>
-            <div className="dish-settings-modal-group-content">
-              <button
-                className="dish-settings-modal-edit-btn"
-                onClick={handleEditDescription}
-              >
-                {t("dish_settings_modal_edit_description")}
-              </button>
-            </div>
-          </div>
-
-          <div className="dish-settings-modal-group">
-            <div className="dish-settings-modal-group-title">
-              {t("dish_settings_modal_edit_ingredients")}
-            </div>
-            <div className="dish-settings-modal-group-content">
-              <button
-                className="dish-settings-modal-edit-btn"
-                onClick={() => {}}
-              >
-                {t("dish_settings_modal_edit_ingredients")}
-              </button>
-            </div>
-          </div>
-
-          <div className="dish-settings-modal-group">
-            <div className="dish-settings-modal-group-title">
-              {t("dish_settings_modal_edit_macronutrients")}
-            </div>
-            <div className="dish-settings-modal-group-content">
-              <button
-                className="dish-settings-modal-edit-btn"
-                onClick={() => {}}
-              >
-                {t("dish_settings_modal_edit_macronutrients")}
-              </button>
-            </div>
-          </div>
+          {settingOptions.map(renderSettingGroup)}
         </div>
       </div>
     </div>
