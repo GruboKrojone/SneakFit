@@ -3,8 +3,6 @@
   "empty_description": "No description available",
   "dish_details": "Dish Details",
   "loading_dishes": "Loading dishes...",
-  "no_more_dishes": "No more dishes available.",
-  "add_own_dish": "Add your own recipe.",
 
   "register_page_title": "Register",
   "register_page_email_holder": "Email",
@@ -59,6 +57,10 @@
   "profile_settings_close": "Close",
   "profile_settings_success": "✓ Profile updated successfully!",
   "profile_settings_error": "Error updating profile",
+  "profile_settings_clear_choices": "Clear saved choices",
+  "profile_settings_clear_choices_button": "Clear previous choices",
+  "profile_settings_clear_choices_hint": "Remove all saved recipe ratings",
+  "choices_cleared_message": "✓ All choices have been cleared!",
 
   "create_dish_modal_title": "Add New Dish",
   "create_dish_modal_name": "Name",

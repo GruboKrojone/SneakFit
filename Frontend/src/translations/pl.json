@@ -57,6 +57,10 @@
   "profile_settings_close": "Zamknij",
   "profile_settings_success": "✓ Profil zaktualizowany pomyślnie!",
   "profile_settings_error": "Błąd przy aktualizacji profilu",
+  "profile_settings_clear_choices": "Usuń zapisane wybory",
+  "profile_settings_clear_choices_button": "Usuń dotychczasowe wybory",
+  "profile_settings_clear_choices_hint": "Usuń wszystkie zapisane oceny przepisów",
+  "choices_cleared_message": "✓ Wszystkie wybory zostały usunięte!",
 
   "create_dish_modal_title": "Dodaj nowe danie",
   "create_dish_modal_name": "Nazwa",

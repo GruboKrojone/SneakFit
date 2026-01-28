@@ -10,6 +10,12 @@ import CreateDishModal from "./CreateDishModal";
 import "./styles/DishSlider.css";
 import { useTranslation } from "react-i18next";
 import { useFetchDishes } from "../hooks/useFetchDishes";
+import { useCleanTempLists } from "../hooks/useCleanTempLists";
+import {
+  addLikedRecipe,
+  addNotLikedRecipe,
+  getAllRatedRecipeIds,
+} from "../utils/recipeStorage";
 
 type ActionType = "pass" | "loved" | "smash" | null;
 
@@ -36,9 +42,14 @@ export default function DishSlider() {
   const navigate = useNavigate();
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  useCleanTempLists();
+
+  const ratedRecipeIds = getAllRatedRecipeIds();
   const visibleCards = dishes
     .map((dish, index) => ({ dish, originalIndex: index }))
-    .filter(({ originalIndex }) => !usedIndices.has(originalIndex));
+    .filter(({ originalIndex, dish }) => 
+      !usedIndices.has(originalIndex) && !ratedRecipeIds.includes(dish.id)
+    );
 
   useEffect(() => {
     if (visibleCards.length === 0 && !showAddRecipeCard) {
@@ -73,6 +84,16 @@ export default function DishSlider() {
 
   const handleTransitionEnd = () => {
     if (isAnimating && animatingIndex !== null) {
+      const currentDish = dishes[animatingIndex];
+      
+      if (currentDish) {
+        if (animationType === "pass") {
+          addNotLikedRecipe(currentDish.id);
+        } else if (animationType === "smash" || animationType === "loved") {
+          addLikedRecipe(currentDish.id);
+        }
+      }
+      
       setUsedIndices((prev) => new Set(prev).add(animatingIndex));
       if (animationType === "pass") {
         setPassedCards((prev) => [...prev, animatingIndex]);
