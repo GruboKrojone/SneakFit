@@ -1,12 +1,12 @@
 .auth-input {
   width: 50dvw;
   height: 6dvh;
-  border-radius: 50px;
+  border-radius: 3.125rem;
   text-align: center;
   margin: 0.5rem;
   background: var(--bg);
   color: var(--text);
-  border: 1px solid var(--border);
+  border: 0.0625rem solid var(--border);
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
   transition: all 0.3s ease;
@@ -15,7 +15,7 @@
 .auth-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  box-shadow: 0 0 0 0.1875rem rgba(255, 107, 53, 0.1);
 }
 
 .auth-input::placeholder {

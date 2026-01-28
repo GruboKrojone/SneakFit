@@ -61,7 +61,7 @@
   border-radius: 1.25rem 1.25rem 0 0;
   padding: 2.5rem 2rem 2rem 2rem;
   width: 98vw;
-  max-width: 900px;
+  max-width: 56.25rem;
   min-height: 100vh;
   height: 100vh;
   box-sizing: border-box;
@@ -79,7 +79,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   width: 100%;
-  max-width: 700px;
+  max-width: 43.75rem;
   margin-top: 2rem;
 }
 
@@ -289,7 +289,7 @@
 }
 
 .swal2-textarea-custom {
-  min-height: 200px !important;
+  min-height: 12.5rem !important;
   resize: vertical !important;
   font-family: 'Inter', sans-serif !important;
   font-size: 1rem !important;

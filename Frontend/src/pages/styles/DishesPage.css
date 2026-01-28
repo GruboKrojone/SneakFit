@@ -32,34 +32,34 @@
 
 .dishes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
   gap: 2rem;
 }
 
 .dishes-box {
   background: var(--card);
-  border-radius: 16px;
+  border-radius: 1rem;
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 1px 3px rgba(0, 0, 0, 0.05),
-    0 2px 8px rgba(0, 0, 0, 0.03);
-  border: 1px solid rgba(0, 0, 0, 0.05);
+    0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.05),
+    0 0.125rem 0.5rem rgba(0, 0, 0, 0.03);
+  border: 0.0625rem solid rgba(0, 0, 0, 0.05);
   padding: 1rem;
 }
 
 .dishes-box:hover {
-  transform: translateY(-8px);
+  transform: translateY(-0.5rem);
   box-shadow: 
-    0 8px 20px rgba(0, 0, 0, 0.08),
-    0 16px 40px rgba(0, 0, 0, 0.04);
+    0 0.5rem 1.25rem rgba(0, 0, 0, 0.08),
+    0 1rem 2.5rem rgba(0, 0, 0, 0.04);
   border-color: #ff9e60;
 }
 
 .dishes-image-wrap {
   width: 100%;
-  height: 240px;
+  height: 15rem;
   background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   display: flex;
   align-items: center;
@@ -114,12 +114,12 @@
   font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.03125rem;
   background: #ffe9d6;
   color: #e67700;
   padding: 0.5rem 1.2rem;
-  border-radius: 999px;
-  border: 1px solid #ffd9b3;
+  border-radius: 62.4375rem;
+  border: 0.0625rem solid #ffd9b3;
   margin-top: 0.25rem;
   margin-left: -1.5rem;
   margin-right: -1.5rem;
@@ -129,21 +129,21 @@
 }
 
 .dishes-restaurant-icon {
-  font-size: 60px !important;
+  font-size: 3.75rem !important;
   color: #dee2e6 !important;
 }
 
 #auto-awesome-icon {
   color: #ff8c42;
-  width: 30px;
-  height: 30px;
-  filter: drop-shadow(0 2px 4px rgba(255, 140, 66, 0.25));
+  width: 1.875rem;
+  height: 1.875rem;
+  filter: drop-shadow(0 0.125rem 0.25rem rgba(255, 140, 66, 0.25));
 }
 
 #add-box-icon {
   color: var(--text-light);
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -155,8 +155,8 @@
 
 #filter-alt-icon {
   color: var(--text-light);
-  width: 30px;
-  height: 30px;
+  width: 1.875rem;
+  height: 1.875rem;
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -186,28 +186,8 @@
 }
 
 .dishes-empty-icon {
-  font-size: 80px !important;
+  font-size: 5rem !important;
   color: #dee2e6 !important;
   margin-bottom: 1rem;
 }
 
-@media (max-width: 1400px) {
-  .dishes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  }
-}
-
-@media (max-width: 768px) {
-  .dishes-page {
-    padding: 2rem 1.5rem;
-  }
-  
-  .dishes-title {
-    font-size: 2.5rem;
-  }
-  
-  .dishes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 1.5rem;
-  }
-}

@@ -20,7 +20,7 @@
 
 .modal-content {
   background: var(--card);
-  border-radius: 20px 20px 0 0;
+  border-radius: 1.25rem 1.25rem 0 0;
   padding: 2rem;
   height: 100dvh;
   max-height: 100dvh;
@@ -30,7 +30,7 @@
   justify-content: flex-start;
   transform: translateY(100%);
   transition: transform 0.4s ease;
-  box-shadow: 0 -8px 32px var(--shadow);
+  box-shadow: 0 -0.5rem 2rem var(--shadow);
   border: none;
 }
 
@@ -77,7 +77,7 @@
   flex-direction: column;
   gap: 1.2rem;
   background: #F5F5F0;
-  border: 1px solid #d1d1d1;
+  border: 0.0625rem solid #d1d1d1;
   border-radius: 0.8rem;
   padding: 1.5rem 1.2rem 1.8rem 1.2rem;
   box-sizing: border-box;
@@ -105,8 +105,8 @@
 .form-group-description textarea {
   background: var(--card);
   padding: 1.25rem;
-  border: 1px solid var(--border);
-  border-radius: 14px;
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.875rem;
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
   color: var(--text);
@@ -117,7 +117,7 @@
 .form-group-description textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+  box-shadow: 0 0 0 0.1875rem rgba(255, 107, 53, 0.1);
 }
 
 .form-group input[type="number"]::-webkit-outer-spin-button,
@@ -170,10 +170,10 @@
   background: rgba(255, 107, 107, 0.2);
   color: #ff6b6b;
   padding: 0.75rem 1rem;
-  border-radius: 14px;
+  border-radius: 0.875rem;
   font-size: 0.875rem;
   text-align: center;
-  border: 1px solid rgba(255, 107, 107, 0.3);
+  border: 0.0625rem solid rgba(255, 107, 107, 0.3);
 }
 
 .submit-button {
@@ -181,18 +181,18 @@
   background: var(--gradient);
   color: #ffffff;
   border: none;
-  border-radius: 50px;
+  border-radius: 3.125rem;
   font-size: 1.13rem;
   font-weight: 600;
   cursor: pointer;
   margin-top: 1rem;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 16px var(--shadow);
+  box-shadow: 0 0.25rem 1rem var(--shadow);
 }
 
 .submit-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 24px rgba(255, 107, 53, 0.4);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.375rem 1.5rem rgba(255, 107, 53, 0.4);
 }
 
 .submit-button:disabled {

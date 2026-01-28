@@ -13,7 +13,7 @@
   width: min(30dvw, 30dvh);
   height: min(30dvw, 30dvh);
   background: transparent !important;
-  border-radius: 20px;
+  border-radius: 1.25rem;
 }
 
 h1 {

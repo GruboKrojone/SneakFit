@@ -14,17 +14,18 @@
 
 .page-footer {
     display: flex;
-    justify-content: center;
+    justify-content: center !important;
     align-items: center;
-    padding: 1rem;
+    padding: 1rem !important;
+    width: 100% !important;
 }
 
 .history-btn {
     background: none;
     border: none;
     cursor: pointer;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 4.5rem;
+    height: 4.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -33,7 +34,7 @@
 }
 
 .history-btn:hover {
-    transform: translateY(-2px) scale(1.05);
+    transform: translateY(-0.125rem) scale(1.05);
 }
 
 .history-btn:active {
@@ -41,7 +42,7 @@
 }
 
 .history-icon {
-    font-size: 2.7rem !important;
+    font-size: 3.5rem !important;
     color: #888;
 }
 
