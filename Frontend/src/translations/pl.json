@@ -86,6 +86,13 @@
   "create_dish_modal_success": "✓ Danie dodane pomyślnie!",
   "create_dish_modal_error": "Błąd przy dodawaniu dania",
 
+  "delete_dish_modal_title": "Czy jesteś pewien że chcesz usunąć przepis?",
+  "delete_dish_modal_checkbox": "Tak jestem pewien",
+  "delete_dish_modal_checkbox_required": "Musisz zaznaczyć checkbox, aby usunąć przepis",
+  "delete_dish_modal_cancel": "Anuluj",
+  "delete_dish_modal_delete": "Usuń",
+  "delete_dish_success": "Przepis został usunięty!",
+  "delete_dish_error": "Błąd podczas usuwania przepisu",
   "comments_modal_title": "Komentarze",
   "comments_modal_close": "Zamknij",
   "comments_modal_no_comments": "Brak komentarzy. Bądź pierwszy!",

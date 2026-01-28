@@ -8,8 +8,11 @@ import PlayCircle from "@mui/icons-material/PlayCircle";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import EditSquare from "@mui/icons-material/EditSquare";
-import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
+import Delete from "@mui/icons-material/Delete";
 import MacroCircle from "../components/MacroCircle";
+import DeleteDishModal from "../components/DeleteDishModal";
+import { toast } from "react-toastify";
+import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import CommentsModal from "../components/CommentsModal";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
@@ -22,6 +25,7 @@ export default function DishDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [servings, setServings] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const hasFetched = useRef<number | null>(null);
@@ -84,6 +88,20 @@ export default function DishDetails() {
     load();
   }, [id]);
 
+  const handleDeleteDish = async () => {
+    if (!dish) return;
+
+    try {
+      await DishesService.deleteDish(dish.id);
+      toast.success(t("delete_dish_success"));
+      setIsDeleteModalOpen(false);
+      navigate("/dishes");
+    } catch (error) {
+      console.error("Error deleting dish:", error);
+      toast.error(t("delete_dish_error"));
+    }
+  };
+
   const handleCommentAdded = (comment: Comment) => {
     setComments((prevComments) => [...prevComments, comment]);
   };
@@ -103,6 +121,13 @@ export default function DishDetails() {
 
   return (
     <div className="dish-details-content">
+      <button
+        id="delete-dish-button"
+        onClick={() => setIsDeleteModalOpen(true)}
+        aria-label="Delete dish"
+      >
+        <Delete id="delete-dish-icon" />
+      </button>
       <div className="dish-grid">
         <div className="grid-item grid-1">
           <div className="dish-image-box">
@@ -111,7 +136,7 @@ export default function DishDetails() {
                 className="carousel-arrow carousel-arrow-left"
                 onClick={() =>
                   setCurrentImageIndex((prev) =>
-                    prev === 0 ? totalImages - 1 : prev - 1
+                    prev === 0 ? totalImages - 1 : prev - 1,
                   )
                 }
                 aria-label="Previous image"
@@ -156,7 +181,7 @@ export default function DishDetails() {
                 className="carousel-arrow carousel-arrow-right"
                 onClick={() =>
                   setCurrentImageIndex((prev) =>
-                    prev === totalImages - 1 ? 0 : prev + 1
+                    prev === totalImages - 1 ? 0 : prev + 1,
                   )
                 }
                 aria-label="Next image"
@@ -301,6 +326,11 @@ export default function DishDetails() {
         </div>
       </div>
 
+      <DeleteDishModal
+        isOpen={isDeleteModalOpen}
+        onClose={() => setIsDeleteModalOpen(false)}
+        onConfirm={handleDeleteDish}
+      />
       {dish && (
         <CommentsModal
           isOpen={isCommentsModalOpen}
