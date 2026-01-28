@@ -4,6 +4,7 @@ using System.Threading.RateLimiting;
 using Algorithm;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Azure.Storage.Blobs;
 using Core.Authentication;
 using Core.Configuration;
 using Core.Configuration.Azure;
@@ -121,6 +122,12 @@ internal static class Program
         var allowedOrigins = builder.Configuration
             .GetSection("App:Cors:AllowedOrigins")
             .Get<string[]>() ?? ["https://localhost:5173"];
+
+        builder.Services.AddSingleton(x =>
+        {
+            var connectionString = builder.Configuration["App:Azure:ConnectionString"];
+            return new BlobServiceClient(connectionString);
+        });
 
         builder.Services.AddCors(options =>
         {

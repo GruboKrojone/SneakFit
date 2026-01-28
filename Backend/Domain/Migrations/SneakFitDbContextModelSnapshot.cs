@@ -218,6 +218,9 @@ namespace Domain.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
+                    b.Property<int?>("MainPictureId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
@@ -234,6 +237,12 @@ namespace Domain.Migrations
                         .HasColumnType("decimal(3, 2)")
                         .HasDefaultValue(0m);
 
+                    b.Property<int?>("SecondaryPictureId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ThirdPictureId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
 
@@ -241,7 +250,13 @@ namespace Domain.Migrations
 
                     b.HasIndex("IsPublic");
 
+                    b.HasIndex("MainPictureId");
+
                     b.HasIndex("OwnerId");
+
+                    b.HasIndex("SecondaryPictureId");
+
+                    b.HasIndex("ThirdPictureId");
 
                     b.HasIndex("IsPublic", "IsDeleted");
 
@@ -283,6 +298,42 @@ namespace Domain.Migrations
                     b.HasIndex("Name");
 
                     b.ToTable("Ingredients", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Images.Entities.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(2048)
+                        .HasColumnType("nvarchar(2048)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OwnerId");
+
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Domain.Users.Entities.Favorited", b =>
@@ -419,10 +470,42 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Dishes.Entities.Dish", b =>
                 {
+                    b.HasOne("Domain.Images.Entities.Image", "MainPicture")
+                        .WithMany()
+                        .HasForeignKey("MainPictureId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
                     b.HasOne("Domain.Users.Entities.User", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Images.Entities.Image", "SecondaryPicture")
+                        .WithMany()
+                        .HasForeignKey("SecondaryPictureId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("Domain.Images.Entities.Image", "ThirdPicture")
+                        .WithMany()
+                        .HasForeignKey("ThirdPictureId")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.Navigation("MainPicture");
+
+                    b.Navigation("Owner");
+
+                    b.Navigation("SecondaryPicture");
+
+                    b.Navigation("ThirdPicture");
+                });
+
+            modelBuilder.Entity("Domain.Images.Entities.Image", b =>
+                {
+                    b.HasOne("Domain.Users.Entities.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Owner");
