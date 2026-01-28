@@ -10,8 +10,10 @@ const EXPIRY_DURATION = 24 * 60 * 60 * 1000;
 const getRecipesFromStorage = (key: string): RecipeEntry[] => {
   try {
     const data = localStorage.getItem(key);
-    if (!data) return [];
-    return JSON.parse(data) as RecipeEntry[];
+    if (data) {
+      return JSON.parse(data) as RecipeEntry[];
+    }
+    return [];
   } catch (error) {
     console.error(`Error reading ${key} from localStorage:`, error);
     return [];
@@ -37,13 +39,13 @@ const removeExpiredEntries = (recipes: RecipeEntry[]): RecipeEntry[] => {
 export const cleanupExpiredRecipes = (): void => {
   const likedRecipes = getRecipesFromStorage(LIKED_RECIPES_KEY);
   const cleanedLiked = removeExpiredEntries(likedRecipes);
-  if (cleanedLiked.length !== likedRecipes.length) {
+  if (cleanedLiked.length < likedRecipes.length) {
     saveRecipesToStorage(LIKED_RECIPES_KEY, cleanedLiked);
   }
 
   const notLikedRecipes = getRecipesFromStorage(NOT_LIKED_RECIPES_KEY);
   const cleanedNotLiked = removeExpiredEntries(notLikedRecipes);
-  if (cleanedNotLiked.length !== notLikedRecipes.length) {
+  if (cleanedNotLiked.length < notLikedRecipes.length) {
     saveRecipesToStorage(NOT_LIKED_RECIPES_KEY, cleanedNotLiked);
   }
 };
@@ -53,7 +55,7 @@ export const addLikedRecipe = (recipeId: number): void => {
   
   const existingIndex = recipes.findIndex(entry => entry.id === recipeId);
   
-  if (existingIndex !== -1) {
+  if (existingIndex >= 0) {
     recipes[existingIndex].timestamp = Date.now();
   } else {
     recipes.push({
@@ -70,7 +72,7 @@ export const addNotLikedRecipe = (recipeId: number): void => {
   
   const existingIndex = recipes.findIndex(entry => entry.id === recipeId);
   
-  if (existingIndex !== -1) {
+  if (existingIndex >= 0) {
     recipes[existingIndex].timestamp = Date.now();
   } else {
     recipes.push({

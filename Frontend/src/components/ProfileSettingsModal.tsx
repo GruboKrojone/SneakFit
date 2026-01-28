@@ -25,7 +25,7 @@ export default function ProfileSettingsModal({
         autoClose: 2000,
       });
     } catch (error) {
-      toast.error("Error clearing choices", {
+      toast.error(`${t("error_clearing_choices")}: ${error}`, {
         position: "bottom-right",
         autoClose: 2000,
       });
