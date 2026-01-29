@@ -162,5 +162,10 @@
   "action_smash": "Genial",
   "action_pass_label": "PASAR",
   "action_loved_label": "AMADO",
-  "action_smash_label": "GENIAL"
+  "action_smash_label": "GENIAL",
+  "favourites": "Favoritos",
+  "close": "Cerrar",
+  "select_mode": "Seleccionar",
+  "remove_from_favourites": "Eliminar de favoritos",
+  "no_favourites": "¡Aún no hay platos favoritos. Agrega platos usando la acción LOVED!"
 }
