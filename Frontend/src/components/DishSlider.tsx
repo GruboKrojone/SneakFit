@@ -323,7 +323,7 @@ export default function DishSlider() {
     <div className="dish-actions">
       <button
         className="action-button btn-pass"
-        title="Pass"
+        title={t("action_pass")}
         disabled={disabled}
         {...(!disabled && {
           onPointerDown: (e: React.PointerEvent) => {
@@ -336,7 +336,7 @@ export default function DishSlider() {
       </button>
       <button
         className="action-button btn-smash"
-        title="Loved"
+        title={t("action_loved")}
         disabled={disabled}
         {...(!disabled && {
           onPointerDown: (e: React.PointerEvent) => {
@@ -349,7 +349,7 @@ export default function DishSlider() {
       </button>
       <button
         className="action-button btn-loved"
-        title="Smash"
+        title={t("action_smash")}
         disabled={disabled}
         {...(!disabled && {
           onPointerDown: (e: React.PointerEvent) => {
@@ -378,9 +378,9 @@ export default function DishSlider() {
     return (
       <div className="action-overlay">
         <span className={getActionClassName(type)}>
-          {type === "pass" && "PASS"}
-          {type === "smash" && "SMASH"}
-          {type === "loved" && "LOVED"}
+          {type === "pass" && t("action_pass_label")}
+          {type === "smash" && t("action_smash_label")}
+          {type === "loved" && t("action_loved_label")}
         </span>
       </div>
     );
@@ -396,21 +396,21 @@ export default function DishSlider() {
       if (dragOffset.x < -50) {
         return (
           <div className="drag-overlay">
-            <span className="drag-hint drag-pass">PASS</span>
+            <span className="drag-hint drag-pass">{t("action_pass_label")}</span>
           </div>
         );
       }
       if (dragOffset.x > 50) {
         return (
           <div className="drag-overlay">
-            <span className="drag-hint drag-smash">SMASH</span>
+            <span className="drag-hint drag-smash">{t("action_smash_label")}</span>
           </div>
         );
       }
     } else if (dragOffset.y < -50) {
       return (
         <div className="drag-overlay">
-          <span className="drag-hint drag-loved">LOVED</span>
+          <span className="drag-hint drag-loved">{t("action_loved_label")}</span>
         </div>
       );
     }

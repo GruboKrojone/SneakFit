@@ -26,26 +26,14 @@ export default function MacroCircle({
     <div className="macro-item macro-circle-item">
       <div className="macro-circle-container">
         <svg width="120" height="120" viewBox="0 0 120 120">
+          <circle className="background-circle" cx="60" cy="60" r="45" />
           <circle
+            className="progress-circle macro-circle-animated"
             cx="60"
             cy="60"
             r="45"
-            fill="none"
-            stroke="#444444"
-            strokeWidth="8"
-          />
-          <circle
-            cx="60"
-            cy="60"
-            r="45"
-            fill="none"
-            stroke="#d9d9d9"
-            strokeWidth="8"
             strokeDasharray={circumference}
             strokeDashoffset={strokeDashoffset}
-            strokeLinecap="round"
-            className="macro-circle-animated"
-            transform="rotate(-90 60 60)"
           />
         </svg>
         <div className="macro-circle-text">

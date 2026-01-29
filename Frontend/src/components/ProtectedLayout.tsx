@@ -5,7 +5,7 @@ import "./styles/ProtectedLayout.css";
 import NavBar from "./NavBar";
 
 interface ProtectedLayoutProps {
-  children: ReactNode;
+  readonly children: ReactNode;
 }
 
 export default function ProtectedLayout({ children }: ProtectedLayoutProps) {

@@ -5,7 +5,7 @@
   "loading_dishes": "Loading dishes...",
   "no_more_dishes": "No more dishes available.",
   "add_own_dish": "Add your own recipe.",
-
+  
   "register_page_title": "Register",
   "register_page_email_holder": "Email",
   "register_page_name_holder": "Name",
@@ -13,18 +13,17 @@
   "register_page_confirm_password_holder": "Confirm Password",
   "register_page_register_button": "Register",
   "register_page_clear_button": "Clear",
-
+  
   "login_page_title": "SneakFit",
   "login_page_email_holder": "Email",
   "login_page_password_holder": "Password",
   "login_page_login_button": "Login",
   "login_page_forgot_password": "Forgot password?",
-
+  
   "home_page_welcome_message": "What would you like to eat today?",
-
   "dishes_page_loading": "Loading dishes...",
   "dishes_page_title": "Recipes",
-
+  
   "dish_details_page_ingredients": "Ingredients",
   "dish_details_page_empty_ingredients": "No ingredients provided",
   "dish_details_page_back_button": "Not today",
@@ -37,12 +36,12 @@
   "dish_details_page_submitting": "Submitting...",
   "dish_details_page_serving_size": "Serving Size",
   "dish_details_page_no_dish_found": "No dish found",
-
+  
   "dish_details_macro_circle_calories": "Kcal",
   "dish_details_macro_circle_proteins": "Proteins",
   "dish_details_macro_circle_fats": "Fats",
   "dish_details_macro_circle_carbs": "Carbs",
-
+  
   "profile": "Profile",
   "profile_settings_title": "Profile Settings",
   "profile_settings_name": "Name",
@@ -57,7 +56,7 @@
   "profile_settings_close": "Close",
   "profile_settings_success": "✓ Profile updated successfully!",
   "profile_settings_error": "Error updating profile",
-
+  
   "create_dish_modal_title": "Add New Dish",
   "create_dish_modal_name": "Name",
   "create_dish_modal_name_placeholder": "Enter dish name",
@@ -119,5 +118,44 @@
   "comments_modal_edit_success": "Comment updated",
   "comments_modal_edit_error": "Failed to update comment",
   "comments_modal_menu_edit": "Edit",
-  "comments_modal_menu_delete": "Delete"
+  "comments_modal_menu_delete": "Delete",
+  "dish_details_page_settings_title": "Recipe settings",
+  "dish_settings_modal_close_title": "Close",
+  "dish_settings_modal_title": "Recipe Settings",
+  "dish_settings_modal_privacy_title": "Recipe privacy",
+  "dish_settings_modal_current_privacy": "Current recipe privacy:",
+  "dish_settings_modal_public": "Public",
+  "dish_settings_modal_private": "Private",
+  "dish_settings_modal_confirm_change_title": "Confirm change",
+  "dish_settings_modal_confirm_change_message": "Are you sure you want to change the recipe privacy?",
+  "dish_settings_modal_confirm_yes": "Yes",
+  "dish_settings_modal_confirm_no": "No",
+  "dish_settings_modal_privacy_updated": "Recipe privacy has been updated",
+  "dish_settings_modal_privacy_update_error": "Failed to update recipe privacy",
+  "dish_settings_modal_edit_photos": "Edit photos",
+  "dish_settings_modal_edit_categories": "Edit categories",
+  "dish_settings_modal_edit_description": "Edit description",
+  "dish_settings_modal_edit_ingredients": "Edit ingredients",
+  "dish_settings_modal_edit_macronutrients": "Edit macronutrients",
+  "dish_settings_modal_edit_description_success": "Description has been updated",
+  "dish_settings_modal_edit_description_error": "Failed to update description",
+  "dish_settings_modal_edit_description_placeholder": "Enter dish description...",
+  "dish_settings_modal_edit_description_aria_label": "Enter dish description",
+  "dish_settings_modal_edit_description_validation": "Description cannot exceed 500 characters!",
+  "dish_settings_modal_edit_description_save": "Save",
+  "dish_settings_modal_edit_description_cancel": "Cancel",
+  
+  "loading": "Loading...",
+  "carousel_previous_image": "Previous image",
+  "carousel_next_image": "Next image",
+  "carousel_go_to_image": "Go to image",
+  "shopping_list_title": "Shopping List",
+  "shopping_list_content": "List",
+  "profile_page_content": "User profile content",
+  "action_pass": "Pass",
+  "action_loved": "Loved",
+  "action_smash": "Smash",
+  "action_pass_label": "PASS",
+  "action_loved_label": "LOVED",
+  "action_smash_label": "SMASH"
 }
