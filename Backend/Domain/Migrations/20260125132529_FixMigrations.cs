@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Domain.Migrations
 {
     /// <inheritdoc />
-    public partial class VerifyNoChanges : Migration
+    public partial class FixMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -90,6 +90,29 @@ namespace Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Images",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Url = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
+                    OwnerId = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Images", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Images_Users_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Dishes",
                 columns: table => new
                 {
@@ -104,6 +127,9 @@ namespace Domain.Migrations
                     IsPublic = table.Column<bool>(type: "bit", nullable: false, defaultValue: false),
                     Rates = table.Column<decimal>(type: "decimal(3,2)", nullable: false, defaultValue: 0m),
                     OwnerId = table.Column<int>(type: "int", nullable: false),
+                    MainPictureId = table.Column<int>(type: "int", nullable: true),
+                    SecondaryPictureId = table.Column<int>(type: "int", nullable: true),
+                    ThirdPictureId = table.Column<int>(type: "int", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
@@ -113,6 +139,21 @@ namespace Domain.Migrations
                 {
                     table.PrimaryKey("PK_Dishes", x => x.Id);
                     table.ForeignKey(
+                        name: "FK_Dishes_Images_MainPictureId",
+                        column: x => x.MainPictureId,
+                        principalTable: "Images",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Dishes_Images_SecondaryPictureId",
+                        column: x => x.SecondaryPictureId,
+                        principalTable: "Images",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Dishes_Images_ThirdPictureId",
+                        column: x => x.ThirdPictureId,
+                        principalTable: "Images",
+                        principalColumn: "Id");
+                    table.ForeignKey(
                         name: "FK_Dishes_Users_OwnerId",
                         column: x => x.OwnerId,
                         principalTable: "Users",
@@ -121,72 +162,108 @@ namespace Domain.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DishCategories",
+                name: "CategoryDish",
                 columns: table => new
                 {
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
-                    DishId = table.Column<int>(type: "int", nullable: false)
+                    CategoriesId = table.Column<int>(type: "int", nullable: false),
+                    DishesId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DishCategories", x => new { x.CategoryId, x.DishId });
+                    table.PrimaryKey("PK_CategoryDish", x => new { x.CategoriesId, x.DishesId });
                     table.ForeignKey(
-                        name: "FK_DishCategories_Categories_CategoryId",
-                        column: x => x.CategoryId,
+                        name: "FK_CategoryDish_Categories_CategoriesId",
+                        column: x => x.CategoriesId,
                         principalTable: "Categories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DishCategories_Dishes_DishId",
-                        column: x => x.DishId,
+                        name: "FK_CategoryDish_Dishes_DishesId",
+                        column: x => x.DishesId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "DishIngredients",
+                name: "Comments",
                 columns: table => new
                 {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Content = table.Column<string>(type: "nvarchar(1000)", maxLength: 1000, nullable: false),
+                    AuthorId = table.Column<int>(type: "int", nullable: false),
                     DishId = table.Column<int>(type: "int", nullable: false),
-                    IngredientId = table.Column<int>(type: "int", nullable: false)
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DishIngredients", x => new { x.DishId, x.IngredientId });
+                    table.PrimaryKey("PK_Comments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_DishIngredients_Dishes_DishId",
+                        name: "FK_Comments_Dishes_DishId",
                         column: x => x.DishId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_DishIngredients_Ingredients_IngredientId",
-                        column: x => x.IngredientId,
+                        name: "FK_Comments_Users_AuthorId",
+                        column: x => x.AuthorId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DishIngredient",
+                columns: table => new
+                {
+                    DishesId = table.Column<int>(type: "int", nullable: false),
+                    IngredientsId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DishIngredient", x => new { x.DishesId, x.IngredientsId });
+                    table.ForeignKey(
+                        name: "FK_DishIngredient_Dishes_DishesId",
+                        column: x => x.DishesId,
+                        principalTable: "Dishes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_DishIngredient_Ingredients_IngredientsId",
+                        column: x => x.IngredientsId,
                         principalTable: "Ingredients",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserFavoriteDishes",
+                name: "Favorited",
                 columns: table => new
                 {
-                    FavoriteDishesId = table.Column<int>(type: "int", nullable: false),
-                    FavoritedByUsersId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DishId = table.Column<int>(type: "int", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    DeletedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserFavoriteDishes", x => new { x.FavoriteDishesId, x.FavoritedByUsersId });
+                    table.PrimaryKey("PK_Favorited", x => new { x.UserId, x.DishId });
                     table.ForeignKey(
-                        name: "FK_UserFavoriteDishes_Dishes_FavoriteDishesId",
-                        column: x => x.FavoriteDishesId,
+                        name: "FK_Favorited_Dishes_DishId",
+                        column: x => x.DishId,
                         principalTable: "Dishes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserFavoriteDishes_Users_FavoritedByUsersId",
-                        column: x => x.FavoritedByUsersId,
+                        name: "FK_Favorited_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -199,8 +276,18 @@ namespace Domain.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_DishCategories_DishId",
-                table: "DishCategories",
+                name: "IX_CategoryDish_DishesId",
+                table: "CategoryDish",
+                column: "DishesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_AuthorId",
+                table: "Comments",
+                column: "AuthorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Comments_DishId",
+                table: "Comments",
                 column: "DishId");
 
             migrationBuilder.CreateIndex(
@@ -214,14 +301,39 @@ namespace Domain.Migrations
                 columns: new[] { "IsPublic", "IsDeleted" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Dishes_MainPictureId",
+                table: "Dishes",
+                column: "MainPictureId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Dishes_OwnerId",
                 table: "Dishes",
                 column: "OwnerId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_DishIngredients_IngredientId",
-                table: "DishIngredients",
-                column: "IngredientId");
+                name: "IX_Dishes_SecondaryPictureId",
+                table: "Dishes",
+                column: "SecondaryPictureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Dishes_ThirdPictureId",
+                table: "Dishes",
+                column: "ThirdPictureId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DishIngredient_IngredientsId",
+                table: "DishIngredient",
+                column: "IngredientsId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Favorited_DishId",
+                table: "Favorited",
+                column: "DishId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Images_OwnerId",
+                table: "Images",
+                column: "OwnerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Ingredients_Name",
@@ -245,11 +357,6 @@ namespace Domain.Migrations
                 columns: new[] { "UserId", "IsRevoked", "ExpiresAt" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserFavoriteDishes_FavoritedByUsersId",
-                table: "UserFavoriteDishes",
-                column: "FavoritedByUsersId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Users_Email",
                 table: "Users",
                 column: "Email",
@@ -260,16 +367,19 @@ namespace Domain.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "DishCategories");
+                name: "CategoryDish");
 
             migrationBuilder.DropTable(
-                name: "DishIngredients");
+                name: "Comments");
+
+            migrationBuilder.DropTable(
+                name: "DishIngredient");
+
+            migrationBuilder.DropTable(
+                name: "Favorited");
 
             migrationBuilder.DropTable(
                 name: "RefreshTokens");
-
-            migrationBuilder.DropTable(
-                name: "UserFavoriteDishes");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -279,6 +389,9 @@ namespace Domain.Migrations
 
             migrationBuilder.DropTable(
                 name: "Dishes");
+
+            migrationBuilder.DropTable(
+                name: "Images");
 
             migrationBuilder.DropTable(
                 name: "Users");

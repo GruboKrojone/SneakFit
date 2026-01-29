@@ -85,7 +85,15 @@
   "create_dish_modal_close_button": "Schließen",
   "create_dish_modal_success": "✓ Gericht erfolgreich hinzugefügt!",
   "create_dish_modal_error": "Fehler beim Hinzufügen des Gerichts",
-  
+
+  "delete_dish_modal_title": "Sind Sie sicher, dass Sie dieses Rezept löschen möchten?",
+  "delete_dish_modal_checkbox": "Ja, ich bin sicher",
+  "delete_dish_modal_checkbox_required": "Sie müssen das Kästchen ankreuzen, um das Rezept zu löschen",
+  "delete_dish_modal_cancel": "Abbrechen",
+  "delete_dish_modal_delete": "Löschen",
+  "delete_dish_success": "Rezept erfolgreich gelöscht!",
+  "delete_dish_error": "Fehler beim Löschen des Rezepts",
+
   "comments_modal_title": "Kommentare",
   "comments_modal_close": "Schließen",
   "comments_modal_no_comments": "Noch keine Kommentare. Sei der Erste!",

@@ -84,7 +84,15 @@
   "create_dish_modal_close_button": "Close",
   "create_dish_modal_success": "✓ Dish added successfully!",
   "create_dish_modal_error": "Error adding dish",
-  
+
+  "delete_dish_modal_title": "Are you sure you want to delete this recipe?",
+  "delete_dish_modal_checkbox": "Yes, I am sure",
+  "delete_dish_modal_checkbox_required": "You must check the checkbox to delete the recipe",
+  "delete_dish_modal_cancel": "Cancel",
+  "delete_dish_modal_delete": "Delete",
+  "delete_dish_success": "Recipe deleted successfully!",
+  "delete_dish_error": "Error deleting recipe",
+
   "comments_modal_title": "Comments",
   "comments_modal_close": "Close",
   "comments_modal_no_comments": "No comments yet. Be the first to comment!",
