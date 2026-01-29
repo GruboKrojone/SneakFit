@@ -122,12 +122,13 @@ export default function CommentsModal({
       title: t("comments_modal_delete_title"),
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#d32f2f",
-      cancelButtonColor: "#2a2a2a",
       confirmButtonText: t("comments_modal_delete_confirm"),
       cancelButtonText: t("comments_modal_delete_cancel"),
-      background: "linear-gradient(180deg, #949494 0%, #383838 100%)",
-      color: "#1a1a1a",
+      customClass: {
+        popup: "swal2-popup-custom",
+        confirmButton: "swal2-confirm-btn-custom swal2-confirm-delete",
+        cancelButton: "swal2-cancel-btn-custom",
+      },
     });
 
     if (result.isConfirmed) {
@@ -162,15 +163,13 @@ export default function CommentsModal({
       },
       width: "600px",
       showCancelButton: true,
-      confirmButtonColor: "#1976d2",
-      cancelButtonColor: "#757575",
       confirmButtonText: t("comments_modal_edit_confirm"),
       cancelButtonText: t("comments_modal_edit_cancel"),
-      background: "linear-gradient(180deg, #949494 0%, #383838 100%)",
-      color: "#1a1a1a",
       customClass: {
         input: "swal2-textarea-custom",
         popup: "swal2-popup-custom",
+        confirmButton: "swal2-confirm-btn-custom",
+        cancelButton: "swal2-cancel-btn-custom",
       },
       didOpen: () => {
         const textarea = Swal.getInput() as unknown as HTMLTextAreaElement;
@@ -181,8 +180,6 @@ export default function CommentsModal({
 
           const counter = document.createElement("div");
           counter.className = "swal2-character-counter";
-          counter.style.cssText =
-            "position: absolute; bottom: 0.75rem; right: 1rem; color: rgba(0, 0, 0, 0.6); font-size: 14px; pointer-events: none;";
           counter.textContent = `${textarea.value.length}/${MAX_COMMENT_LENGTH}`;
 
           textarea.parentElement?.appendChild(counter);

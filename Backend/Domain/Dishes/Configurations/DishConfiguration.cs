@@ -36,6 +36,24 @@ internal sealed class DishConfiguration : EntityBaseConfiguration<Dish>
             .HasForeignKey(x => x.OwnerId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        builder.HasOne(x => x.MainPicture)
+            .WithMany()
+            .HasForeignKey(x => x.MainPictureId)
+            .OnDelete(DeleteBehavior.NoAction)
+            .IsRequired(false);
+
+        builder.HasOne(x => x.SecondaryPicture)
+            .WithMany()
+            .HasForeignKey(x => x.SecondaryPictureId)
+            .OnDelete(DeleteBehavior.NoAction)
+            .IsRequired(false);
+
+        builder.HasOne(x => x.ThirdPicture)
+            .WithMany()
+            .HasForeignKey(x => x.ThirdPictureId)
+            .OnDelete(DeleteBehavior.NoAction)
+            .IsRequired(false);
+
         builder.HasMany(x => x.Categories)
             .WithMany(x => x.Dishes);
 

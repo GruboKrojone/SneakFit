@@ -5,18 +5,22 @@ import { useTranslation } from "react-i18next";
 import "./styles/ProfilePage.css";
 
 export default function ProfilePage() {
-  useTranslation();
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="profile-page">
-      <div className="profile-header">
-        <div className="page-title">{useTranslation().t("profile")}</div>
-        <SettingsIcon id="settings-icon" onClick={() => setIsModalOpen(true)} />
-      </div>
+      <div className="page-title">{t("profile")}</div>
+      <button
+        className="settings-gear-btn"
+        onClick={() => setIsModalOpen(true)}
+        title={t("profile_settings_title")}
+      >
+        <SettingsIcon className="settings-gear-icon" />
+      </button>
 
-      <div className="profile-content">
-        <p>User profile content</p>
+      <div>
+        <p>{t("profile_page_content")}</p>
       </div>
 
       <ProfileSettingsModal

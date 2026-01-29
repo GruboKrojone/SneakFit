@@ -50,7 +50,7 @@ export default function RegisterPage() {
       setErrorMsg(
         error instanceof Error
           ? error.message
-          : "Registration unsuccessful. Please try again."
+          : "Registration unsuccessful. Please try again.",
       );
     }
   };
@@ -113,7 +113,7 @@ export default function RegisterPage() {
         </div>
         <div id="right">
           <Close
-            id="close-button"
+            className="close-button"
             onClick={() => navigateTo(`/${locale}/login`)}
           />
         </div>
