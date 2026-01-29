@@ -56,7 +56,11 @@
   "profile_settings_close": "Close",
   "profile_settings_success": "✓ Profile updated successfully!",
   "profile_settings_error": "Error updating profile",
-  
+  "profile_settings_clear_choices": "Clear saved choices",
+  "profile_settings_clear_choices_button": "Clear previous choices",
+  "profile_settings_clear_choices_hint": "Remove all saved recipe ratings",
+  "choices_cleared_message": "✓ All choices have been cleared!",
+
   "create_dish_modal_title": "Add New Dish",
   "create_dish_modal_name": "Name",
   "create_dish_modal_name_placeholder": "Enter dish name",

@@ -57,7 +57,11 @@
   "profile_settings_close": "Cerrar",
   "profile_settings_success": "✓ ¡Perfil actualizado exitosamente!",
   "profile_settings_error": "Error al actualizar el perfil",
-  
+  "profile_settings_clear_choices": "Borrar elecciones guardadas",
+  "profile_settings_clear_choices_button": "Borrar elecciones anteriores",
+  "profile_settings_clear_choices_hint": "Eliminar todas las calificaciones de recetas guardadas",
+  "choices_cleared_message": "✓ ¡Todas las elecciones han sido borradas!",
+
   "create_dish_modal_title": "Agregar Nuevo Plato",
   "create_dish_modal_name": "Nombre",
   "create_dish_modal_name_placeholder": "Ingresa el nombre del plato",

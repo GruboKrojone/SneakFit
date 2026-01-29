@@ -57,7 +57,11 @@
   "profile_settings_close": "Schließen",
   "profile_settings_success": "✓ Profil erfolgreich aktualisiert!",
   "profile_settings_error": "Fehler beim Aktualisieren des Profils",
-  
+  "profile_settings_clear_choices": "Gespeicherte Auswahl löschen",
+  "profile_settings_clear_choices_button": "Bisherige Auswahl löschen",
+  "profile_settings_clear_choices_hint": "Alle gespeicherten Rezeptbewertungen entfernen",
+  "choices_cleared_message": "✓ Alle Auswahlen wurden gelöscht!",
+
   "create_dish_modal_title": "Neues Gericht hinzufügen",
   "create_dish_modal_name": "Name",
   "create_dish_modal_name_placeholder": "Geben Sie den Namen des Gerichts ein",
