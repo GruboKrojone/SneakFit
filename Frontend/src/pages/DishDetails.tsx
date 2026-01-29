@@ -13,7 +13,6 @@ import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import MacroCircle from "../components/MacroCircle";
 import DeleteDishModal from "../components/DeleteDishModal";
 import { toast } from "react-toastify";
-import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import CommentsModal from "../components/CommentsModal";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
