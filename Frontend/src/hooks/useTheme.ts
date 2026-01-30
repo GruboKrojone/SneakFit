@@ -29,7 +29,7 @@ export function useTheme() {
   }, [theme]);
 
   useEffect(() => {
-    const mediaQuery = globalThis.matchMedia('(prefers-color-scheme: dark)');
+    const mediaQuery = globalThis.matchMedia?.('(prefers-color-scheme: dark)');
     
     const handleChange = (e: MediaQueryListEvent) => {
       const hasUserPreference = localStorage.getItem(STORAGE_KEY);
