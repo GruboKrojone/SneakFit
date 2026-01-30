@@ -7,6 +7,7 @@ using Domain.Comments;
 using Domain.Dishes;
 using Domain.Images;
 using Domain.Users;
+using Domnain.Integrations.Gemini;
 using MediatR.Extensions.Autofac.DependencyInjection;
 using MediatR.Extensions.Autofac.DependencyInjection.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -30,6 +31,7 @@ public class DomainModule(IConfigurationRoot configuration) : Module
         builder.RegisterModule<AuthenticationModule>();
         builder.RegisterModule<DishesModule>();
         builder.RegisterModule<CommentsModule>();
+        builder.RegisterModule(new IntegrationModule(configuration));
         builder.RegisterModule<ImagesModule>();
 
         builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();

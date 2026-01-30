@@ -201,4 +201,9 @@
   "service_unknown_error": "Wystąpił nieznany błąd",
   "theme_switch_to_dark": "Przełącz na tryb ciemny",
   "theme_switch_to_light": "Przełącz na tryb jasny"
+  "favourites": "Ulubione",
+  "close": "Zamknij",
+  "select_mode": "Zaznacz",
+  "remove_from_favourites": "Usuń z ulubionych",
+  "no_favourites": "Brak ulubionych dań. Dodaj dania używając akcji LOVED!"
 }

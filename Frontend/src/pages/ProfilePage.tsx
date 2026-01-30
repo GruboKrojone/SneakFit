@@ -1,12 +1,14 @@
 import { useState } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ProfileSettingsModal from "../components/ProfileSettingsModal";
+import FavouritesModal from "../components/FavouritesModal";
 import { useTranslation } from "react-i18next";
 import "./styles/ProfilePage.css";
 
 export default function ProfilePage() {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFavouriteModalOpen, setIsFavouriteModalOpen] = useState(false);
 
   return (
     <div className="profile-page">
@@ -19,13 +21,20 @@ export default function ProfilePage() {
         <SettingsIcon className="settings-gear-icon" />
       </button>
 
-      <div>
-        <p>{t("profile_page_content")}</p>
-      </div>
+      <button
+        className="favourites-button"
+        onClick={() => setIsFavouriteModalOpen(true)}
+      >
+        {t("favourites")}
+      </button>
 
       <ProfileSettingsModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+      />
+      <FavouritesModal
+        isOpen={isFavouriteModalOpen}
+        onClose={() => setIsFavouriteModalOpen(false)}
       />
     </div>
   );

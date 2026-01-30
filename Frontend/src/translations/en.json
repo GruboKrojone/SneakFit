@@ -201,4 +201,9 @@
   "service_unknown_error": "Unknown error occurred",
   "theme_switch_to_dark": "Switch to dark mode",
   "theme_switch_to_light": "Switch to light mode"
+  "favourites": "Favourites",
+  "close": "Close",
+  "select_mode": "Select",
+  "remove_from_favourites": "Remove from favourites",
+  "no_favourites": "No favourite dishes yet. Add dishes by using the LOVED action!"
 }

@@ -202,4 +202,9 @@
   "service_unknown_error": "Ocurrió un error desconocido",
   "theme_switch_to_dark": "Cambiar a modo oscuro",
   "theme_switch_to_light": "Cambiar a modo claro"
+  "favourites": "Favoritos",
+  "close": "Cerrar",
+  "select_mode": "Seleccionar",
+  "remove_from_favourites": "Eliminar de favoritos",
+  "no_favourites": "¡Aún no hay platos favoritos. Agrega platos usando la acción LOVED!"
 }

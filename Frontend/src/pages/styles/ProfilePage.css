@@ -54,3 +54,28 @@
   font-size: 2.7rem !important;
   color: #888888;
 }
+  color: #888;
+}
+
+.favourites-button {
+  padding: 1.05rem 3.5rem;
+  background: var(--gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: 3.125rem;
+  font-size: 1.13rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0.25rem 1rem var(--shadow);
+}
+
+.favourites-button:hover {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.375rem 1.5rem rgba(255, 107, 53, 0.4);
+}
+
+.favourites-button:active {
+  transform: translateY(0);
+}
