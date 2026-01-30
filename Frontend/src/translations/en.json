@@ -161,5 +161,10 @@
   "action_smash": "Smash",
   "action_pass_label": "PASS",
   "action_loved_label": "LOVED",
-  "action_smash_label": "SMASH"
+  "action_smash_label": "SMASH",
+  "favourites": "Favourites",
+  "close": "Close",
+  "select_mode": "Select",
+  "remove_from_favourites": "Remove from favourites",
+  "no_favourites": "No favourite dishes yet. Add dishes by using the LOVED action!"
 }

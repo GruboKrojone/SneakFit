@@ -173,6 +173,28 @@ class DishesService {
       throw new Error(`Failed to delete dish ${dishId}: ${errorMessage}`);
     }
   }
+
+  static async addDishToFavorites(dishId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/favorite`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to add dish to favorites");
+      }
+    } catch (error) {
+      console.error("Error adding dish to favorites:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      throw new Error(`Failed to add dish ${dishId} to favorites: ${errorMessage}`);
+    }
+  }
 }
 
 export default DishesService;

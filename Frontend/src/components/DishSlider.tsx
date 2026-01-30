@@ -14,8 +14,10 @@ import { useCleanTempLists } from "../hooks/useCleanTempLists";
 import {
   addLikedRecipe,
   addNotLikedRecipe,
+  addFavouriteRecipe,
   getAllRatedRecipeIds,
 } from "../utils/recipeStorage";
+import DishesService from "../services/DishesService";
 
 type ActionType = "pass" | "loved" | "smash" | null;
 
@@ -87,10 +89,17 @@ export default function DishSlider() {
       const currentDish = dishes[animatingIndex];
       
       if (currentDish) {
-        if (animationType === "pass") {
-          addNotLikedRecipe(currentDish.id);
-        } else if (animationType === "smash" || animationType === "loved") {
-          addLikedRecipe(currentDish.id);
+        switch (animationType) {
+          case "pass":
+            addNotLikedRecipe(currentDish.id);
+            break;
+          case "smash":
+            addLikedRecipe(currentDish.id);
+            break;
+          case "loved":
+            addFavouriteRecipe(currentDish.id);
+            DishesService.addDishToFavorites(currentDish.id);
+            break;
         }
       }
       

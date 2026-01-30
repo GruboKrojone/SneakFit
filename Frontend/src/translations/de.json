@@ -162,5 +162,10 @@
   "action_smash": "Hammer",
   "action_pass_label": "ÜBERSPRINGEN",
   "action_loved_label": "GELIEBT",
-  "action_smash_label": "HAMMER"
+  "action_smash_label": "HAMMER",
+  "favourites": "Favoriten",
+  "close": "Schließen",
+  "select_mode": "Auswählen",
+  "remove_from_favourites": "Aus Favoriten entfernen",
+  "no_favourites": "Noch keine Lieblingsgerichte. Fügen Sie Gerichte mit der LOVED-Aktion hinzu!"
 }

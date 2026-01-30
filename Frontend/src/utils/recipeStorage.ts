@@ -5,6 +5,7 @@ export interface RecipeEntry {
 
 const LIKED_RECIPES_KEY = 'likedRecipes';
 const NOT_LIKED_RECIPES_KEY = 'notLikedRecipes';
+const FAVOURITE_RECIPES_KEY = 'favouriteRecipes';
 const EXPIRY_DURATION = 24 * 60 * 60 * 1000;
 
 const getRecipesFromStorage = (key: string): RecipeEntry[] => {
@@ -48,6 +49,12 @@ export const cleanupExpiredRecipes = (): void => {
   if (cleanedNotLiked.length < notLikedRecipes.length) {
     saveRecipesToStorage(NOT_LIKED_RECIPES_KEY, cleanedNotLiked);
   }
+
+  const favouriteRecipes = getRecipesFromStorage(FAVOURITE_RECIPES_KEY);
+  const cleanedFavourites = removeExpiredEntries(favouriteRecipes);
+  if (cleanedFavourites.length < favouriteRecipes.length) {
+    saveRecipesToStorage(FAVOURITE_RECIPES_KEY, cleanedFavourites);
+  }
 };
 
 export const addLikedRecipe = (recipeId: number): void => {
@@ -84,16 +91,42 @@ export const addNotLikedRecipe = (recipeId: number): void => {
   saveRecipesToStorage(NOT_LIKED_RECIPES_KEY, recipes);
 };
 
+export const addFavouriteRecipe = (recipeId: number): void => {
+  const recipes = getRecipesFromStorage(FAVOURITE_RECIPES_KEY);
+  
+  const existingIndex = recipes.findIndex(entry => entry.id === recipeId);
+  
+  if (existingIndex >= 0) {
+    recipes[existingIndex].timestamp = Date.now();
+  } else {
+    recipes.push({
+      id: recipeId,
+      timestamp: Date.now()
+    });
+  }
+  
+  saveRecipesToStorage(FAVOURITE_RECIPES_KEY, recipes);
+};
+
+export const removeFavouriteRecipe = (recipeId: number): void => {
+  const recipes = getRecipesFromStorage(FAVOURITE_RECIPES_KEY);
+  const filteredRecipes = recipes.filter(entry => entry.id !== recipeId);
+  saveRecipesToStorage(FAVOURITE_RECIPES_KEY, filteredRecipes);
+};
+
 export const getAllRatedRecipeIds = (): number[] => {
   const likedRecipes = getRecipesFromStorage(LIKED_RECIPES_KEY);
   const notLikedRecipes = getRecipesFromStorage(NOT_LIKED_RECIPES_KEY);
+  const favouriteRecipes = getRecipesFromStorage(FAVOURITE_RECIPES_KEY);
   
   const validLiked = removeExpiredEntries(likedRecipes);
   const validNotLiked = removeExpiredEntries(notLikedRecipes);
+  const validFavourites = removeExpiredEntries(favouriteRecipes);
   
   const allIds = [
     ...validLiked.map(entry => entry.id),
-    ...validNotLiked.map(entry => entry.id)
+    ...validNotLiked.map(entry => entry.id),
+    ...validFavourites.map(entry => entry.id)
   ];
   
   return [...new Set(allIds)];
@@ -116,7 +149,15 @@ export const getNotLikedRecipeIds = (): number[] => {
   return validRecipes.map(entry => entry.id);
 };
 
+export const getFavouriteRecipeIds = (): number[] => {
+  const recipes = getRecipesFromStorage(FAVOURITE_RECIPES_KEY);
+  const validRecipes = removeExpiredEntries(recipes);
+  return validRecipes.map(entry => entry.id);
+};
+
 export const clearAllRecipeData = (): void => {
   localStorage.removeItem(LIKED_RECIPES_KEY);
   localStorage.removeItem(NOT_LIKED_RECIPES_KEY);
+  localStorage.removeItem(FAVOURITE_RECIPES_KEY);
 };
+
