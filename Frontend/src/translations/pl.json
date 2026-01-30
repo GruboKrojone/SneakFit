@@ -5,7 +5,7 @@
   "loading_dishes": "Ładowanie przepisów...",
   "no_more_dishes": "Brak przepisów.",
   "add_own_dish": "Dodaj własny przepis.",
-
+  
   "register_page_title": "Rejestracja",
   "register_page_email_holder": "Adres e-mail",
   "register_page_name_holder": "Nazwa użytkownika",
@@ -13,18 +13,18 @@
   "register_page_confirm_password_holder": "Potwierdź hasło",
   "register_page_register_button": "Zarejestruj się",
   "register_page_clear_button": "Wyczyść",
-
+  
   "login_page_title": "SneakFit",
   "login_page_email_holder": "Adres e-mail",
   "login_page_password_holder": "Hasło",
   "login_page_login_button": "Zaloguj się",
   "login_page_forgot_password": "Zapomniałeś hasła?",
-
+  
   "home_page_welcome_message": "Co dziś ugotujemy?",
-
+  
   "dishes_page_loading": "Ładowanie przepisów...",
   "dishes_page_title": "Przepisy",
-
+  
   "dish_details_page_ingredients": "Składniki",
   "dish_details_page_empty_ingredients": "Brak dostępnych składników.",
   "dish_details_page_back_button": "Nie dziś",
@@ -37,7 +37,7 @@
   "dish_details_page_submitting": "Wysyłanie...",
   "dish_details_page_serving_size": "Wielkość porcji",
   "dish_details_page_no_dish_found": "Nie znaleziono dania",
-
+  
   "dish_details_macro_circle_calories": "Kcal",
   "dish_details_macro_circle_proteins": "Białko",
   "dish_details_macro_circle_fats": "Tłuszcze",
@@ -57,6 +57,10 @@
   "profile_settings_close": "Zamknij",
   "profile_settings_success": "✓ Profil zaktualizowany pomyślnie!",
   "profile_settings_error": "Błąd przy aktualizacji profilu",
+  "profile_settings_clear_choices": "Usuń zapisane wybory",
+  "profile_settings_clear_choices_button": "Usuń dotychczasowe wybory",
+  "profile_settings_clear_choices_hint": "Usuń wszystkie zapisane oceny przepisów",
+  "choices_cleared_message": "✓ Wszystkie wybory zostały usunięte!",
 
   "create_dish_modal_title": "Dodaj nowe danie",
   "create_dish_modal_name": "Nazwa",
@@ -86,6 +90,13 @@
   "create_dish_modal_success": "✓ Danie dodane pomyślnie!",
   "create_dish_modal_error": "Błąd przy dodawaniu dania",
 
+  "delete_dish_modal_title": "Czy jesteś pewien że chcesz usunąć przepis?",
+  "delete_dish_modal_checkbox": "Tak jestem pewien",
+  "delete_dish_modal_checkbox_required": "Musisz zaznaczyć checkbox, aby usunąć przepis",
+  "delete_dish_modal_cancel": "Anuluj",
+  "delete_dish_modal_delete": "Usuń",
+  "delete_dish_success": "Przepis został usunięty!",
+  "delete_dish_error": "Błąd podczas usuwania przepisu",
   "comments_modal_title": "Komentarze",
   "comments_modal_close": "Zamknij",
   "comments_modal_no_comments": "Brak komentarzy. Bądź pierwszy!",
@@ -111,5 +122,44 @@
   "comments_modal_edit_success": "Komentarz zaktualizowany",
   "comments_modal_edit_error": "Nie udało się zaktualizować komentarza",
   "comments_modal_menu_edit": "Edytuj",
-  "comments_modal_menu_delete": "Usuń"
+  "comments_modal_menu_delete": "Usuń",
+  "dish_details_page_settings_title": "Ustawienia przepisu",
+  "dish_settings_modal_close_title": "Zamknij",
+  "dish_settings_modal_title": "Ustawienia przepisu",
+  "dish_settings_modal_privacy_title": "Prywatność przepisu",
+  "dish_settings_modal_current_privacy": "Obecna prywatność przepisu:",
+  "dish_settings_modal_public": "Publiczny",
+  "dish_settings_modal_private": "Prywatny",
+  "dish_settings_modal_confirm_change_title": "Potwierdź zmianę",
+  "dish_settings_modal_confirm_change_message": "Czy na pewno chcesz zmienić prywatność przepisu?",
+  "dish_settings_modal_confirm_yes": "Tak",
+  "dish_settings_modal_confirm_no": "Nie",
+  "dish_settings_modal_privacy_updated": "Prywatność przepisu została zaktualizowana",
+  "dish_settings_modal_privacy_update_error": "Nie udało się zaktualizować prywatności przepisu",
+  "dish_settings_modal_edit_photos": "Edytuj zdjęcia",
+  "dish_settings_modal_edit_categories": "Edytuj kategorie",
+  "dish_settings_modal_edit_description": "Edytuj opis",
+  "dish_settings_modal_edit_ingredients": "Edytuj składniki",
+  "dish_settings_modal_edit_macronutrients": "Edytuj makroskładniki",
+  "dish_settings_modal_edit_description_success": "Opis został zaktualizowany",
+  "dish_settings_modal_edit_description_error": "Nie udało się zaktualizować opisu",
+  "dish_settings_modal_edit_description_placeholder": "Wpisz opis dania...",
+  "dish_settings_modal_edit_description_aria_label": "Wpisz opis dania",
+  "dish_settings_modal_edit_description_validation": "Opis nie może przekraczać 500 znaków!",
+  "dish_settings_modal_edit_description_save": "Zapisz",
+  "dish_settings_modal_edit_description_cancel": "Anuluj",
+  
+  "loading": "Ładowanie...",
+  "carousel_previous_image": "Poprzednie zdjęcie",
+  "carousel_next_image": "Następne zdjęcie",
+  "carousel_go_to_image": "Przejdź do zdjęcia",
+  "shopping_list_title": "Lista zakupów",
+  "shopping_list_content": "Lista",
+  "profile_page_content": "Zawartość profilu użytkownika",
+  "action_pass": "Omiń",
+  "action_loved": " Ulubione",
+  "action_smash": "Super",
+  "action_pass_label": "OMIŃ",
+  "action_loved_label": "ULUBIONE",
+  "action_smash_label": "SUPER"
 }

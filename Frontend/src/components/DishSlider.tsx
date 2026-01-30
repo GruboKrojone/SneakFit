@@ -10,6 +10,12 @@ import CreateDishModal from "./CreateDishModal";
 import "./styles/DishSlider.css";
 import { useTranslation } from "react-i18next";
 import { useFetchDishes } from "../hooks/useFetchDishes";
+import { useCleanTempLists } from "../hooks/useCleanTempLists";
+import {
+  addLikedRecipe,
+  addNotLikedRecipe,
+  getAllRatedRecipeIds,
+} from "../utils/recipeStorage";
 
 type ActionType = "pass" | "loved" | "smash" | null;
 
@@ -36,9 +42,14 @@ export default function DishSlider() {
   const navigate = useNavigate();
   const sliderRef = useRef<HTMLDivElement>(null);
 
+  useCleanTempLists();
+
+  const ratedRecipeIds = getAllRatedRecipeIds();
   const visibleCards = dishes
     .map((dish, index) => ({ dish, originalIndex: index }))
-    .filter(({ originalIndex }) => !usedIndices.has(originalIndex));
+    .filter(({ originalIndex, dish }) => 
+      !usedIndices.has(originalIndex) && !ratedRecipeIds.includes(dish.id)
+    );
 
   useEffect(() => {
     if (visibleCards.length === 0 && !showAddRecipeCard) {
@@ -73,6 +84,16 @@ export default function DishSlider() {
 
   const handleTransitionEnd = () => {
     if (isAnimating && animatingIndex !== null) {
+      const currentDish = dishes[animatingIndex];
+      
+      if (currentDish) {
+        if (animationType === "pass") {
+          addNotLikedRecipe(currentDish.id);
+        } else if (animationType === "smash" || animationType === "loved") {
+          addLikedRecipe(currentDish.id);
+        }
+      }
+      
       setUsedIndices((prev) => new Set(prev).add(animatingIndex));
       if (animationType === "pass") {
         setPassedCards((prev) => [...prev, animatingIndex]);
@@ -323,7 +344,7 @@ export default function DishSlider() {
     <div className="dish-actions">
       <button
         className="action-button btn-pass"
-        title="Pass"
+        title={t("action_pass")}
         disabled={disabled}
         {...(!disabled && {
           onPointerDown: (e: React.PointerEvent) => {
@@ -336,7 +357,7 @@ export default function DishSlider() {
       </button>
       <button
         className="action-button btn-smash"
-        title="Loved"
+        title={t("action_loved")}
         disabled={disabled}
         {...(!disabled && {
           onPointerDown: (e: React.PointerEvent) => {
@@ -349,7 +370,7 @@ export default function DishSlider() {
       </button>
       <button
         className="action-button btn-loved"
-        title="Smash"
+        title={t("action_smash")}
         disabled={disabled}
         {...(!disabled && {
           onPointerDown: (e: React.PointerEvent) => {
@@ -378,9 +399,9 @@ export default function DishSlider() {
     return (
       <div className="action-overlay">
         <span className={getActionClassName(type)}>
-          {type === "pass" && "PASS"}
-          {type === "smash" && "SMASH"}
-          {type === "loved" && "LOVED"}
+          {type === "pass" && t("action_pass_label")}
+          {type === "smash" && t("action_smash_label")}
+          {type === "loved" && t("action_loved_label")}
         </span>
       </div>
     );
@@ -396,21 +417,21 @@ export default function DishSlider() {
       if (dragOffset.x < -50) {
         return (
           <div className="drag-overlay">
-            <span className="drag-hint drag-pass">PASS</span>
+            <span className="drag-hint drag-pass">{t("action_pass_label")}</span>
           </div>
         );
       }
       if (dragOffset.x > 50) {
         return (
           <div className="drag-overlay">
-            <span className="drag-hint drag-smash">SMASH</span>
+            <span className="drag-hint drag-smash">{t("action_smash_label")}</span>
           </div>
         );
       }
     } else if (dragOffset.y < -50) {
       return (
         <div className="drag-overlay">
-          <span className="drag-hint drag-loved">LOVED</span>
+          <span className="drag-hint drag-loved">{t("action_loved_label")}</span>
         </div>
       );
     }

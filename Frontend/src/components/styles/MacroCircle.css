@@ -1,6 +1,9 @@
 .macro-item {
-  border-radius: 10px;
+  border-radius: 0.875rem;
   text-align: center;
+  background: var(--card);
+  border: 0.0625rem solid var(--border);
+  padding: 1rem;
 }
 
 .macro-item.macro-circle-item {
@@ -8,12 +11,13 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 0.5rem;
 }
 
 .macro-circle-container {
   position: relative;
-  width: 100px;
-  height: 100px;
+  width: 6.25rem;
+  height: 6.25rem;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -28,6 +32,21 @@
   transition: stroke-dashoffset 1.2s ease-out;
 }
 
+.macro-circle-container svg circle.background-circle {
+  fill: none;
+  stroke: #444444;
+  stroke-width: 0.5rem;
+}
+
+.macro-circle-container svg circle.progress-circle {
+  fill: none;
+  stroke: #ff8c00;
+  stroke-width: 0.5rem;
+  stroke-linecap: round;
+  transform: rotate(-90deg);
+  transform-origin: center;
+}
+
 .macro-circle-text {
   position: absolute;
   display: flex;
@@ -38,19 +57,20 @@
 }
 
 .macro-circle-value {
-  font-size: 20px;
-  font-weight: bold;
-  color: #d0d0d0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
 }
 
 .macro-circle-unit {
-  font-size: 12px;
-  color: #d0d0d0;
-  margin-top: 2px;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  margin-top: 0.125rem;
 }
 
 .macro-label {
-  font-size: 12px;
-  color: #d0d0d0;
+  font-size: 0.75rem;
+  color: var(--text-light);
   text-transform: capitalize;
+  font-weight: 500;
 }
