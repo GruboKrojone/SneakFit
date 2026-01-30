@@ -201,7 +201,7 @@
   "comments_service_delete_failed": "Fehler beim Löschen des Kommentars",
   "service_unknown_error": "Unbekannter Fehler aufgetreten",
   "theme_switch_to_dark": "In den Dunkelmodus wechseln",
-  "theme_switch_to_light": "In den Hellmodus wechseln"
+  "theme_switch_to_light": "In den Hellmodus wechseln",
   "favourites": "Favoriten",
   "close": "Schließen",
   "select_mode": "Auswählen",

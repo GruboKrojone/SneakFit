@@ -200,7 +200,7 @@
   "comments_service_delete_failed": "Failed to delete comment",
   "service_unknown_error": "Unknown error occurred",
   "theme_switch_to_dark": "Switch to dark mode",
-  "theme_switch_to_light": "Switch to light mode"
+  "theme_switch_to_light": "Switch to light mode",
   "favourites": "Favourites",
   "close": "Close",
   "select_mode": "Select",

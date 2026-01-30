@@ -1,7 +1,5 @@
-import { useNavigate, NavLink, useParams } from "react-router-dom";
-import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { useNavigate, NavLink, useParams, useLocation } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useRef } from "react";
 import AuthService from "../services/AuthService";
 import { Language, languageToLocale, localeToLanguage } from "../services/UserService";
@@ -73,44 +71,6 @@ export default function NavBar() {
   };
 
   return (
-      <nav className={`nav-bar ${isOpen ? "open" : ""}`}>
-        <div className="nav-profile-icon">
-          <NavLink to={`/${locale}/profile`}>
-            <AccountCircleRoundedIcon id="profile-icon" />
-          </NavLink>
-        </div>
-        <ul className="nav-list">
-          <li>
-            <NavLink to={`/${locale}/home`} onClick={closeNav}>
-              <HomeOutlinedIcon />
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to={`/${locale}/dishes`} onClick={closeNav}>
-              <RestaurantMenuOutlinedIcon />
-            </NavLink>
-          </li>
-          <li>
-            <NavLink to={`/${locale}/shopping-list`} onClick={closeNav}>
-              <ShoppingBagOutlinedIcon />
-            </NavLink>
-          </li>
-        </ul>
-
-        <div className="nav-footer">
-          <button 
-            className="theme-btn" 
-            onClick={toggleTheme}
-            aria-label={t(theme === 'light' ? 'theme_switch_to_dark' : 'theme_switch_to_light')}
-            title={t(theme === 'light' ? 'theme_switch_to_dark' : 'theme_switch_to_light')}
-          >
-            {theme === 'light' ? <BedtimeOutlinedIcon /> : <WbSunnyOutlinedIcon />}
-          </button>
-          <button className="logout-btn" onClick={handleLogout}>
-            <LogoutOutlinedIcon />
-          </button>
-        </div>
-      </nav>
     <nav className={`nav-bar ${isOpen ? "open" : ""}`}>
       <div className="nav-language-selector" ref={langSelectorRef}>
         <button
@@ -134,11 +94,13 @@ export default function NavBar() {
           </div>
         )}
       </div>
+
       <div className="nav-profile-icon">
         <NavLink to={`/${locale}/profile`}>
           <AccountCircleRoundedIcon id="profile-icon" />
         </NavLink>
       </div>
+
       <ul className="nav-list">
         <li>
           <NavLink to={`/${locale}/home`} onClick={closeNav}>
@@ -158,6 +120,14 @@ export default function NavBar() {
       </ul>
 
       <div className="nav-footer">
+        <button 
+          className="theme-btn" 
+          onClick={toggleTheme}
+          aria-label={t(theme === 'light' ? 'theme_switch_to_dark' : 'theme_switch_to_light')}
+          title={t(theme === 'light' ? 'theme_switch_to_dark' : 'theme_switch_to_light')}
+        >
+          {theme === 'light' ? <BedtimeOutlinedIcon /> : <WbSunnyOutlinedIcon />}
+        </button>
         <button className="logout-btn" onClick={handleLogout}>
           <LogoutOutlinedIcon />
         </button>

@@ -201,7 +201,7 @@
   "comments_service_delete_failed": "Error al eliminar comentario",
   "service_unknown_error": "Ocurrió un error desconocido",
   "theme_switch_to_dark": "Cambiar a modo oscuro",
-  "theme_switch_to_light": "Cambiar a modo claro"
+  "theme_switch_to_light": "Cambiar a modo claro",
   "favourites": "Favoritos",
   "close": "Cerrar",
   "select_mode": "Seleccionar",
