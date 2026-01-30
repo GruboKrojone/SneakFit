@@ -1,6 +1,7 @@
 using Core.Authentication;
 using Core.CQRS;
 using Core.Middlewares;
+using Domain.Categories.Dto;
 using Domain.Dishes.Dto;
 using Domain.Dishes.Repositories;
 
@@ -25,11 +26,12 @@ internal sealed class GetDishesQueryHandler(
             d.Id,
             d.Name,
             d.Rates,
-            d.Owner.Name,
+            d.OwnerId,
+            d.Owner!.Name,
             d.IsPublic,
             d.Categories != null
-                ? d.Categories.Select(c => new CategoryDto(c.Id, c.Name)).ToList()
-                : new List<CategoryDto>(),
+                ? [.. d.Categories.Select(c => new CategoryDto(c.Id, c.Name))]
+                : [],
             1,
             null,
             null

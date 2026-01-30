@@ -1,9 +1,12 @@
+using Domain.Categories.Dto;
+
 namespace Domain.Dishes.Dto;
 
 public record DishCutDto(
     int Id,
     string Name,
-    float Rates,
+    decimal Rates,
+    int UserId,
     string OwnerName,
     bool IsPublic,
     List<CategoryDto>? Categories,

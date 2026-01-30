@@ -8,7 +8,7 @@ namespace Domain.Dishes.Queries;
 
 public record DishDetailsQuery(int DishId) : IQuery<DishDetails>;
 
-internal class DishDetailsQueryHandler(
+internal sealed class DishDetailsQueryHandler(
     IDishRepository dishRepository,
     IUserContext userContext) : IQueryHandler<DishDetailsQuery, DishDetails>
 {
@@ -32,7 +32,7 @@ internal class DishDetailsQueryHandler(
             dish.IsPublic,
             dish.Rates,
             dish.OwnerId,
-            dish.Ingredients?.Select(i => new IngredientDto(i.Name, null)).ToList() ?? new List<IngredientDto>()
+            dish.Ingredients?.Select(i => new IngredientDto(i.Name, null)).ToList() ?? []
         );
     }
 }

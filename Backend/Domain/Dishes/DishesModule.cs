@@ -1,9 +1,10 @@
 using Autofac;
+using Domain.Categories.Repositories;
 using Domain.Dishes.Repositories;
 
 namespace Domain.Dishes;
 
-internal class DishesModule : Module
+internal sealed class DishesModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {

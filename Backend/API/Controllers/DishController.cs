@@ -34,4 +34,19 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("/dishes")]
     public async Task<IEnumerable<DishCutDto>> GetDishes(CancellationToken cancellationToken)
         => await mediator.Send(new GetDishesQuery(), cancellationToken);
+
+    [HttpPost]
+    [Route("{id}/favorite")]
+    public async Task<Unit> MarkDishAsFavorite(int id, CancellationToken cancellationToken)
+        => await mediator.Send(new MarkDishFavoriteCommand(id), cancellationToken);
+
+    [HttpDelete]
+    [Route("{id}/delete")]
+    public async Task<Unit> DeleteDish(int id, CancellationToken cancellationToken)
+        => await mediator.Send(new DeleteDishCommand(id), cancellationToken);
+
+    [HttpGet]
+    [Route("recommended")]
+    public async Task<IEnumerable<DishCutDto>> GetRecommendedDishes(int maxResults = 10, CancellationToken cancellationToken = default)
+    => await mediator.Send(new GetRecommendedDishesQuery(maxResults), cancellationToken);
 }

@@ -5,5 +5,7 @@ namespace Domain.Authentication.Services;
 public interface IAuthService
 {
     public string GenerateToken(string email, UserRole role, int userId);
-    public byte[] ComputePasswordHash(string password, byte[] salt);
+    public string GenerateRefreshToken();
+    public string HashPassword(string password);
+    public bool VerifyPassword(string password, string hash);
 }

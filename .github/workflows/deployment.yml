@@ -8,6 +8,8 @@ on:
 
 permissions:
   contents: read
+  checks: write
+  pull-requests: write
 
 jobs:
   backend-build:
@@ -40,22 +42,40 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Clear NuGet cache and install EF Core tools
+        run: |
+          dotnet nuget locals all --clear
+          dotnet tool install --global dotnet-ef --version 8.0.* || dotnet tool update --global dotnet-ef --version 8.0.*
+
       - name: Restore dependencies
         run: dotnet restore SneakFIt.sln
 
       - name: Build Release
         run: dotnet build SneakFIt.sln --configuration Release --no-restore
 
+      - name: 🧪 Run Unit Tests
+        run: dotnet test SneakFIt.sln --configuration Release --no-build --verbosity normal --logger "trx;LogFileName=test-results.trx"
+
+      - name: 📊 Publish Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Backend Test Results
+          path: "**/test-results.trx"
+          reporter: dotnet-trx
+          working-directory: Backend
+
       - name: 📦 Validate EF Migrations (on local SQL container)
         env:
           SA_PASSWORD: ${{ secrets.BUILD_SA_PASSWORD }}
         run: |
-          dotnet tool install --global dotnet-ef
-
           LOCAL_DB_CONN_STRING="Server=localhost,1433;Database=temp_ci_db;User Id=sa;Password=$SA_PASSWORD;TrustServerCertificate=True"
 
+          export ConnectionStrings__SneakFitDbContext="$LOCAL_DB_CONN_STRING"
+
           dotnet ef database update -s API -p Domain --context SneakFitDbContext \
-            --connection "$LOCAL_DB_CONN_STRING"
+            --connection "$LOCAL_DB_CONN_STRING" \
+            --configuration Release
 
       - name: Publish API
         run: dotnet publish API/API.csproj --configuration Release --no-build --output ./publish
@@ -113,24 +133,30 @@ jobs:
         with:
           dotnet-version: 8.0.x
 
+      - name: Clear NuGet cache and install EF Core tools
+        run: |
+          dotnet nuget locals all --clear
+          dotnet tool install --global dotnet-ef --version 8.0.* || dotnet tool update --global dotnet-ef --version 8.0.*
+
       - name: 📦 Run EF Database Migrations (Dev)
         env:
-          ConnectionStrings__SneakFitDbContext: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
-
+          AZURE_SQL_CONNECTION_STRING_DEV: ${{ secrets.AZURE_SQL_CONNECTION_STRING_DEV }}
         run: |
-          dotnet tool install --global dotnet-ef
-
           max_attempts=3
-          delay=20 # Czas oczekiwania w sekundach między próbami
+          delay=20
 
           for ((i=1; i<=max_attempts; i++)); do
             echo "Applying migrations (Attempt $i/$max_attempts)..."
             
-            dotnet ef database update -s API -p Domain --context SneakFitDbContext
+            export ConnectionStrings__SneakFitDbContext="$AZURE_SQL_CONNECTION_STRING_DEV"
+            
+            dotnet ef database update -s API -p Domain --context SneakFitDbContext \
+              --connection "$AZURE_SQL_CONNECTION_STRING_DEV" \
+              --configuration Release
             
             if [ $? -eq 0 ]; then
               echo "Migrations applied successfully. ✅"
-              exit 0 # Sukces, zakończ krok pomyślnie
+              exit 0
             fi
             
             if [ $i -lt $max_attempts ]; then

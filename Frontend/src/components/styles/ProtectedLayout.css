@@ -1,0 +1,22 @@
+.protected-layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100dvh;
+    width: 100dvw;
+}
+
+.protected-content {
+    flex: 1;
+    width: 94dvw;
+    height: 100dvh;
+    margin-left: 6dvw;
+    padding: 2rem;
+}
+
+.page-content {
+    width: 100%;
+    max-width: 87.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+}

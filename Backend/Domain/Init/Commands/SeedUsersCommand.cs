@@ -1,7 +1,7 @@
-using System.Security.Cryptography;
 using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
+using Domain.Authentication.Services;
 using Domain.Users.Entities;
 using Domain.Users.Enums;
 using Domain.Users.Repositories;
@@ -13,17 +13,17 @@ public record SeedUsersCommand : ICommand<Unit>;
 
 internal sealed class AddInitUsersCommandHandler(
     IUserRepository userRepository,
+    IAuthService authService,
     IUnitOfWork unitOfWork) : ICommandHandler<SeedUsersCommand, Unit>
 {
     public async Task<Unit> Handle(SeedUsersCommand command, CancellationToken cancellationToken)
     {
-        using var hmac = new HMACSHA512();
-        var passwordBytes = "Password123$d"u8.ToArray();
+        var password = "Password123$d";
+        var passwordHash = authService.HashPassword(password);
 
         var user = new User(
             "user@example.com",
-            hmac.ComputeHash(passwordBytes),
-            hmac.Key,
+            passwordHash,
             UserRole.Admin,
             "User",
             23
@@ -31,8 +31,7 @@ internal sealed class AddInitUsersCommandHandler(
 
         var user2 = new User(
             "user2@example.com",
-            hmac.ComputeHash(passwordBytes),
-            hmac.Key,
+            passwordHash,
             UserRole.Employee,
             "User2",
             23
@@ -40,8 +39,7 @@ internal sealed class AddInitUsersCommandHandler(
 
         var user3 = new User(
             "user3@example.com",
-            hmac.ComputeHash(passwordBytes),
-            hmac.Key,
+            passwordHash,
             UserRole.User,
             "User3",
             23

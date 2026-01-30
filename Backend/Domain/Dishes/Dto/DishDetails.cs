@@ -9,6 +9,6 @@ public record DishDetails(
     int? Carbs,
     int? Fat,
     bool IsPublic,
-    float Rates,
+    decimal Rates,
     int OwnerId,
     List<IngredientDto>? Ingredients);

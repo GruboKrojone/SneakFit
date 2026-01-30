@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Domain.Authentication.Services;
 
-public class AuthService(IConfiguration configuration) : IAuthService
+internal sealed class AuthService(IConfiguration configuration) : IAuthService
 {
     public string GenerateToken(string email, UserRole role, int userId)
     {
@@ -32,18 +32,26 @@ public class AuthService(IConfiguration configuration) : IAuthService
             configuration["App:Authentication:JwtIssuer"],
             configuration["App:Authentication:JwtIssuer"],
             claims,
-            expires: DateTime.Now.AddDays(
-                int.Parse(configuration["App:Authentication:JwtExpireDays"]
-                          ?? throw new DomainException("JwtExpireDays not configured",
-                              (int)AuthErrorCode.JwtExpireDaysNotConfigured))),
+            expires: DateTime.UtcNow.AddHours(
+                int.Parse(configuration["App:Authentication:JwtExpireHours"]
+                          ?? throw new DomainException("JwtExpireHours not configured",
+                              (int)AuthErrorCode.JwtExpireHoursNotConfigured))),
             signingCredentials: creds);
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public byte[] ComputePasswordHash(string password, byte[] salt)
+    public string GenerateRefreshToken()
     {
-        using var hmac = new HMACSHA512(salt);
-        return hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+        var randomNumber = new byte[64];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(randomNumber);
+        return Convert.ToBase64String(randomNumber);
     }
+
+    public string HashPassword(string password)
+        => BCrypt.Net.BCrypt.HashPassword(password, workFactor: 12);
+
+    public bool VerifyPassword(string password, string hash)
+        => BCrypt.Net.BCrypt.Verify(password, hash);
 }

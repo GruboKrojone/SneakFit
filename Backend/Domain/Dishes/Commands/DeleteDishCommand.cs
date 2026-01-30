@@ -1,0 +1,36 @@
+﻿using Core.Authentication;
+using Core.CQRS;
+using Core.Database;
+using Core.Middlewares;
+using Domain.Dishes.Repositories;
+using Domain.Users.Repositories;
+using MediatR;
+
+namespace Domain.Dishes.Commands;
+
+public record DeleteDishCommand(int DishId) : ICommand<Unit>;
+
+internal sealed class DeleteDishCommandHandler(
+    IDishRepository dishRepository,
+    IUserRepository userRepository,
+    IUserContext userContext,
+    IUnitOfWork unitOfWork) : ICommandHandler<DeleteDishCommand, Unit>
+{
+    public async Task<Unit> Handle(DeleteDishCommand command, CancellationToken cancellationToken)
+    {
+        var userId = userContext.UserId ??
+            throw new DomainException("Log in please!", (int)CommonErrorCode.Unauthorized);
+
+        var dishId = command.DishId;
+
+        var dish = await dishRepository.FindAsync(dishId, cancellationToken);
+
+        if (!userRepository.IsOperationAllowed(userId, dish.Id))
+            throw new InvalidOperationException("User is not allowed to delete that recipe!");
+
+        dishRepository.Delete(dish);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
+
+        return Unit.Value;
+    }
+}

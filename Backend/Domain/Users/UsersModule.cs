@@ -3,12 +3,13 @@ using Domain.Users.Repositories;
 
 namespace Domain.Users;
 
-internal class UsersModule : Module
+internal sealed class UsersModule : Module
 {
     protected override void Load(ContainerBuilder builder)
     {
         base.Load(builder);
 
         builder.RegisterType<UserRepository>().AsImplementedInterfaces();
+        builder.RegisterType<FavoritedRepository>().AsImplementedInterfaces();
     }
 }
