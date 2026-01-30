@@ -38,7 +38,7 @@ export function useTheme() {
       }
     };
 
-    if (mediaQuery.addEventListener) {
+    if (mediaQuery?.addEventListener) {
       mediaQuery.addEventListener('change', handleChange);
       return () => mediaQuery.removeEventListener('change', handleChange);
     }
