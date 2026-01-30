@@ -1,7 +1,7 @@
 import { useNavigate, NavLink, useParams, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import AuthService from "../services/AuthService";
-import UserService, { Language, languageToLocale, localeToLanguage } from "../services/UserService";
+import { Language, languageToLocale, localeToLanguage } from "../services/UserService";
 import "./styles/NavBar.css";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -53,13 +53,6 @@ export default function NavBar() {
 
   const handleLanguageChange = async (lang: Language) => {
     try {
-      // Temporary: Skip API call due to backend issue with Favorited entity
-      // TODO: Uncomment when backend Favorited class has parameterless constructor
-      // const user = AuthService.getCurrentUser();
-      // if (user) {
-      //   await UserService.setLang(user.id, lang);
-      // }
-
       const newLocale = languageToLocale[lang];
       const currentPath = location.pathname;
       const pathWithoutLocale = currentPath.replace(/^\/[a-z]{2}/, "");
