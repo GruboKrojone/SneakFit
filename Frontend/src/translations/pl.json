@@ -161,5 +161,10 @@
   "action_smash": "Super",
   "action_pass_label": "OMIŃ",
   "action_loved_label": "ULUBIONE",
-  "action_smash_label": "SUPER"
+  "action_smash_label": "SUPER",
+  "favourites": "Ulubione",
+  "close": "Zamknij",
+  "select_mode": "Zaznacz",
+  "remove_from_favourites": "Usuń z ulubionych",
+  "no_favourites": "Brak ulubionych dań. Dodaj dania używając akcji LOVED!"
 }
