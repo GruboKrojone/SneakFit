@@ -65,7 +65,6 @@ export default function FavouriteModal({
     setSelectedDishes(new Set());
     setSelectionMode(false);
     
-    // Aktualizuj listę po usunięciu
     const favouriteIds = getFavouriteRecipeIds();
     const filteredDishes = dishes.filter(dish => favouriteIds.includes(dish.id));
     setFavouriteDishes(filteredDishes);
