@@ -10,7 +10,7 @@ export function useTheme() {
     if (stored === 'light' || stored === 'dark') {
       return stored;
     }
-    if (globalThis.matchMedia && globalThis.matchMedia('(prefers-color-scheme: dark)').matches) {
+    if (globalThis.matchMedia?.('(prefers-color-scheme: dark)')?.matches) {
       return 'dark';
     }
     return 'light';
