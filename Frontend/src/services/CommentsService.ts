@@ -1,4 +1,5 @@
 import AuthService from "./AuthService";
+import i18n from "../translations/service/i18n";
 
 export interface Comment {
   id?: number;
@@ -23,7 +24,7 @@ class CommentsService {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch comments");
+        throw new Error(i18n.t("comments_service_fetch_failed"));
       }
 
       const data = await response.json();
@@ -49,15 +50,15 @@ class CommentsService {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server error:", response.status, errorText);
-        throw new Error(`Failed to add comment: ${response.status} - ${errorText}`);
+        throw new Error(`${i18n.t("comments_service_add_failed")}: ${response.status} - ${errorText}`);
       }
 
       return await response.json();
     } catch (error) {
       console.error("Error adding comment:", error);
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
-      throw new Error(`Failed to add comment: ${errorMessage}`);
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(`${i18n.t("comments_service_add_failed")}: ${errorMessage}`);
     }
   }
 
@@ -76,13 +77,13 @@ class CommentsService {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server error:", response.status, errorText);
-        throw new Error(`Failed to edit comment: ${response.status} - ${errorText}`);
+        throw new Error(`${i18n.t("comments_service_edit_failed")}: ${response.status} - ${errorText}`);
       }
     } catch (error) {
       console.error("Error editing comment:", error);
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
-      throw new Error(`Failed to edit comment: ${errorMessage}`);
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(`${i18n.t("comments_service_edit_failed")}: ${errorMessage}`);
     }
   }
 
@@ -100,13 +101,13 @@ class CommentsService {
       if (!response.ok) {
         const errorText = await response.text();
         console.error("Server error:", response.status, errorText);
-        throw new Error(`Failed to delete comment: ${response.status} - ${errorText}`);
+        throw new Error(`${i18n.t("comments_service_delete_failed")}: ${response.status} - ${errorText}`);
       }
     } catch (error) {
       console.error("Error deleting comment:", error);
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
-      throw new Error(`Failed to delete comment: ${errorMessage}`);
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(`${i18n.t("comments_service_delete_failed")}: ${errorMessage}`);
     }
   }
 }

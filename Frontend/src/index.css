@@ -12,13 +12,13 @@
 }
 
 body.dark {
-  --bg: #0f0f0f;
-  --card: #161616;
-  --text: #e0e0e0;
-  --text-light: #a0a0a0;
-  --border: #222222;
+  --bg: #1a1a1a;
+  --card: #242424;
+  --text: #e8e8e8;
+  --text-light: #b0b0b0;
+  --border: #333333;
   --gradient: linear-gradient(155deg, #ff8c42 0%, #ff5e2d 50%, #e63900 100%);
-  --shadow: rgba(0, 0, 0, 0.5);
+  --shadow: rgba(0, 0, 0, 0.4);
   --accent: #ff6b35;
   --tag-bg: rgba(255, 107, 53, 0.18);
   --tag-text: #ffab70;

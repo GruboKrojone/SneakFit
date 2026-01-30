@@ -15,9 +15,9 @@
   border: 0.0625rem solid var(--border);
   border-radius: 1.25rem;
   box-shadow: 
-    0 0.625rem 2.5rem rgba(0, 0, 0, 0.12), 
-    0 0.375rem 1.25rem rgba(0, 0, 0, 0.08),
-    0 0.125rem 0.5rem rgba(0, 0, 0, 0.06);
+    0 0.625rem 2.5rem #0000001f, 
+    0 0.375rem 1.25rem #00000012,
+    0 0.125rem 0.5rem #0000000a;
   overflow: hidden;
   user-select: none;
   transition: transform 0.35s ease-out,
@@ -38,18 +38,18 @@
 .dish-card.front-card {
   cursor: pointer;
   box-shadow: 
-    0 1.25rem 3.75rem rgba(0, 0, 0, 0.16), 
-    0 0.625rem 1.875rem rgba(0, 0, 0, 0.12),
-    0 0.25rem 0.75rem rgba(0, 0, 0, 0.08);
+    0 1.25rem 3.75rem #00000029, 
+    0 0.625rem 1.875rem #0000001f,
+    0 0.25rem 0.75rem #00000012;
 }
 
 .empty-placeholder-card {
   background: var(--card);
   border: 0.0625rem solid var(--border);
   box-shadow: 
-    0 0.5rem 1.875rem rgba(0, 0, 0, 0.10), 
-    0 0.25rem 0.9375rem rgba(0, 0, 0, 0.07),
-    0 0.125rem 0.375rem rgba(0, 0, 0, 0.05);
+    0 0.5rem 1.875rem #0000001a, 
+    0 0.25rem 0.9375rem #0000000f,
+    0 0.125rem 0.375rem #00000008;
   pointer-events: none;
 }
 
@@ -65,11 +65,10 @@
 .dish-image {
   width: 100%;
   height: 55%;
-  background: linear-gradient(135deg, #f5f7fa 0%, #e9ecef 100%);
+  background-color: #494949;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #6c757d;
   font-size: 0.875rem;
   text-align: center;
   padding: 1.25rem;
@@ -88,7 +87,7 @@
 
 .restaurant-menu-icon {
   font-size: 3.75rem !important;
-  color: white !important;
+  color: #ffffff !important;
 }
 
 .action-overlay {
@@ -107,7 +106,7 @@
 .action-overlay span {
   padding: 1.25rem 2.5rem;
   border-radius: 0.9375rem;
-  text-shadow: 0 0.125rem 0.5rem rgba(0, 0, 0, 0.2);
+  text-shadow: 0 0.125rem 0.5rem #00000033;
 }
 
 .drag-overlay {
@@ -127,7 +126,7 @@
   padding: 1.25rem 2.5rem;
   border-radius: 0.9375rem;
   opacity: 0.9;
-  text-shadow: 0 0.1875rem 0.75rem rgba(0, 0, 0, 0.25);
+  text-shadow: 0 0.1875rem 0.75rem #0000003d;
 }
 
 .drag-pass {
@@ -185,9 +184,9 @@
 }
 
 .dish-rating {
-  background: linear-gradient(135deg, #fff3e6 0%, #ffe8d1 100%);
-  border: 0.0625rem solid #ffd4a8;
-  color: #d96c00;
+  background: var(--tag-bg);
+  border: 0.0625rem solid var(--accent);
+  color: var(--tag-text);
   padding: 0.375rem 0.75rem;
   border-radius: 62.4375rem;
   font-size: 1rem;
@@ -207,14 +206,14 @@
 }
 
 .dish-description {
-  color: #495057;
+  color: var(--text);
   font-size: 1.5dvh;
   line-height: 1.6;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  background: #f8f9fa;
-  border: 0.0625rem solid #dee2e6;
+  background: var(--bg);
+  border: 0.0625rem solid var(--border);
   padding: 1.5dvh;
   border-radius: 0.875rem;
   height: 18dvh;
@@ -227,13 +226,13 @@
 }
 
 .category-tag {
-  background: linear-gradient(135deg, #fff3e6 0%, #ffe8d1 100%);
-  color: #d96c00;
+  background: var(--tag-bg);
+  color: var(--tag-text);
   padding: 0.4rem 1rem;
   border-radius: 62.4375rem;
   font-size: 0.75rem;
   font-weight: 600;
-  border: 0.0625rem solid #ffd4a8;
+  border: 0.0625rem solid var(--accent);
 }
 
 .dish-actions {
@@ -243,10 +242,10 @@
   align-items: center;
   margin-top: 0.9375rem;
   padding: 0.9375rem;
-  background: #f8f9fa;
-  border: 0.0625rem solid #dee2e6;
+  background: var(--bg);
+  border: 0.0625rem solid var(--border);
   border-radius: 3.125rem;
-  box-shadow: inset 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 0.125rem 0.25rem var(--shadow);
 }
 
 .dish-actions .action-button {
@@ -264,12 +263,12 @@
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  box-shadow: 0 0.1875rem 0.75rem rgba(0, 0, 0, 0.15), 0 0.0625rem 0.25rem rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.1875rem 0.75rem #00000026, 0 0.0625rem 0.25rem #0000001a;
 }
 
 .action-button:hover {
   transform: translateY(-0.125rem) scale(1.05);
-  box-shadow: 0 0.375rem 1.25rem rgba(0, 0, 0, 0.2), 0 0.125rem 0.5rem rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0.375rem 1.25rem #00000033, 0 0.125rem 0.5rem #0000001f;
 }
 
 .action-button:active {
@@ -293,13 +292,11 @@
   background: #2196f3;
   color: #ffffff;
   transform: scale(1.15);
-  box-shadow: 0 0.25rem 1rem rgba(33, 150, 243, 0.4), 0 0.125rem 0.5rem rgba(33, 150, 243, 0.2);
 }
 
 .btn-smash:hover {
   background: #1976d2;
   transform: translateY(-0.125rem) scale(1.2);
-  box-shadow: 0 0.5rem 1.5rem rgba(33, 150, 243, 0.5), 0 0.1875rem 0.75rem rgba(33, 150, 243, 0.3);
 }
 
 .btn-loved {

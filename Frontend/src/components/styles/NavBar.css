@@ -75,9 +75,39 @@
   margin-bottom: 3dvh;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  gap: 1rem;
+}
+
+.theme-btn {
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 3rem;
+  min-height: 3rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.theme-btn svg {
+  width: 2.125rem;
+  height: 2.125rem;
 }
 
 .logout-btn {

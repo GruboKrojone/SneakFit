@@ -15,7 +15,7 @@
 .auth-input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 0.1875rem rgba(255, 107, 53, 0.1);
+  box-shadow: 0 0 0 0.1875rem #ff6b351a;
 }
 
 .auth-input::placeholder {

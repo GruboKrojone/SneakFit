@@ -6,6 +6,7 @@
   align-items: center;
   position: relative;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .page-title {
@@ -51,5 +52,5 @@
 
 .settings-gear-icon {
   font-size: 2.7rem !important;
-  color: #888;
+  color: #888888;
 }
