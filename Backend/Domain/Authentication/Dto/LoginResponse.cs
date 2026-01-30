@@ -6,5 +6,6 @@ public record LoginResponse(
     int UserId,
     string? Email,
     UserRole? Role,
-    string? AccessToken
+    string? AccessToken,
+    string? RefreshToken
 );

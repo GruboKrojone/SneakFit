@@ -31,7 +31,7 @@ export interface Dish {
 }
 
 class DishesService {
-  private static baseUrl = "https://localhost:7059";
+  private static readonly baseUrl = "https://localhost:7059";
 
   static async getAllDishes(): Promise<Dish[]> {
     try {
@@ -149,6 +149,28 @@ class DishesService {
       throw new Error(
         `Failed to update dish ${dishId} visibility: ${errorMessage}`
       );
+    }
+  }
+
+  static async deleteDish(dishId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/delete`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to delete dish");
+      }
+    } catch (error) {
+      console.error("Error deleting dish:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error occurred";
+      throw new Error(`Failed to delete dish ${dishId}: ${errorMessage}`);
     }
   }
 }

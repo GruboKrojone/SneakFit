@@ -1,58 +1,55 @@
-using System.ComponentModel.DataAnnotations;
 using Core.Database;
+using Domain.Comments.Entities;
 using Domain.Dishes.Entities;
 using Domain.Users.Enums;
-using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Users.Entities;
 
-sealed class User : EntityBase
+public sealed class User : EntityBase
 {
-    private User() { }
+    public string Email { get; private set; }
+    public string Password { get; private set; }
+    public UserRole Role { get; private set; }
+    public string Name { get; private set; }
+    public int? Age { get; private set; }
+    public Lang Lang { get; private set; }
+    public ICollection<Dish> FavoriteDishes { get; private set; }
+    public ICollection<Comment> Comments { get; private set; }
+
+
+    private User()
+    {
+        Email = string.Empty;
+        Password = string.Empty;
+        Name = string.Empty;
+        Lang = Lang.EN;
+        FavoriteDishes = [];
+    }
 
     public User(
         string email,
-        byte[] passwordHash,
-        byte[] passwordSalt,
+        string password,
         UserRole role,
         string name,
-        int? age)
+        int? age) : this()
     {
         Email = email;
-        PasswordHash = passwordHash;
-        PasswordSalt = passwordSalt;
+        Password = password;
         Role = role;
         Name = name;
         Age = age;
     }
 
-
-    [EmailAddress]
-    [Required]
-    [MaxLength(100)]
-    public string Email { get; private set; }
-    public byte[] PasswordHash { get; private set; }
-    public byte[]? PasswordSalt { get; private set; }
-    public UserRole Role { get; private set; }
-    [MaxLength(100)] public string Name { get; private set; }
-    public int? Age { get; private set; }
-    public Lang Lang { get; private set; } = Lang.EN;
-    public ICollection<Dish> FavoriteDishes { get; set; } = new List<Dish>();
-
-
     public void SetApplicationLang(Lang lang)
     {
         Lang = lang;
+        MarkAsUpdated();
     }
 
-    public static void OnModelCreating(ModelBuilder builder)
+    public void UpdateProfile(string name, int? age)
     {
-        builder.Entity<User>().HasKey(x => x.Id);
-        builder.Entity<User>().HasIndex(x => x.Email).IsUnique();
-
-        builder.Entity<User>()
-        .HasMany(u => u.FavoriteDishes)
-        .WithMany(d => d.FavoritedByUsers)
-        .UsingEntity(j => j.ToTable("UserFavouriteDishes"));
+        Name = name;
+        Age = age;
+        MarkAsUpdated();
     }
 }

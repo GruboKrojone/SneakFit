@@ -1,29 +1,58 @@
-using Core.Database;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace Core.CQRS.Behaviors;
 
-public class TransactionPipelineBehavior<TRequest, TResponse>(IUnitOfWork unitOfWork)
-    : IPipelineBehavior<TRequest, TResponse> where TRequest : ICommand<TResponse>
+public sealed class TransactionPipelineBehavior<TRequest, TResponse>(
+    DbContext dbContext,
+    ILogger<TransactionPipelineBehavior<TRequest, TResponse>> logger) : IPipelineBehavior<TRequest, TResponse>
+    where TRequest : ICommand<TResponse>
 {
-    public async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next,
+    private readonly DbContext _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
+    private readonly ILogger<TransactionPipelineBehavior<TRequest, TResponse>> _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+
+    public async Task<TResponse> Handle(
+        TRequest request,
+        RequestHandlerDelegate<TResponse> next,
         CancellationToken cancellationToken)
     {
-        using (var transaction = await unitOfWork.BeginTransactionAsync(cancellationToken))
+        var strategy = _dbContext.Database.CreateExecutionStrategy();
+
+        return await strategy.ExecuteAsync(async () =>
         {
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync(cancellationToken);
+
             try
             {
+                _logger.LogInformation(
+                    "Begin transaction for {CommandName}",
+                    typeof(TRequest).Name);
+
                 var response = await next();
-                await unitOfWork.SaveChangesAsync(cancellationToken);
-                await transaction.CommitAsync(CancellationToken.None);
+
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+
+                _logger.LogInformation(
+                    "Transaction committed for {CommandName}",
+                    typeof(TRequest).Name);
 
                 return response;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                await transaction.RollbackAsync(CancellationToken.None);
-                throw;
+                _logger.LogError(
+                    ex,
+                    "Transaction failed for {CommandName}, rolling back",
+                    typeof(TRequest).Name);
+
+                await transaction.RollbackAsync(cancellationToken);
+
+                throw new InvalidOperationException(
+                    $"Transaction failed for command {typeof(TRequest).Name}. See inner exception for details.",
+                    ex);
             }
-        }
+        });
     }
 }

@@ -11,7 +11,7 @@ namespace Domain.Dishes.Commands;
 
 public record AddDishCommand(DishParams Params) : ICommand<Unit>;
 
-sealed class AddDishCommandHandler(
+internal sealed class AddDishCommandHandler(
     IDishRepository dishRepository,
     IUserContext userContext,
     IUnitOfWork unitOfWork) : ICommandHandler<AddDishCommand, Unit>

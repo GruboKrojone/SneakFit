@@ -1,0 +1,387 @@
+.dish-settings-modal-close-btn:hover .dish-settings-modal-close-icon {
+  color: orange;
+}
+
+.dish-settings-modal-group {
+  background: #F5F5F0;
+  border-radius: 1.1rem;
+  padding: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  aspect-ratio: 1;
+  justify-content: center;
+}
+
+.dish-settings-modal-group:first-child {
+  aspect-ratio: 1;
+}
+
+.dish-settings-modal-group-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  font-family: 'Playfair Display', serif;
+}
+
+.dish-settings-modal-group-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.dish-settings-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s cubic-bezier(.4,0,.2,1), background-color 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.dish-settings-modal-overlay.open {
+  opacity: 1;
+  pointer-events: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+}
+
+.dish-settings-modal-content {
+  background: #fff;
+  border: 0.0625rem solid #d1d1d1;
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 2.5rem 2rem 2rem 2rem;
+  width: 98vw;
+  max-width: 56.25rem;
+  min-height: 100vh;
+  height: 100vh;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform: translateY(100%);
+  opacity: 0;
+  transition: transform 0.35s cubic-bezier(.4,0,.2,1), opacity 0.35s cubic-bezier(.4,0,.2,1);
+}
+
+.dish-settings-modal-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 43.75rem;
+  margin-top: 2rem;
+}
+
+.dish-settings-modal-overlay.open .dish-settings-modal-content {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+
+.dish-settings-modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+  border-radius: 50%;
+}
+
+.dish-settings-modal-close-btn:hover {
+  color: var(--accent);
+  background: rgba(255, 107, 53, 0.1);
+}
+
+.dish-settings-modal-close-icon {
+  font-size: 2rem;
+}
+
+.dish-settings-modal-title {
+  margin: 0 0 2.2rem 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #222;
+  width: 100%;
+  text-align: center;
+}
+
+.dish-settings-modal-settings-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.dish-settings-modal-settings-group p {
+  margin: 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.dish-settings-modal-settings-label {
+  font-size: 1.18rem;
+  color: #444;
+  font-weight: 600;
+  font-family: 'Playfair Display', serif;
+}
+
+.dish-settings-modal-settings-switch {
+  width: 1.375rem;
+  height: 1.375rem;
+  accent-color: #ff8c00;
+  cursor: pointer;
+}
+
+.dish-settings-modal-select {
+  background: var(--card);
+  padding: 0.5rem 0.75rem;
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.375rem;
+  font-size: 0.9rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  min-width: 7.5rem;
+  width: 100%;
+  max-width: 8.75rem;
+}
+
+.dish-settings-modal-select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.1875rem rgba(255, 107, 53, 0.1);
+}
+
+.dish-settings-modal-select:hover {
+  border-color: var(--accent);
+}
+
+.edit-description-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+}
+
+.edit-description-modal-content {
+  background: var(--bg);
+  border-radius: 1rem;
+  padding: 2rem;
+  max-width: 37.5rem;
+  width: 90vw;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.2);
+}
+
+.edit-description-modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 1.5rem 0;
+  text-align: center;
+}
+
+.edit-description-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.edit-description-textarea {
+  width: 100%;
+  min-height: 12.5rem;
+  padding: 1rem;
+  border: 0.125rem solid var(--border);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  color: var(--text);
+  background: var(--card);
+  resize: vertical;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.edit-description-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 0.1875rem rgba(255, 107, 53, 0.1);
+}
+
+.edit-description-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.edit-description-cancel-btn,
+.edit-description-save-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.edit-description-cancel-btn {
+  background: var(--border);
+  color: var(--text);
+}
+
+.edit-description-cancel-btn:hover {
+  background: #ddd;
+}
+
+.edit-description-save-btn {
+  background: var(--gradient);
+  color: white;
+}
+
+.edit-description-save-btn:hover {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.25rem 0.75rem rgba(255, 107, 53, 0.3);
+}
+
+.dish-settings-modal-edit-btn {
+  background: var(--gradient);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dish-settings-modal-edit-btn:hover {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.25rem 0.75rem rgba(255, 107, 53, 0.3);
+}
+
+.swal2-textarea-custom {
+  min-height: 12.5rem !important;
+  resize: vertical !important;
+  font-family: 'Inter', sans-serif !important;
+  font-size: 1rem !important;
+  line-height: 1.5 !important;
+}
+
+.swal-character-counter {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.edit-description-popup-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1100;
+  padding: 2rem;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.edit-description-popup-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+.edit-description-popup-content {
+  background: var(--bg);
+  border-radius: 1.25rem;
+  padding: 2.5rem;
+  max-width: 43.75rem;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow: 0 1.25rem 3.75rem rgba(0, 0, 0, 0.3);
+  border: 0.0625rem solid var(--border);
+  transform: scale(0.9) translateY(1.25rem);
+  opacity: 0;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.edit-description-popup-overlay.show .edit-description-popup-content {
+  transform: scale(1) translateY(0);
+  opacity: 1;
+}
+
+.edit-description-popup-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0 0 2rem 0;
+  text-align: center;
+}
+
+.edit-description-popup-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.textarea-container {
+  position: relative;
+}
+.character-counter {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.75rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  pointer-events: none;
+}
+
+.edit-description-popup-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}

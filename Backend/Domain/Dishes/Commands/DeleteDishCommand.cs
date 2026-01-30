@@ -10,7 +10,7 @@ namespace Domain.Dishes.Commands;
 
 public record DeleteDishCommand(int DishId) : ICommand<Unit>;
 
-sealed class DeleteDishCommandHandler(
+internal sealed class DeleteDishCommandHandler(
     IDishRepository dishRepository,
     IUserRepository userRepository,
     IUserContext userContext,
@@ -22,14 +22,15 @@ sealed class DeleteDishCommandHandler(
             throw new DomainException("Log in please!", (int)CommonErrorCode.Unauthorized);
 
         var dishId = command.DishId;
+
         var dish = await dishRepository.FindAsync(dishId, cancellationToken);
 
-        if (!userRepository.IsOperationAllowed(userId, dishId))
+        if (!userRepository.IsOperationAllowed(userId, dish.Id))
             throw new InvalidOperationException("User is not allowed to delete that recipe!");
 
         dishRepository.Delete(dish);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return await Task.FromResult(Unit.Value);
+        return Unit.Value;
     }
 }
