@@ -9,4 +9,14 @@ public sealed class Step(string name, string description, int order, int dishId)
     public int Order { get; set; } = order;
     public int DishId { get; set; } = dishId;
     public Dish Dish { get; set; }
+
+
+    public void Update(
+        string name,
+        string? description)
+    {
+        Name = name;
+        Description = description;
+        MarkAsUpdated();
+    }
 }
