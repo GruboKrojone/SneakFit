@@ -5,6 +5,7 @@ namespace Domain.Dishes.Dto;
 public record DishCutDto(
     int Id,
     string Name,
+    string Description,
     decimal Rates,
     int UserId,
     string OwnerName,

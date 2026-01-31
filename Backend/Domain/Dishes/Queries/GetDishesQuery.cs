@@ -25,6 +25,7 @@ internal sealed class GetDishesQueryHandler(
         return dishes.Select(d => new DishCutDto(
             d.Id,
             d.Name,
+            d.Description ?? "No desc available",
             d.Rates,
             d.OwnerId,
             d.Owner!.Name,

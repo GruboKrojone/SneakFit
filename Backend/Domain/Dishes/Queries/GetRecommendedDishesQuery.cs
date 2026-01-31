@@ -59,6 +59,7 @@ internal sealed class GetRecommendedDishesQueryHandler(
             .Select(d => new DishCutDto(
                 d.Id,
                 d.Name,
+                d.Description ?? "No description available",
                 d.Rates,
                 d.OwnerId,
                 d.Owner!.Name,
