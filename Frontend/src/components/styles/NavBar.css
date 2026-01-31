@@ -163,9 +163,39 @@
   margin-bottom: 3dvh;
   width: 100%;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   flex-shrink: 0;
+  gap: 1rem;
+}
+
+.theme-btn {
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  background: transparent;
+  color: #ffffff;
+  border-radius: 0.625rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  min-width: 3rem;
+  min-height: 3rem;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.theme-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.05);
+}
+
+.theme-btn svg {
+  width: 2.125rem;
+  height: 2.125rem;
 }
 
 .logout-btn {
@@ -198,4 +228,19 @@
 
 .nav-toggle {
   display: none;
+}
+
+/* Dark mode overrides */
+body.dark .language-dropdown {
+  background: rgba(30, 30, 30, 0.98);
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.6);
+}
+
+body.dark .language-option:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+body.dark .language-option.active {
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 0.5rem rgba(255, 255, 255, 0.1);
 }

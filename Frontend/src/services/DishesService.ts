@@ -1,4 +1,6 @@
 import AuthService from "./AuthService";
+import i18n from "../translations/service/i18n";
+import { toast } from "react-toastify";
 
 export interface Category {
   id: number;
@@ -45,7 +47,7 @@ class DishesService {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch dishes");
+        throw new Error(i18n.t("dishes_service_fetch_all_failed"));
       }
 
       const data = await response.json();
@@ -68,12 +70,12 @@ class DishesService {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to fetch dish");
+        throw new Error(i18n.t("dishes_service_fetch_one_failed"));
       }
 
       return await response.json();
     } catch (error) {
-      console.error("Error fetching dish:", error);
+      toast.error(i18n.t("dishes_service_fetch_one_failed\n" + error));
       return null;
     }
   }
@@ -91,15 +93,15 @@ class DishesService {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create dish");
+        throw new Error(i18n.t("dishes_service_create_failed"));
       }
 
       return await response.json();
     } catch (error) {
       console.error("Error creating dish:", error);
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
-      throw new Error(`Failed to create dish: ${errorMessage}`);
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(`${i18n.t("dishes_service_create_failed")}: ${errorMessage}`);
     }
   }
 
@@ -116,15 +118,15 @@ class DishesService {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update dish");
+        throw new Error(i18n.t("dishes_service_update_failed"));
       }
 
       return await response.json();
     } catch (error) {
       console.error("Error updating dish:", error);
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
-      throw new Error(`Failed to update dish ${dishId}: ${errorMessage}`);
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(`${i18n.t("dishes_service_update_failed")} ${dishId}: ${errorMessage}`);
     }
   }
 
@@ -140,14 +142,14 @@ class DishesService {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update dish visibility");
+        throw new Error(i18n.t("dishes_service_visibility_failed"));
       }
     } catch (error) {
       console.error("Error updating dish visibility:", error);
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
       throw new Error(
-        `Failed to update dish ${dishId} visibility: ${errorMessage}`
+        `${i18n.t("dishes_service_visibility_failed")} ${dishId}: ${errorMessage}`
       );
     }
   }
@@ -164,13 +166,13 @@ class DishesService {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to delete dish");
+        throw new Error(i18n.t("dishes_service_delete_failed"));
       }
     } catch (error) {
       console.error("Error deleting dish:", error);
       const errorMessage =
-        error instanceof Error ? error.message : "Unknown error occurred";
-      throw new Error(`Failed to delete dish ${dishId}: ${errorMessage}`);
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(`${i18n.t("dishes_service_delete_failed")} ${dishId}: ${errorMessage}`);
     }
   }
 
