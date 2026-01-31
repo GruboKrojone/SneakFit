@@ -402,10 +402,6 @@ FodyWeavers.xsd
 
 # Local appsettings
 Backend/API/appsettings.Local.json
-Backend/API/appsettings.Development.json
-# Keep appsettings.json as a template, do not ignore it here if it's required by CI
-# Backend/API/appsettings.json <- Removed from ignore
-Backend/API/appsettings.Production.json
 
 bin/
 obj/
