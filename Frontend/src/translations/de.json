@@ -167,5 +167,10 @@
   "close": "Schließen",
   "select_mode": "Auswählen",
   "remove_from_favourites": "Aus Favoriten entfernen",
-  "no_favourites": "Noch keine Lieblingsgerichte. Fügen Sie Gerichte mit der LOVED-Aktion hinzu!"
+  "no_favourites": "Noch keine Lieblingsgerichte. Fügen Sie Gerichte mit der LOVED-Aktion hinzu!",
+  "shopping_list_add_placeholder": "Artikel hinzufügen...",
+  "shopping_list_add_button": "Hinzufügen",
+  "shopping_list_clear_all": "Alles löschen",
+  "shopping_list_empty": "Deine Einkaufsliste ist leer",
+  "shopping_list_remove_item": "Löschen"
 }

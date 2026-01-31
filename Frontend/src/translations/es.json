@@ -167,5 +167,10 @@
   "close": "Cerrar",
   "select_mode": "Seleccionar",
   "remove_from_favourites": "Eliminar de favoritos",
-  "no_favourites": "¡Aún no hay platos favoritos. Agrega platos usando la acción LOVED!"
+  "no_favourites": "¡Aún no hay platos favoritos. Agrega platos usando la acción LOVED!",
+  "shopping_list_add_placeholder": "Añadir artículo...",
+  "shopping_list_add_button": "Añadir",
+  "shopping_list_clear_all": "Borrar todo",
+  "shopping_list_empty": "Tu lista de la compra está vacía",
+  "shopping_list_remove_item": "Eliminar"
 }
