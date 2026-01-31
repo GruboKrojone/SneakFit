@@ -13,5 +13,6 @@ internal sealed class DishesModule : Module
         builder.RegisterType<DishRepository>().AsImplementedInterfaces();
         builder.RegisterType<IngredientRepository>().AsImplementedInterfaces();
         builder.RegisterType<CategoryRepository>().AsImplementedInterfaces();
+        builder.RegisterType<StepRepository>().AsImplementedInterfaces();
     }
 }

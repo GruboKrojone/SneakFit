@@ -48,5 +48,10 @@ public class DishController(IMediator mediator) : ControllerBase
     [HttpGet]
     [Route("recommended")]
     public async Task<IEnumerable<DishCutDto>> GetRecommendedDishes(int maxResults = 10, CancellationToken cancellationToken = default)
-    => await mediator.Send(new GetRecommendedDishesQuery(maxResults), cancellationToken);
+        => await mediator.Send(new GetRecommendedDishesQuery(maxResults), cancellationToken);
+
+    [HttpPost]
+    [Route("{dishId}/addStep")]
+    public async Task<Unit> AddCookingStep(int dishId, CookingStepParams @params, CancellationToken cancellationToken)
+        => await mediator.Send(new AddCookingStepCommand(dishId, @params), cancellationToken);
 }
