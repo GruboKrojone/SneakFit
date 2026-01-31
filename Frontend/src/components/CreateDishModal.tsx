@@ -1,4 +1,6 @@
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import Close from "@mui/icons-material/Close";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
@@ -12,103 +14,74 @@ interface CreateDishModalProps {
   readonly onDishAdded?: () => void;
 }
 
+const createDishSchemaType = z.object({
+  name: z.string(),
+  calories: z.coerce.number(),
+  protein: z.coerce.number(),
+  carbs: z.coerce.number(),
+  fat: z.coerce.number(),
+  description: z.string(),
+});
+
+type CreateDishFormData = z.infer<typeof createDishSchemaType>;
+
 export default function CreateDishModal({
   isOpen,
   onClose,
   onDishAdded,
 }: CreateDishModalProps) {
   const { t } = useTranslation();
-  const [formData, setFormData] = useState({
-    name: "",
-    calories: "",
-    carbs: "",
-    protein: "",
-    fat: "",
-    description: "",
+
+  const createDishSchema = z.object({
+    name: z.string().min(1, t("create_dish_modal_name_required")).trim(),
+    calories: z.coerce
+      .number()
+      .positive(t("create_dish_modal_calories_must_be_positive")),
+    protein: z.coerce
+      .number()
+      .min(0, t("create_dish_modal_protein_cannot_be_negative")),
+    carbs: z.coerce
+      .number()
+      .min(0, t("create_dish_modal_carbs_cannot_be_negative")),
+    fat: z.coerce
+      .number()
+      .min(0, t("create_dish_modal_fat_cannot_be_negative")),
+    description: z
+      .string()
+      .min(1, t("create_dish_modal_description_required"))
+      .max(500, t("create_dish_modal_description_max"))
+      .trim(),
   });
 
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    watch,
+  } = useForm<CreateDishFormData>({
+    resolver: zodResolver(createDishSchema) as any,
+    defaultValues: {
+      name: "",
+      calories: 0,
+      carbs: 0,
+      protein: 0,
+      fat: 0,
+      description: "",
+    },
+  });
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
+  const description = watch("description");
 
-    if (!formData.name.trim()) {
-      newErrors.name = t("create_dish_modal_name_required");
-    }
-
-    if (!formData.calories || Number.isNaN(Number(formData.calories))) {
-      newErrors.calories = t("create_dish_modal_calories_must_be_number");
-    } else if (Number(formData.calories) <= 0) {
-      newErrors.calories = t("create_dish_modal_calories_must_be_positive");
-    }
-
-    if (!formData.carbs || Number.isNaN(Number(formData.carbs))) {
-      newErrors.carbs = t("create_dish_modal_carbs_must_be_number");
-    } else if (Number(formData.carbs) < 0) {
-      newErrors.carbs = t("create_dish_modal_carbs_cannot_be_negative");
-    }
-
-    if (!formData.protein || Number.isNaN(Number(formData.protein))) {
-      newErrors.protein = t("create_dish_modal_protein_must_be_number");
-    } else if (Number(formData.protein) < 0) {
-      newErrors.protein = t("create_dish_modal_protein_cannot_be_negative");
-    }
-
-    if (!formData.fat || Number.isNaN(Number(formData.fat))) {
-      newErrors.fat = t("create_dish_modal_fat_must_be_number");
-    } else if (Number(formData.fat) < 0) {
-      newErrors.fat = t("create_dish_modal_fat_cannot_be_negative");
-    }
-
-    if (!formData.description.trim()) {
-      newErrors.description = t("create_dish_modal_description_required");
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const { name, value } = e.target;
-
-    if (
-      ["calories", "carbs", "protein", "fat"].includes(name) &&
-      value &&
-      Number.isNaN(Number(value))
-    ) {
-      return;
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    if (errors[name]) {
-      setErrors((prev) => ({
-        ...prev,
-        [name]: "",
-      }));
-    }
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) {
-      return;
-    }
-
+  const onSubmit = async (data: CreateDishFormData) => {
     try {
       const newDish: Omit<Dish, "id"> = {
-        name: formData.name.trim(),
-        description: formData.description.trim(),
-        calories: Number(formData.calories),
-        carbs: Number(formData.carbs),
-        protein: Number(formData.protein),
-        fat: Number(formData.fat),
+        name: data.name,
+        description: data.description,
+        calories: data.calories,
+        carbs: data.carbs,
+        protein: data.protein,
+        fat: data.fat,
         rates: 0,
         ownerId: 0,
         ownerName: "",
@@ -125,14 +98,7 @@ export default function CreateDishModal({
         onDishAdded();
       }
 
-      setFormData({
-        name: "",
-        calories: "",
-        carbs: "",
-        protein: "",
-        fat: "",
-        description: "",
-      });
+      reset();
 
       toast.success(t("create_dish_modal_success"), {
         position: "top-center",
@@ -147,10 +113,6 @@ export default function CreateDishModal({
       toast.error("✗ " + errorMessage, {
         position: "top-center",
         autoClose: 2000,
-      });
-
-      setErrors({
-        submit: errorMessage,
       });
     }
   };
@@ -171,18 +133,16 @@ export default function CreateDishModal({
 
         <h2 className="modal-title">{t("create_dish_modal_title")}</h2>
 
-        <form onSubmit={handleSubmit} className="form-container">
+        <form onSubmit={handleSubmit(onSubmit)} className="form-container">
           <div className="form-group">
             <label htmlFor="name">{t("create_dish_modal_name")}</label>
             <input
               type="text"
               id="name"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
               placeholder={t("create_dish_modal_name_placeholder")}
+              {...register("name")}
             />
-            {errors.name && <span className="error-text">{errors.name}</span>}
+            {errors.name && <span className="error-text">{errors.name.message}</span>}
           </div>
 
           <div className="form-row">
@@ -193,13 +153,11 @@ export default function CreateDishModal({
               <input
                 type="number"
                 id="calories"
-                name="calories"
-                value={formData.calories}
-                onChange={handleInputChange}
                 placeholder={t("create_dish_modal_calories_placeholder")}
+                {...register("calories")}
               />
               {errors.calories && (
-                <span className="error-text">{errors.calories}</span>
+                <span className="error-text">{errors.calories.message}</span>
               )}
             </div>
 
@@ -208,13 +166,11 @@ export default function CreateDishModal({
               <input
                 type="number"
                 id="protein"
-                name="protein"
-                value={formData.protein}
-                onChange={handleInputChange}
                 placeholder={t("create_dish_modal_protein_placeholder")}
+                {...register("protein")}
               />
               {errors.protein && (
-                <span className="error-text">{errors.protein}</span>
+                <span className="error-text">{errors.protein.message}</span>
               )}
             </div>
           </div>
@@ -225,13 +181,11 @@ export default function CreateDishModal({
               <input
                 type="number"
                 id="carbs"
-                name="carbs"
-                value={formData.carbs}
-                onChange={handleInputChange}
                 placeholder={t("create_dish_modal_carbs_placeholder")}
+                {...register("carbs")}
               />
               {errors.carbs && (
-                <span className="error-text">{errors.carbs}</span>
+                <span className="error-text">{errors.carbs.message}</span>
               )}
             </div>
 
@@ -240,12 +194,10 @@ export default function CreateDishModal({
               <input
                 type="number"
                 id="fat"
-                name="fat"
-                value={formData.fat}
-                onChange={handleInputChange}
                 placeholder={t("create_dish_modal_fat_placeholder")}
+                {...register("fat")}
               />
-              {errors.fat && <span className="error-text">{errors.fat}</span>}
+              {errors.fat && <span className="error-text">{errors.fat.message}</span>}
             </div>
           </div>
 
@@ -258,12 +210,10 @@ export default function CreateDishModal({
             </label>
             <textarea
               id="description"
-              name="description"
-              value={formData.description}
-              onChange={handleInputChange}
               placeholder={t("create_dish_modal_description_placeholder")}
               maxLength={500}
               style={{ paddingBottom: "2.2rem" }}
+              {...register("description")}
             />
             <div
               style={{
@@ -275,19 +225,15 @@ export default function CreateDishModal({
                 pointerEvents: "none",
               }}
             >
-              {formData.description.length}/500
+              {description.length}/500
             </div>
             {errors.description && (
-              <span className="error-text">{errors.description}</span>
+              <span className="error-text">{errors.description.message}</span>
             )}
           </div>
 
-          {errors.submit && (
-            <div className="error-message">{errors.submit}</div>
-          )}
-
-          <button type="submit" className="submit-button">
-            {t("create_dish_modal_submit_button")}
+          <button type="submit" className="submit-button" disabled={isSubmitting}>
+            {isSubmitting ? t("submitting") : t("create_dish_modal_submit_button")}
           </button>
         </form>
       </div>

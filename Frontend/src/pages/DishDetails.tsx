@@ -11,8 +11,6 @@ import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import MacroCircle from "../components/MacroCircle";
-import DeleteDishModal from "../components/DeleteDishModal";
-import { toast } from "react-toastify";
 import CommentsModal from "../components/CommentsModal";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
@@ -25,7 +23,6 @@ export default function DishDetails() {
   const [isLoading, setIsLoading] = useState(true);
   const [servings, setServings] = useState(1);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const hasFetched = useRef<number | null>(null);
@@ -44,7 +41,6 @@ export default function DishDetails() {
     }
 
     const absOffset = Math.abs(offset);
-    const isCenter = offset === 0;
     const direction = offset > 0 ? 1 : -1;
 
     let scale = 0.6;
@@ -52,19 +48,23 @@ export default function DishDetails() {
     let zIndex = 1;
     let translateX = direction * absOffset * 100;
 
-    if (isCenter) {
-      scale = 0.9;
-      opacity = 1;
-      zIndex = 10;
-      translateX = 0;
-    } else if (absOffset === 1) {
-      scale = 0.7;
-      opacity = 0.5;
-      zIndex = 5;
-    } else if (absOffset === 2) {
-      scale = 0.5;
-      opacity = 0.25;
-      zIndex = 3;
+    switch (absOffset) {
+      case 0:
+        scale = 0.9;
+        opacity = 1;
+        zIndex = 10;
+        translateX = 0;
+        break;
+      case 1:
+        scale = 0.7;
+        opacity = 0.5;
+        zIndex = 5;
+        break;
+      case 2:
+        scale = 0.5;
+        opacity = 0.25;
+        zIndex = 3;
+        break;
     }
 
     return { scale, opacity, zIndex, translateX };
@@ -88,20 +88,6 @@ export default function DishDetails() {
     };
     load();
   }, [id]);
-
-  const handleDeleteDish = async () => {
-    if (!dish) return;
-
-    try {
-      await DishesService.deleteDish(dish.id);
-      toast.success(t("delete_dish_success"));
-      setIsDeleteModalOpen(false);
-      navigate("/dishes");
-    } catch (error) {
-      console.error("Error deleting dish:", error);
-      toast.error(t("delete_dish_error"));
-    }
-  };
 
   const handleCommentAdded = (comment: Comment) => {
     setComments((prevComments) => [...prevComments, comment]);
@@ -317,11 +303,6 @@ export default function DishDetails() {
         </div>
       </div>
 
-      <DeleteDishModal
-        isOpen={isDeleteModalOpen}
-        onClose={() => setIsDeleteModalOpen(false)}
-        onConfirm={handleDeleteDish}
-      />
       {dish && (
         <CommentsModal
           isOpen={isCommentsModalOpen}

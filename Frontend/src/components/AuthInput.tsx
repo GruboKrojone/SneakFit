@@ -1,25 +1,25 @@
+import { forwardRef } from "react";
 import "./styles/AuthInput.css";
 
-interface AuthInputProps {
+interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   type: string;
   placeholder: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export default function AuthInput({
-  type,
-  placeholder,
-  value,
-  onChange,
-}: AuthInputProps) {
-  return (
-    <input
-      className="auth-input"
-      type={type}
-      placeholder={placeholder}
-      value={value}
-      onChange={onChange}
-    />
-  );
-}
+const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
+  ({ type, placeholder, ...rest }, ref) => {
+    return (
+      <input
+        ref={ref}
+        className="auth-input"
+        type={type}
+        placeholder={placeholder}
+        {...rest}
+      />
+    );
+  }
+);
+
+AuthInput.displayName = "AuthInput";
+
+export default AuthInput;

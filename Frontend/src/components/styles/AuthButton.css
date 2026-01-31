@@ -13,5 +13,5 @@
 
 .auth-button:hover {
   transform: translateY(-0.125rem);
-  box-shadow: 0 0.375rem 1.5rem rgba(255, 107, 53, 0.4);
+  box-shadow: 0 0.375rem 1.5rem #ff6b3566;
 }

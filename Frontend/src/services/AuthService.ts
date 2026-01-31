@@ -1,3 +1,4 @@
+import i18n from "../translations/service/i18n";
 export interface LoginCredentials {
   email: string;
   password: string;
@@ -35,7 +36,7 @@ class AuthService {
     });
 
     if (!response.ok) {
-      throw new Error("Authentication failed");
+      throw new Error(i18n.t("auth_service_login_failed"));
     }
 
     const data: AuthResponse = await response.json();
@@ -56,7 +57,7 @@ class AuthService {
     });
 
     if (!response.ok) {
-      throw new Error("Registration failed");
+      throw new Error(i18n.t("auth_service_register_failed"));
     }
 
     const contentType = response.headers.get("content-type");
