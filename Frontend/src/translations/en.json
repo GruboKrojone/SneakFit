@@ -205,5 +205,11 @@
   "close": "Close",
   "select_mode": "Select",
   "remove_from_favourites": "Remove from favourites",
-  "no_favourites": "No favourite dishes yet. Add dishes by using the LOVED action!"
+  "no_favourites": "No favourite dishes yet. Add dishes by using the LOVED action!",
+  "shopping_list_add_placeholder": "Add item...",
+  "shopping_list_add_button": "Add",
+  "shopping_list_clear_all": "Clear All",
+  "shopping_list_empty": "Your shopping list is empty",
+  "shopping_list_remove_item": "Remove",
+  "confirm_clear": "Are you sure you want to clear the entire list?"
 }
