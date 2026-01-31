@@ -205,5 +205,11 @@
   "close": "Zamknij",
   "select_mode": "Zaznacz",
   "remove_from_favourites": "Usuń z ulubionych",
-  "no_favourites": "Brak ulubionych dań. Dodaj dania używając akcji LOVED!"
+  "no_favourites": "Brak ulubionych dań. Dodaj dania używając akcji LOVED!",
+  "shopping_list_add_placeholder": "Dodaj produkt...",
+  "shopping_list_add_button": "Dodaj",
+  "shopping_list_clear_all": "Wyczyść wszystko",
+  "shopping_list_empty": "Twoja lista zakupów jest pusta",
+  "shopping_list_remove_item": "Usuń",
+  "confirm_clear": "Czy na pewno chcesz wyczyścić całą listę?"
 }

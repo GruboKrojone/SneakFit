@@ -1,0 +1,174 @@
+.shopping-list-page {
+  width: 100%;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.shopping-list-container {
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  padding: 0 1rem;
+}
+
+.shopping-list-input-group {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  width: 100%;
+}
+
+.shopping-list-input {
+  flex: 1;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 0.8rem 1.2rem;
+  font-size: 1rem;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.shopping-list-input:focus {
+  border-color: var(--accent);
+}
+
+.shopping-list-add-btn {
+  background: var(--gradient);
+  color: white;
+  border: none;
+  border-radius: 1.25rem;
+  padding: 0 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.shopping-list-add-btn:hover {
+  transform: translateY(-2px);
+}
+
+.shopping-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  width: 100%;
+}
+
+.shopping-item-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: var(--card);
+  border-radius: 1rem;
+  box-shadow: 0 4px 12px var(--shadow);
+  transition: transform 0.2s;
+  overflow: hidden;
+}
+
+.shopping-item-wrapper:hover {
+  transform: translateX(4px);
+}
+
+.shopping-item-row {
+  background: none;
+  border: 1px solid transparent;
+  padding: 1rem 1.2rem;
+  padding-right: 3.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex: 1;
+  text-align: left;
+  cursor: pointer;
+  width: 100%;
+  font-family: inherit;
+  transition: border-color 0.2s;
+}
+
+.shopping-item-row:hover {
+  border-color: var(--tag-bg);
+}
+
+.shopping-item-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex: 1;
+}
+
+.shopping-item-text {
+  font-size: 1.1rem;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.shopping-item-row.completed .shopping-item-text {
+  text-decoration: line-through;
+  color: var(--text-light);
+}
+
+.shopping-item-delete-btn {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
+}
+
+.shopping-item-delete-btn:hover {
+  background: rgba(255, 77, 77, 0.1);
+  color: #ff4d4d;
+}
+
+.shopping-list-clear-btn {
+  margin-top: 2rem;
+  padding: 0.8rem 2rem;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-light);
+  border-radius: 2rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+  align-self: center;
+}
+
+.shopping-list-clear-btn:hover {
+  background: rgba(255, 77, 77, 0.05);
+  border-color: #ff4d4d;
+  color: #ff4d4d;
+}
+
+.shopping-list-empty {
+  text-align: center;
+  color: var(--text-light);
+  margin-top: 3rem;
+  font-style: italic;
+}
+
+.shopping-item-checked-icon {
+  color: #2e7d32;
+}
+
+.shopping-item-unchecked-icon {
+  color: var(--text-light);
+}
+
+.shopping-item-delete-btn .MuiSvgIcon-root {
+  font-size: 1.25rem;
+}
