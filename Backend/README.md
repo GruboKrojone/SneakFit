@@ -1,4 +1,4 @@
-# SneakFit API Documentation v1.0.0
+# SneakFit API Documentation v1.0.1
 
 ## 📋 Contents
 
@@ -19,6 +19,8 @@ The **SneakFit API** is a RESTful service for recipe management, meal planning, 
 The API is organized into the following resources:
 
 ```text
+├── AI
+│   ├── POST   /ai/ask
 ├── Auth                     # Authorization & Authentication
 │   ├── POST   /auth/login
 │   ├── POST   /auth/register
@@ -41,6 +43,11 @@ The API is organized into the following resources:
 │   ├── PUT    /dish/{dishId}/public
 │   ├── PUT    /dish/{dishId}/update
 │   └── DELETE /dish/{id}/delete
+├── Image
+│   ├── POST   /image
+│   ├── PUT    /image/{dishId}/assign
+│   ├── GET    /image/{dishId}/main
+│   └── GET    /image/{dishId}/all
 └── User                     # User Profile & Settings
     ├── PUT    /user/{id}/lang
     └── PUT    /user/{id}/settings
@@ -776,6 +783,221 @@ curl -X 'PUT' \
 ```bash
 {}
 ```
+
+## 6. AI
+
+#### Ask
+Ask AI for a dish recipe
+
+**Definition:**
+`POST /ai/ask`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `categories` | Category[] | Yes | Dish categories |
+| `testes` | string | yes | Taste of dish |
+| `requiredTools` | string | yes | Taste of dish |
+| `lang` | string | No | User preferred language |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/ai/ask' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "categories": [
+    {
+      "name": "<CATEGORY_NAME>"
+    }
+  ],
+  "tastes": [
+    "<DISH_TASTE>"
+  ],
+  "requiredTools": [
+    "<TOOL>"
+  ],
+  "lang": "<LANG>"
+}'
+```
+
+**Example Response (200):**
+```bash
+{
+  ## Glazed Sweet Potato Dessert Strings
+
+  **Categories:** String, Dessert, Vegetarian
+  **Required Tools:** Stove, Non-stick skillet, Peeler or Spiralizer
+
+  ### Ingredients (1 portion):
+  * 1 medium (approx. 150g) - Sweet potato, peeled and julienned into long strings
+  * 1.5 tbsp - Unsalted butter
+  * 2 tbsp - Maple syrup
+  * 1/2 tsp - Ground cinnamon
+  * 1/4 tsp - Vanilla extract
+  * 1 pinch - Sea salt
+  * 1 tbsp - Water
+  * 1 tbsp - Toasted crushed pecans (optional garnish)
+
+  ### Preparation Steps:
+  1. Prepare the sweet potato by using a spiralizer or a julienne peeler to create long, thin "string" noodles.
+  2. Place the skillet over medium heat on the stove and melt the butter until it begins to foam.
+  3. Add the sweet potato strings to the skillet. Sauté for 3–4 minutes, tossing gently with tongs to ensure they soften slightly without breaking.
+  4. Stir in the maple syrup, cinnamon, vanilla extract, and sea salt. 
+  5. Add the tablespoon of water. This creates a small amount of steam to help cook the "strings" through while the sugar emulsifies with the butter.
+  6. Reduce the heat to medium-low and continue to cook for another 4–5 minutes, tossing frequently, until the liquid has reduced into a thick, glossy glaze that coats the strings.
+  7. Once the strings are tender but still hold their shape (al dente), remove from heat.
+  8. Plate the strings in a twirled nest and garnish with toasted pecans if desired.
+
+  ### Estimates (per portion):
+  * **Time:** 15 Minutes
+  * **Calories:** 285 kcal
+  * **Carbs:** 38 g
+  * **Proteins:** 2 g
+  * **Fat:** 14 g
+}
+```
+
+---
+
+## 7. Images
+
+#### Add
+Add image to db
+
+**Definition:**
+`POST /image`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `file` | string | Yes | Dish image |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/image' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'file=@<PHOTO_NAME.jpg;type=image/jpeg'
+```
+
+**Example Response (200):**
+```bash
+{
+ {
+  "url": "<IMG_URL>"
+}
+}
+```
+
+---
+
+#### Assign
+Assign image to dish
+
+**Definition:**
+`POST /image`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+| `mainId` | integer | No | ImageId |
+| `secondId` | integer | No | ImageId |
+| `thirdId` | integer | No | ImageId |
+
+**Example Request:**
+```bash
+curl -X 'PUT' \
+  'https://<HOST>/image/<ID>/assign?mainId=<IMAGEID>&secondId=<IMAGEID>&thirdId=<IMAGEID>' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Get Main Image
+Get main image
+
+**Definition:**
+`GET /image/{dishId}/main`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'GET' \
+  'https://<HOST>/image/<DISHID>/main' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{
+  "imageId": <ID>,
+  "ownerId": <ID>,
+  "url": "<IMG_URL>",
+  "position": "<POSITION>"
+}
+```
+
+---
+
+#### Get All Dish Images
+Get all dish images
+
+**Definition:**
+`GET /image/{dishId}/all`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'GET' \
+  'https://<HOST>/image/<DISHID>/all' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+[
+  {
+    "imageId": <ID>,
+    "ownerId": <ID>,
+    "url": "<IMG_URL>",
+    "position": "<POSITION>"
+  },
+  {
+    "imageId": <ID>,
+    "ownerId": <ID>,
+    "url": "<IMG_URL>",
+    "position": "<POSITION>"
+  },
+  {
+    "imageId": <ID>,
+    "ownerId": <ID>,
+    "url": "<IMG_URL>",
+    "position": "<POSITION>"
+  }
+]
+```
+
+---
 
 # Data Models
 
