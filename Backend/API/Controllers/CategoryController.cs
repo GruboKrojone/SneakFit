@@ -25,4 +25,9 @@ public class CategoryController(IMediator mediator) : ControllerBase
     [Route("{id}/assignToDish/{dishId}")]
     public async Task<Unit> AssignCategoryToDish(int id, int dishId, CancellationToken cancellationToken)
         => await mediator.Send(new AssignCategoryToDishCommand(id, dishId), cancellationToken);
+
+    [HttpPut]
+    [Route("{id}/unassignFromDish/{dishId}")]
+    public async Task<Unit> UnassignCategoryFromDish(int id, int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new UnassignCategoryFromDishCommand(id, dishId), cancellationToken);
 }
