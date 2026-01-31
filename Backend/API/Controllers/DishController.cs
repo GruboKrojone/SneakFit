@@ -59,4 +59,9 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("/step/{stepId}/update")]
     public async Task<Unit> UpdateCookingStep(int stepId, CookingStepParams @params, CancellationToken cancellationToken)
         => await mediator.Send(new UpdateCookingStepCommand(stepId, @params), cancellationToken);
+
+    [HttpGet]
+    [Route("{dishId}/steps")]
+    public async Task<IEnumerable<CookingStepDto>> GetCookingSteps(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new GetCookingStepsQuery(dishId), cancellationToken);
 }
