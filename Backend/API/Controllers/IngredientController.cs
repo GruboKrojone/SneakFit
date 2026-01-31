@@ -13,4 +13,9 @@ public class IngredientController(IMediator mediator) : ControllerBase
     [Route("add")]
     public async Task<Unit> AddIngredient(IngredientParams @params, CancellationToken cancellationToken)
         => await mediator.Send(new AddIngredientCommand(@params), cancellationToken);
+
+    [HttpPost]
+    [Route("{id}/assignToDish/{dishId}")]
+    public async Task<Unit> AssignIngredientToDish(int id, int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new AssignIngredientToDishCommand(id, dishId), cancellationToken);
 }
