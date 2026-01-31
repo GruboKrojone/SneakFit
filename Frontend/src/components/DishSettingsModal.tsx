@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Swal from "sweetalert2";
 import DishesService from "../services/DishesService";
 import { toast } from "react-toastify";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface DishSettingsModalProps {
   readonly isOpen: boolean;
@@ -33,6 +34,8 @@ export default function DishSettingsModal({
   dishId,
 }: DishSettingsModalProps) {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { locale } = useParams<{ locale: string }>();
   const [tempPrivacy, setTempPrivacy] = useState(isPublic);
   const [description, setDescription] = useState("");
 
@@ -61,8 +64,7 @@ export default function DishSettingsModal({
         onChangePublic(newValue);
         toast.success(t("dish_settings_modal_privacy_updated"));
       } catch (error) {
-        console.error("Error updating dish privacy:", error);
-        toast.error(t("dish_settings_modal_privacy_update_error"));
+        toast.error(t("dish_settings_modal_privacy_update_error\n" + error));
       }
     }
   };
@@ -84,10 +86,9 @@ export default function DishSettingsModal({
         return null;
       },
       showCancelButton: true,
+
       confirmButtonText: t("dish_settings_modal_edit_description_save"),
       cancelButtonText: t("dish_settings_modal_edit_description_cancel"),
-      width: "700px",
-      padding: "2.5rem",
       customClass: {
         ...SWAL_CUSTOM_CLASS,
         input: "swal2-textarea-custom",
@@ -95,8 +96,6 @@ export default function DishSettingsModal({
       didOpen: () => {
         const textarea = Swal.getInput();
         if (textarea) {
-          textarea.style.minHeight = "500px";
-          textarea.style.resize = "vertical";
 
           const counter = document.createElement("div");
           counter.className = "swal-character-counter";
@@ -116,8 +115,7 @@ export default function DishSettingsModal({
         setDescription(newDescription);
         toast.success(t("dish_settings_modal_edit_description_success"));
       } catch (error) {
-        console.error("Error updating dish description:", error);
-        toast.error(t("dish_settings_modal_edit_description_error"));
+        toast.error(t("dish_settings_modal_edit_description_error\n" + error));
       }
     }
   };
@@ -145,6 +143,31 @@ export default function DishSettingsModal({
       </div>
     </div>
   );
+
+  const handleDeleteDish = async () => {
+    const result = await Swal.fire({
+      title: t("dish_settings_modal_delete_confirm_title"),
+      text: t("dish_settings_modal_delete_confirm_text"),
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: t("dish_settings_modal_confirm_yes"),
+      cancelButtonText: t("dish_settings_modal_confirm_no"),
+      customClass: {
+        ...SWAL_CUSTOM_CLASS,
+        confirmButton: "swal2-confirm-btn-danger-custom",
+      },
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await DishesService.deleteDish(dishId);
+        toast.success(t("dish_settings_modal_delete_success"));
+        navigate(`/${locale}/dishes`);
+      } catch (error) {
+        toast.error(t("dish_settings_modal_delete_error") + "\n" + error);
+      }
+    }
+  };
 
   return (
     <div
@@ -192,6 +215,20 @@ export default function DishSettingsModal({
           </div>
 
           {settingOptions.map(renderSettingGroup)}
+
+          <div className="dish-settings-modal-group dish-settings-modal-group-wide">
+            <div className="dish-settings-modal-group-title">
+              {t("dish_settings_modal_delete_title")}
+            </div>
+            <div className="dish-settings-modal-group-content">
+              <button
+                className="dish-settings-modal-edit-btn dish-settings-modal-delete-btn"
+                onClick={handleDeleteDish}
+              >
+                {t("dish_settings_modal_delete_button")}
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

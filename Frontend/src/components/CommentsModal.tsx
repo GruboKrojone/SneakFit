@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import Close from "@mui/icons-material/Close";
 import Person from "@mui/icons-material/Person";
 import MoreVert from "@mui/icons-material/MoreVert";
@@ -18,6 +21,14 @@ interface CommentsModalProps {
   readonly onCommentAdded: (comment: Comment) => void;
 }
 
+const MAX_COMMENT_LENGTH = 500;
+
+const commentSchemaType = z.object({
+  content: z.string(),
+});
+
+type CommentFormData = z.infer<typeof commentSchemaType>;
+
 export default function CommentsModal({
   isOpen,
   onClose,
@@ -27,42 +38,36 @@ export default function CommentsModal({
   onCommentAdded,
 }: CommentsModalProps) {
   const { t } = useTranslation();
-  const [newComment, setNewComment] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const [localComments, setLocalComments] = useState<Comment[]>(comments);
-  const MAX_COMMENT_LENGTH = 500;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    reset,
+    watch,
+  } = useForm<CommentFormData>({
+    resolver: zodResolver(commentSchemaType),
+    defaultValues: {
+      content: "",
+    },
+  });
+
+  const commentContent = watch("content");
 
   useEffect(() => {
     if (!isOpen) {
-      setNewComment("");
+      reset();
       setOpenMenuIndex(null);
     }
-  }, [isOpen]);
+  }, [isOpen, reset]);
 
   useEffect(() => {
     setLocalComments(comments);
   }, [comments]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!newComment.trim() || isSubmitting) return;
-
-    if (newComment.trim().length > MAX_COMMENT_LENGTH) {
-      toast.error(
-        t("comments_modal_too_long").replace(
-          "{0}",
-          MAX_COMMENT_LENGTH.toString(),
-        ),
-        {
-          position: "top-center",
-          autoClose: 3000,
-        },
-      );
-      return;
-    }
-
+  const onSubmit = async (data: CommentFormData) => {
     const user = AuthService.getCurrentUser();
     if (!user) {
       toast.error(t("comments_modal_login_required"), {
@@ -75,7 +80,7 @@ export default function CommentsModal({
     const isDuplicate = localComments.some(
       (comment) =>
         comment.content.trim().toLowerCase() ===
-          newComment.trim().toLowerCase() &&
+          data.content.trim().toLowerCase() &&
         Number(comment.authorId) === Number(user.id),
     );
 
@@ -87,18 +92,17 @@ export default function CommentsModal({
       return;
     }
 
-    setIsSubmitting(true);
     try {
-      await CommentsService.addComment(dishId, newComment.trim());
+      await CommentsService.addComment(dishId, data.content.trim());
 
       const newCommentObj: Comment = {
-        content: newComment.trim(),
+        content: data.content.trim(),
         authorId: user.id,
         dishId: dishId,
       };
 
       onCommentAdded(newCommentObj);
-      setNewComment("");
+      reset();
 
       toast.success(t("comments_modal_success"), {
         position: "top-center",
@@ -112,8 +116,6 @@ export default function CommentsModal({
         position: "top-center",
         autoClose: 2000,
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -251,24 +253,28 @@ export default function CommentsModal({
           {t("comments_modal_title")}: {dishName}
         </h2>
 
-        <form onSubmit={handleSubmit} className="comments-modal-form">
+        <form onSubmit={handleSubmit(onSubmit)} className="comments-modal-form">
           <div className="comments-modal-input-wrapper">
             <textarea
               className="comments-modal-input"
               placeholder={t("comments_modal_placeholder")}
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
               rows={4}
               maxLength={MAX_COMMENT_LENGTH}
+              {...register("content")}
             />
             <div className="comments-modal-counter">
-              {newComment.length}/{MAX_COMMENT_LENGTH}
+              {commentContent.length}/{MAX_COMMENT_LENGTH}
             </div>
+            {errors.content && (
+              <span className="error-text" style={{ color: '#ff6b6b' }}>
+                {errors.content.message}
+              </span>
+            )}
           </div>
           <button
             type="submit"
             className="comments-modal-submit"
-            disabled={!newComment.trim() || isSubmitting}
+            disabled={isSubmitting}
           >
             {isSubmitting
               ? t("comments_modal_submitting")
@@ -276,8 +282,7 @@ export default function CommentsModal({
           </button>
         </form>
 
-        <div className="comments-modal-list">
-          {localComments.length > 0 ? (
+        <div className="comments-modal-list">{localComments.length > 0 ? (
             localComments.map((comment, index) => (
               <div
                 key={`${comment.dishId}-${comment.authorId}-${index}`}

@@ -1,4 +1,4 @@
-.modal-overlay {
+.profile-modal-overlay {
   position: fixed;
   inset: 0;
   background-color: #00000000;
@@ -11,19 +11,18 @@
   transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
-.modal-overlay.open {
+.profile-modal-overlay.open {
   opacity: 1;
   pointer-events: auto;
   background-color: #00000099;
 }
 
-
-.modal-content {
+.profile-modal-content {
   background: var(--card);
   border-radius: 1.25rem 1.25rem 0 0;
   padding: 2rem;
-  height: 100dvh;
   max-height: 100dvh;
+  height: 100dvh;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -34,11 +33,11 @@
   border: none;
 }
 
-.modal-overlay.open .modal-content {
+.profile-modal-overlay.open .profile-modal-content {
   transform: translateY(0);
 }
 
-.close-button {
+.profile-close-button {
   position: absolute;
   top: 1rem;
   right: 1rem;
@@ -54,16 +53,16 @@
   border-radius: 50%;
 }
 
-.close-button:hover {
+.profile-close-button:hover {
   color: var(--accent);
   background: #ff6b351a;
 }
 
-.close-icon {
+.profile-close-icon {
   font-size: 2rem;
 }
 
-.modal-title {
+.profile-modal-title {
   margin: 0 0 1.5rem 0;
   font-family: 'Playfair Display', serif;
   font-size: 1.75rem;
@@ -72,7 +71,7 @@
   text-align: center;
 }
 
-.form-container {
+.profile-form-container {
   display: flex;
   flex-direction: column;
   gap: 1.2rem;
@@ -83,26 +82,19 @@
   box-sizing: border-box;
 }
 
-.form-group {
+.profile-form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.form-group label {
+.profile-form-group label {
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--text);
 }
 
-.form-group-description label {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.form-group input,
-.form-group-description textarea {
+.profile-form-group input {
   background: var(--card);
   padding: 1.25rem;
   border: 0.0625rem solid var(--border);
@@ -113,70 +105,36 @@
   transition: all 0.3s ease;
 }
 
-.form-group input:focus,
-.form-group-description textarea:focus {
+.profile-form-group input:focus {
   outline: none;
   border-color: var(--accent);
   box-shadow: 0 0 0 0.1875rem #ff6b351a;
 }
 
-.form-group input[type="number"]::-webkit-outer-spin-button,
-.form-group input[type="number"]::-webkit-inner-spin-button {
+.profile-form-group input[type="number"]::-webkit-outer-spin-button,
+.profile-form-group input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
-.form-group input[type="number"] {
+.profile-form-group input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
 
-.form-group input:disabled,
-.form-group-description textarea:disabled {
+.profile-form-group input:disabled {
   background: var(--bg);
   opacity: 0.6;
   cursor: not-allowed;
 }
 
-.form-group-description {
-  display: flex;
-  flex-direction: column;
-  gap: 0.3rem;
-  width: 100%;
-}
-
-.form-group-description textarea {
-  resize: vertical;
-  overflow-y: auto;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  width: 100%;
-  height: 6rem;
-}
-
-.form-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.625rem;
-}
-
-.error-text {
+.profile-error-text {
   font-size: 0.75rem;
   color: #ff6b6b;
   margin-top: 0.25rem;
 }
 
-.error-message {
-  background: #ff6b6b26;
-  color: #ff6b6b;
-  padding: 0.75rem 1rem;
-  border-radius: 0.875rem;
-  font-size: 0.875rem;
-  text-align: center;
-  border: 0.0625rem solid #ff6b6b4d;
-}
-
-.submit-button {
+.profile-submit-button {
   padding: 1.05rem 3.5rem;
   background: var(--gradient);
   color: #ffffff;
@@ -190,13 +148,30 @@
   box-shadow: 0 0.25rem 1rem var(--shadow);
 }
 
-.submit-button:hover:not(:disabled) {
+.profile-submit-button:hover:not(:disabled) {
   transform: translateY(-0.125rem);
   box-shadow: 0 0.375rem 1.5rem #ff6b3566;
 }
 
-.submit-button:disabled {
+.profile-submit-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
+}
+
+.profile-clear-group {
+  margin-top: 1.5rem;
+}
+
+.profile-clear-button {
+  background: #dc3545;
+}
+
+.profile-clear-button:hover:not(:disabled) {
+  background: #c82333;
+  box-shadow: 0 0.375rem 1.5rem #dc354566;
+}
+
+.profile-delete-icon {
+  margin-right: 0.5rem;
 }

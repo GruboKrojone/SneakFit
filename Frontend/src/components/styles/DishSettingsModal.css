@@ -1,19 +1,24 @@
 .dish-settings-modal-close-btn:hover .dish-settings-modal-close-icon {
-  color: orange;
+  color: #ffa500;
 }
 
 .dish-settings-modal-group {
-  background: #F5F5F0;
+  background: var(--bg);
   border-radius: 1.1rem;
   padding: 1rem;
   width: 100%;
   box-sizing: border-box;
-  box-shadow: 0 0.125rem 0.5rem rgba(0,0,0,0.03);
+  box-shadow: 0 0.125rem 0.5rem var(--shadow);
   display: flex;
   flex-direction: column;
   align-items: center;
   aspect-ratio: 1;
   justify-content: center;
+}
+
+.dish-settings-modal-group-wide {
+  grid-column: 1 / -1;
+  aspect-ratio: auto;
 }
 
 .dish-settings-modal-group:first-child {
@@ -23,7 +28,7 @@
 .dish-settings-modal-group-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #222;
+  color: var(--text);
   margin-bottom: 0.5rem;
   text-align: center;
   font-family: 'Playfair Display', serif;
@@ -39,7 +44,7 @@
 .dish-settings-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: #00000000;
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -52,18 +57,19 @@
 .dish-settings-modal-overlay.open {
   opacity: 1;
   pointer-events: auto;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: #00000099;
 }
 
 .dish-settings-modal-content {
-  background: #fff;
-  border: 0.0625rem solid #d1d1d1;
+  background: var(--card);
+  border: 0.0625rem solid var(--border);
   border-radius: 1.25rem 1.25rem 0 0;
   padding: 2.5rem 2rem 2rem 2rem;
   width: 98vw;
   max-width: 56.25rem;
-  min-height: 100vh;
-  height: 100vh;
+  max-height: 100dvh;
+  height: auto;
+  overflow-y: auto;
   box-sizing: border-box;
   position: relative;
   display: flex;
@@ -107,7 +113,7 @@
 
 .dish-settings-modal-close-btn:hover {
   color: var(--accent);
-  background: rgba(255, 107, 53, 0.1);
+  background: #ff6b351a;
 }
 
 .dish-settings-modal-close-icon {
@@ -119,7 +125,7 @@
   font-family: 'Playfair Display', serif;
   font-size: 1.75rem;
   font-weight: 700;
-  color: #222;
+  color: var(--text);
   width: 100%;
   text-align: center;
 }
@@ -140,7 +146,7 @@
 
 .dish-settings-modal-settings-label {
   font-size: 1.18rem;
-  color: #444;
+  color: var(--text);
   font-weight: 600;
   font-family: 'Playfair Display', serif;
 }
@@ -170,7 +176,7 @@
 .dish-settings-modal-select:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 0.1875rem rgba(255, 107, 53, 0.1);
+  box-shadow: 0 0 0 0.1875rem #ff6b351a;
 }
 
 .dish-settings-modal-select:hover {
@@ -180,7 +186,7 @@
 .edit-description-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: #00000099;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -196,7 +202,7 @@
   max-height: 80vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.625rem 2.5rem #00000033;
 }
 
 .edit-description-modal-title {
@@ -232,7 +238,7 @@
 .edit-description-textarea:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 0.1875rem rgba(255, 107, 53, 0.1);
+  box-shadow: 0 0 0 0.1875rem #ff6b351a;
 }
 
 .edit-description-modal-actions {
@@ -258,22 +264,22 @@
 }
 
 .edit-description-cancel-btn:hover {
-  background: #ddd;
+  background: #dddddd;
 }
 
 .edit-description-save-btn {
   background: var(--gradient);
-  color: white;
+  color: #ffffff;
 }
 
 .edit-description-save-btn:hover {
   transform: translateY(-0.125rem);
-  box-shadow: 0 0.25rem 0.75rem rgba(255, 107, 53, 0.3);
+  box-shadow: 0 0.25rem 0.75rem #ff6b354d;
 }
 
 .dish-settings-modal-edit-btn {
   background: var(--gradient);
-  color: white;
+  color: #ffffff;
   border: none;
   padding: 0.75rem 1.5rem;
   border-radius: 0.5rem;
@@ -285,23 +291,46 @@
 
 .dish-settings-modal-edit-btn:hover {
   transform: translateY(-0.125rem);
-  box-shadow: 0 0.25rem 0.75rem rgba(255, 107, 53, 0.3);
+  box-shadow: 0 0.25rem 0.75rem #ff6b354d;
 }
 
 .swal2-textarea-custom {
-  min-height: 12.5rem !important;
+  min-height: 31.25rem !important;
   resize: vertical !important;
   font-family: 'Inter', sans-serif !important;
   font-size: 1rem !important;
   line-height: 1.5 !important;
 }
 
+.swal2-popup-custom {
+  width: 43.75rem !important;
+  padding: 2.5rem !important;
+}
+
+.dish-settings-modal-delete-btn {
+  background-color: var(--error, #dc3545);
+  color: white;
+  margin-top: 1rem;
+}
+
+.dish-settings-modal-delete-btn:hover {
+  background-color: #c82333;
+}
+
+.swal2-confirm-btn-danger-custom {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border-radius: 0.25em;
+  padding: 0.625em 1.1em;
+  border: none;
+}
+
 .swal-character-counter {
   position: absolute;
   bottom: 0.5rem;
   right: 0.5rem;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
+  background: #000000b3;
+  color: #ffffff;
   padding: 0.25rem 0.5rem;
   border-radius: 0.5rem;
   font-size: 0.8rem;
@@ -312,7 +341,7 @@
 .edit-description-popup-overlay {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #00000080;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -337,7 +366,7 @@
   max-height: 90vh;
   overflow-y: auto;
   position: relative;
-  box-shadow: 0 1.25rem 3.75rem rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1.25rem 3.75rem #0000004d;
   border: 0.0625rem solid var(--border);
   transform: scale(0.9) translateY(1.25rem);
   opacity: 0;
@@ -371,8 +400,8 @@
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
+  background: #000000b3;
+  color: #ffffff;
   padding: 0.25rem 0.5rem;
   border-radius: 0.75rem;
   font-size: 0.85rem;

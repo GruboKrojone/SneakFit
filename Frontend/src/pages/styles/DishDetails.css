@@ -1,9 +1,11 @@
 .dish-details-content {
   width: 100%;
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow-x: hidden;
+  padding-bottom: 2rem;
 }
 
 #delete-dish-button {
@@ -23,7 +25,7 @@
 
 #delete-dish-button:hover {
   transform: scale(1.15);
-  filter: drop-shadow(0 4px 8px rgba(255, 107, 107, 0.5));
+  filter: drop-shadow(0 4px 8px #ff6b6b80);
 }
 
 #delete-dish-icon {
@@ -39,9 +41,9 @@
 .dish-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: auto auto;
   gap: 2rem;
-  height: 100%;
+  height: auto;
   width: 100%;
 }
 
@@ -90,7 +92,7 @@
 
 .carousel-arrow:hover {
   transform: translateY(-0.125rem) scale(1.1);
-  box-shadow: 0 0.375rem 1.5rem rgba(255, 107, 53, 0.4);
+  box-shadow: 0 0.375rem 1.5rem #ff6b3566;
 }
 
 .carousel-arrow-icon {
@@ -197,11 +199,11 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03125rem;
-  background: #ffe9d6;
-  color: #e67700;
+  background: var(--tag-bg);
+  color: var(--tag-text);
   padding: 0.5rem 1.2rem;
   border-radius: 62.4375rem;
-  border: 0.0625rem solid #ffd9b3;
+  border: 0.0625rem solid var(--accent);
   text-align: center;
 }
 
@@ -385,7 +387,7 @@
 
 .servings-btn:hover {
   transform: translateY(-0.125rem);
-  box-shadow: 0 0.25rem 1rem rgba(255, 107, 53, 0.4);
+  box-shadow: 0 0.25rem 1rem #ff6b3566;
 }
 
 .servings-number {
@@ -524,7 +526,7 @@
 
 .btn-decline:hover {
   background-color: transparent;
-  transform: scale(1.25);
+  transform: scale(1.05);
   color: #ff8c5a;
 }
 
@@ -541,7 +543,7 @@
 
 .btn-accept:hover {
   background-color: transparent;
-  transform: scale(1.25);
+  transform: scale(1.05);
   color: #66bb6a;
 }
 
@@ -586,5 +588,5 @@
 
 .settings-gear-icon {
   font-size: 2.7rem !important;
-  color: #888;
+  color: #888888;
 }

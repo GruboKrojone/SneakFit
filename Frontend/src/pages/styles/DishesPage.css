@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: all 0.3s ease;
 }
 
 .page-title {
@@ -34,6 +35,7 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
   gap: 2rem;
+  transition: all 0.3s ease;
 }
 
 .dishes-box {
@@ -43,36 +45,38 @@
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 
-    0 0.0625rem 0.1875rem rgba(0, 0, 0, 0.05),
-    0 0.125rem 0.5rem rgba(0, 0, 0, 0.03);
-  border: 0.0625rem solid rgba(0, 0, 0, 0.05);
+    0 0.0625rem 0.1875rem #0000000d,
+    0 0.125rem 0.5rem #00000008;
+  border: 0.0625rem solid #0000000d;
   padding: 1rem;
 }
 
 .dishes-box:hover {
   transform: translateY(-0.5rem);
   box-shadow: 
-    0 0.5rem 1.25rem rgba(0, 0, 0, 0.08),
-    0 1rem 2.5rem rgba(0, 0, 0, 0.04);
+    0 0.5rem 1.25rem #00000013,
+    0 1rem 2.5rem #00000008;
   border-color: #ff9e60;
 }
 
 .dishes-image-wrap {
   width: 100%;
   height: 15rem;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: #494949;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   position: relative;
+  transition: all 0.3s ease;
 }
 
 .dishes-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.4s ease;
+  transition: transform 0.3s ease;
 }
 
 .dishes-box:hover .dishes-image {
@@ -115,17 +119,18 @@
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03125rem;
-  background: #ffe9d6;
-  color: #e67700;
+  background: var(--tag-bg);
+  color: var(--tag-text);
   padding: 0.5rem 1.2rem;
   border-radius: 62.4375rem;
-  border: 0.0625rem solid #ffd9b3;
+  border: 0.0625rem solid var(--accent);
   margin-top: 0.25rem;
   margin-left: -1.5rem;
   margin-right: -1.5rem;
   width: calc(100% + 3rem);
   text-align: center;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .dishes-restaurant-icon {
@@ -137,7 +142,7 @@
   color: #ff8c42;
   width: 1.875rem;
   height: 1.875rem;
-  filter: drop-shadow(0 0.125rem 0.25rem rgba(255, 140, 66, 0.25));
+  filter: drop-shadow(0 0.125rem 0.25rem #ff8c4240);
 }
 
 #add-box-icon {
