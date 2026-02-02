@@ -32,7 +32,7 @@ internal sealed class DishDetailsQueryHandler(
             dish.IsPublic,
             dish.Rates,
             dish.OwnerId,
-            dish.Ingredients?.Select(i => new IngredientDto(i.Name, null)).ToList() ?? []
+            dish.Ingredients?.Select(i => new IngredientDto(i.Id, i.Name, null)).ToList() ?? []
         );
     }
 }
