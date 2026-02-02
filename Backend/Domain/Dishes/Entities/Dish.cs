@@ -100,7 +100,7 @@ public sealed class Dish : EntityBase
 
     public void RecalculateAverageRating()
     {
-        if (Ratings.Any())
+        if (Ratings.Count != 0)
         {
             Rates = Math.Round(Ratings.Average(r => r.Rating), 2);
         }
