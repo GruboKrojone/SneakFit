@@ -29,6 +29,7 @@ public sealed class Dish : EntityBase
     public ICollection<Ingredient> Ingredients { get; private set; }
     public ICollection<User> FavoritedByUsers { get; private set; }
     public ICollection<Comment> Comments { get; private set; }
+    public ICollection<DishRating> Ratings { get; private set; }
 
     private Dish()
     {
@@ -37,6 +38,7 @@ public sealed class Dish : EntityBase
         Ingredients = [];
         FavoritedByUsers = [];
         Comments = [];
+        Ratings = [];
         Rates = 0;
         IsPublic = false;
     }
@@ -92,6 +94,19 @@ public sealed class Dish : EntityBase
     public void UpdateRating(decimal newRating)
     {
         Rates = newRating;
+        MarkAsUpdated();
+    }
+
+    public void RecalculateAverageRating()
+    {
+        if (Ratings.Any())
+        {
+            Rates = Math.Round(Ratings.Average(r => r.Rating), 2);
+        }
+        else
+        {
+            Rates = 0;
+        }
         MarkAsUpdated();
     }
 

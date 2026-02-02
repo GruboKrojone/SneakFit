@@ -20,6 +20,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
     internal DbSet<Ingredient> Ingredients => Set<Ingredient>();
     internal DbSet<Category> Categories => Set<Category>();
     internal DbSet<Comment> Comments => Set<Comment>();
+    internal DbSet<DishRating> DishRatings => Set<DishRating>();
     internal DbSet<RefreshToken> RefreshTokens { get; set; }
 
 
@@ -36,7 +37,13 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
         modelBuilder.Entity<Comment>().HasQueryFilter(c => !c.IsDeleted);
         modelBuilder.Entity<Favorited>().HasQueryFilter(f => !f.IsDeleted);
         modelBuilder.Entity<Image>().HasQueryFilter(f => !f.IsDeleted);
+        modelBuilder.Entity<DishRating>().HasQueryFilter(r => !r.IsDeleted);
+
         modelBuilder.ApplyConfiguration(new RefreshTokenConfiguration());
+
+        modelBuilder.Entity<DishRating>()
+            .HasIndex(r => new { r.UserId, r.DishId })
+            .IsUnique();
     }
 
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
