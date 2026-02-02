@@ -8,8 +8,8 @@ public sealed class Ingredient(
     string name,
     string? description) : EntityBase
 {
-    [Required][MaxLength(100)] public string Name { get; private set; } = name;
-    [MaxLength(280)] public string? Description { get; private set; } = description;
+    [Required][MaxLength(100)] public string Name { get; set; } = name;
+    [MaxLength(280)] public string? Description { get; set; } = description;
     public ICollection<Dish>? Dishes { get; private set; } = [];
 
 

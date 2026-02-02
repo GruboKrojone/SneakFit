@@ -4,6 +4,7 @@ using Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Domain.Migrations
 {
     [DbContext(typeof(SneakFitDbContext))]
-    partial class SneakFitDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260131162701_DishRating")]
+    partial class DishRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,52 +342,6 @@ namespace Domain.Migrations
                     b.ToTable("Ingredients", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Dishes.Entities.Step", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("DeletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<int>("DishId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
-                    b.Property<int>("Order")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("DishId");
-
-                    b.HasIndex("Name");
-
-                    b.ToTable("Steps", (string)null);
-                });
-
             modelBuilder.Entity("Domain.Images.Entities.Image", b =>
                 {
                     b.Property<int>("Id")
@@ -585,10 +542,6 @@ namespace Domain.Migrations
                     b.Navigation("ThirdPicture");
                 });
 
-            modelBuilder.Entity("Domain.Dishes.Entities.Step", b =>
-                {
-                    b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
-                        .WithMany("Steps")
             modelBuilder.Entity("Domain.Dishes.Entities.DishRating", b =>
                 {
                     b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
@@ -597,7 +550,6 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Dish");
                     b.HasOne("Domain.Users.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
@@ -643,7 +595,6 @@ namespace Domain.Migrations
                 {
                     b.Navigation("Comments");
 
-                    b.Navigation("Steps");
                     b.Navigation("Ratings");
                 });
 

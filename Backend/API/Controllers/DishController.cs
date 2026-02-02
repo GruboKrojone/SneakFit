@@ -69,4 +69,10 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("/step/{stepId}/delete")]
     public async Task<Unit> DeleteCookingStep(int stepId, CancellationToken cancellationToken)
         => await mediator.Send(new DeleteCookingStepCommand(stepId), cancellationToken);
+    => await mediator.Send(new GetRecommendedDishesQuery(maxResults), cancellationToken);
+
+    [HttpPut]
+    [Route("{dishId}/rate")]
+    public async Task<Unit> RateDish(int dishId, decimal rating, CancellationToken cancellationToken)
+        => await mediator.Send(new RateDishCommand(dishId, rating), cancellationToken);
 }
