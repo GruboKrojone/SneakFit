@@ -25,6 +25,7 @@ public sealed class Dish : EntityBase
     public Image? SecondaryPicture { get; set; }
     public int? ThirdPictureId { get; set; }
     public Image? ThirdPicture { get; set; }
+    public List<Step> Steps { get; set; }
     public ICollection<Category> Categories { get; private set; }
     public ICollection<Ingredient> Ingredients { get; private set; }
     public ICollection<User> FavoritedByUsers { get; private set; }
@@ -99,7 +100,7 @@ public sealed class Dish : EntityBase
 
     public void RecalculateAverageRating()
     {
-        if (Ratings.Any())
+        if (Ratings.Count != 0)
         {
             Rates = Math.Round(Ratings.Average(r => r.Rating), 2);
         }

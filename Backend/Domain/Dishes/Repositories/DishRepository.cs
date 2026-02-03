@@ -16,5 +16,6 @@ internal sealed class DishRepository(
             .Include(d => d.Ingredients)
             .Include(d => d.Categories)
             .Include(d => d.Owner)
-            .Include(d => d.Comments);
+            .Include(d => d.Comments)
+            .Include(d => d.Steps);
 }

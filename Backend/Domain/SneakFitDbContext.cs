@@ -20,6 +20,7 @@ internal sealed class SneakFitDbContext(DbContextOptions<SneakFitDbContext> opti
     internal DbSet<Ingredient> Ingredients => Set<Ingredient>();
     internal DbSet<Category> Categories => Set<Category>();
     internal DbSet<Comment> Comments => Set<Comment>();
+    internal DbSet<Step> Steps => Set<Step>();
     internal DbSet<DishRating> DishRatings => Set<DishRating>();
     internal DbSet<RefreshToken> RefreshTokens { get; set; }
 
