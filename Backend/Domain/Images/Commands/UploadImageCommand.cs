@@ -11,18 +11,20 @@ using Microsoft.Extensions.Configuration;
 
 namespace Domain.Images.Commands;
 
-public record UploadImageCommand(Stream FileStream, string FileName, string ContentType) : ICommand<string>;
+public record ImageUploadResult(int Id, string Url);
+
+public record UploadImageCommand(Stream FileStream, string FileName, string ContentType) : ICommand<ImageUploadResult>;
 
 internal class UploadImageCommandHandler(
     IImageRepository imageRepository,
     IUnitOfWork unitOfWork,
     IUserContext userContext,
     BlobServiceClient blobServiceClient,
-    IConfiguration configuration) : ICommandHandler<UploadImageCommand, string>
+    IConfiguration configuration) : ICommandHandler<UploadImageCommand, ImageUploadResult>
 {
     private readonly string _containerName = configuration["App:Azure:ContainerName"] ?? "images";
 
-    public async Task<string> Handle(UploadImageCommand request, CancellationToken cancellationToken)
+    public async Task<ImageUploadResult> Handle(UploadImageCommand request, CancellationToken cancellationToken)
     {
         var containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
         await containerClient.CreateIfNotExistsAsync(cancellationToken: cancellationToken);
@@ -46,6 +48,6 @@ internal class UploadImageCommandHandler(
             new BlobHttpHeaders { ContentType = request.ContentType },
             cancellationToken: cancellationToken);
 
-        return blobClient.Uri.ToString();
+        return new ImageUploadResult(image.Id, blobClient.Uri.ToString());
     }
 }

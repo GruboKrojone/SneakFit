@@ -3,10 +3,10 @@ import { useNavigate, useParams } from "react-router-dom";
 import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
 import ThumbUp from "@mui/icons-material/ThumbUp";
-import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
 import { ClipLoader } from "react-spinners";
 import CreateDishModal from "./CreateDishModal";
+import DishImage from "./DishImage";
 import "./styles/DishSlider.css";
 import { useTranslation } from "react-i18next";
 import { useFetchDishes } from "../hooks/useFetchDishes";
@@ -393,13 +393,13 @@ export default function DishSlider() {
     </div>
   );
 
-  const renderDishImage = (dish: { mainImageId?: number; name: string }) => (
+  const renderDishImage = (dish: { id: number; name: string }) => (
     <div className="dish-image">
-      {!dish.mainImageId || dish.mainImageId <= 1 ? (
-        <RestaurantMenu className="restaurant-menu-icon" />
-      ) : (
-        <img alt={dish.name} />
-      )}
+      <DishImage 
+        dishId={dish.id} 
+        alt={dish.name} 
+        placeholderClassName="restaurant-menu-icon"
+      />
     </div>
   );
 

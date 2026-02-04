@@ -28,7 +28,7 @@ public class AddDishCommandTests
 
 
     [Fact]
-    public async Task ValidCommand_ShouldAddDishAndReturnUnit()
+    public async Task ValidCommand_ShouldAddDishAndReturnDishId()
     {
         // Arrange
         var userId = 1;
@@ -48,7 +48,7 @@ public class AddDishCommandTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.Should().Be(Unit.Value);
+        result.Should().BeGreaterThan(0);
         _dishRepository.Verify(x => x.Add(It.Is<Dish>(d =>
             d.Name == dishParams.Name &&
             d.Description == dishParams.Description &&
@@ -110,7 +110,7 @@ public class AddDishCommandTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.Should().Be(Unit.Value);
+        result.Should().BeGreaterThan(0);
         _dishRepository.Verify(x => x.Add(It.Is<Dish>(d => d.Name == "Oatmeal")), Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(CancellationToken.None), Times.Once);
     }

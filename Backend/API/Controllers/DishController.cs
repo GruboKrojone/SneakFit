@@ -12,7 +12,7 @@ public class DishController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Route("add")]
-    public async Task<Unit> AddDish(DishParams @params, CancellationToken cancellationToken)
+    public async Task<int> AddDish(DishParams @params, CancellationToken cancellationToken)
         => await mediator.Send(new AddDishCommand(@params), cancellationToken);
 
     [HttpPut]

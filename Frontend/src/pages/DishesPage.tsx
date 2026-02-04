@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import DishesService, { Dish } from "../services/DishesService";
-import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
+import DishImage from "../components/DishImage";
 import "./styles/DishesPage.css";
 import { useTranslation } from "react-i18next";
 import AddBoxIcon from "@mui/icons-material/AddBox";
@@ -63,11 +63,12 @@ export default function DishesPage() {
                 >
                   <div className="dishes-owner">{dish.ownerName ?? "-"}</div>
                   <div className="dishes-image-wrap">
-                    {dish.mainImageId ? (
-                      <img alt={dish.name} className="dishes-image" />
-                    ) : (
-                      <RestaurantMenu className="dishes-restaurant-icon" />
-                    )}
+                    <DishImage 
+                      dishId={dish.id} 
+                      alt={dish.name} 
+                      className="dishes-image" 
+                      placeholderClassName="dishes-restaurant-icon"
+                    />
                   </div>
                   <div className="dishes-body">
                     <div className="dishes-name">{dish.name}</div>

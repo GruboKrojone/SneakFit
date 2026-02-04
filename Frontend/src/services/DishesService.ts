@@ -32,6 +32,15 @@ export interface Dish {
   ingredients?: Ingredient[];
 }
 
+export interface CreateDishDTO {
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  description: string;
+}
+
 class DishesService {
   private static readonly baseUrl = "https://localhost:7059";
 
@@ -93,10 +102,18 @@ class DishesService {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Create dish failed:", response.status, errorText);
         throw new Error(i18n.t("dishes_service_create_failed"));
       }
 
-      return await response.json();
+      const dishId = await response.json();
+      
+      // Return the dish with the ID from backend
+      return {
+        ...dish,
+        id: dishId,
+      };
     } catch (error) {
       console.error("Error creating dish:", error);
       const errorMessage =

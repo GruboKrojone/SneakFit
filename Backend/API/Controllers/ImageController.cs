@@ -11,15 +11,15 @@ namespace API.Controllers;
 public class ImageController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    public async Task<ActionResult<string>> UploadImage(IFormFile file)
+    public async Task<ActionResult<object>> UploadImage(IFormFile file)
     {
         if (file == null || file.Length == 0)
             return BadRequest("No file uploaded");
 
         using var stream = file.OpenReadStream();
-        var imageUrl = await mediator.Send(new UploadImageCommand(stream, file.FileName, file.ContentType));
+        var result = await mediator.Send(new UploadImageCommand(stream, file.FileName, file.ContentType));
 
-        return Ok(new { url = imageUrl });
+        return Ok(new { id = result.Id, url = result.Url });
     }
 
     [HttpPut]
