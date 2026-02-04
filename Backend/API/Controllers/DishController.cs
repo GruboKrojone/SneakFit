@@ -74,4 +74,9 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("{dishId}/rate")]
     public async Task<Unit> RateDish(int dishId, decimal rating, CancellationToken cancellationToken)
         => await mediator.Send(new RateDishCommand(dishId, rating), cancellationToken);
+
+    [HttpPut]
+    [Route("{dishId}/private")]
+    public async Task<Unit> MakeDishPrivate(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new MakeDishPrivateCommand(dishId), cancellationToken);
 }
