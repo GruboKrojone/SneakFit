@@ -74,4 +74,9 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("{dishId}/rate")]
     public async Task<Unit> RateDish(int dishId, decimal rating, CancellationToken cancellationToken)
         => await mediator.Send(new RateDishCommand(dishId, rating), cancellationToken);
+
+    [HttpPost]
+    [Route("{dishId}/unfavorite")]
+    public async Task<Unit> UnmarkDishAsFavorite(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new UnmarkDishFavoriteCommand(dishId), cancellationToken);
 }

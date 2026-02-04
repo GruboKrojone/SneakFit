@@ -14,6 +14,13 @@ public abstract class EntityBase
         DeletedAt = DateTime.UtcNow;
     }
 
+    public void Restore()
+    {
+        IsDeleted = false;
+        DeletedAt = null;
+        MarkAsUpdated();
+    }
+
     protected void MarkAsUpdated()
         => UpdatedAt = DateTime.UtcNow;
 }

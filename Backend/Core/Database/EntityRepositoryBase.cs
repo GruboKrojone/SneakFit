@@ -27,6 +27,13 @@ public abstract class EntityRepositoryBase<TEntity>(DbContext dbContext) : IEnti
     public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken) =>
         GetQuery().AsNoTracking().AnyAsync(predicate, cancellationToken);
 
+    public async Task<TEntity?> FindIncludingDeletedAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+    {
+        return await _dbSet
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(predicate, cancellationToken);
+    }
+
     public async Task<IList<TResult>> FindAsync<TResult>(
         Expression<Func<TEntity, bool>> predicate,
         Expression<Func<TEntity, TResult>> projection,
