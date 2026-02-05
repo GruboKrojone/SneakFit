@@ -31,19 +31,35 @@ internal sealed class MarkDishAsFavoriteCommandHandler(
         var dish = await dishRepository.FindAsync(command.Id, cancellationToken)
             ?? throw new DomainException("Dish not found", (int)CommonErrorCode.EntityNotFound);
 
-        if (user.FavoriteDishes.Any(d => d.Id == command.Id))
+        var existingFavorite = await favoritedRepository.FindIncludingDeletedAsync(
+            f => f.UserId == userId && f.DishId == command.Id,
+            cancellationToken);
+
+        if (existingFavorite != null)
         {
-            logger.Warning("Dish {DishId} is already a favorite for user {UserId}", command.Id, user.Id);
+            if (existingFavorite.IsDeleted)
+            {
+                // Restore the soft-deleted favorite
+                existingFavorite.Restore();
+                favoritedRepository.Update(existingFavorite);
+                await unitOfWork.SaveChangesAsync(cancellationToken);
+
+                logger.Information("Restored soft-deleted favorite. Dish {DishId} marked as favorite for user {UserId}", command.Id, userId);
+            }
+            else
+            {
+                logger.Warning("Dish {DishId} is already a favorite for user {UserId}", command.Id, userId);
+            }
+
             return Unit.Value;
         }
 
+        // Create new favorite relationship
         var favoriteDish = new Favorited(userId, dish.Id);
-
         favoritedRepository.Add(favoriteDish);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        logger.Information("Successfully saved changes. Dish {DishId} marked as favorite for user {UserId}", command.Id, user.Id);
-        logger.Information("New count: {Count} for userId: {UserId}", user.FavoriteDishes.Count, user.Id);
+        logger.Information("Successfully saved changes. Dish {DishId} marked as favorite for user {UserId}", command.Id, userId);
 
         return Unit.Value;
     }
