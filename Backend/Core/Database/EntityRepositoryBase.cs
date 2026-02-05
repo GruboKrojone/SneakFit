@@ -13,7 +13,6 @@ public abstract class EntityRepositoryBase<TEntity>(DbContext dbContext) : IEnti
     public async Task<TEntity> FindAsync(int id, CancellationToken cancellationToken)
     {
         var entity = await GetQuery()
-            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == id, cancellationToken);
 
         return entity ?? throw new DomainException(
