@@ -75,6 +75,11 @@ public class DishController(IMediator mediator) : ControllerBase
     public async Task<Unit> RateDish(int dishId, decimal rating, CancellationToken cancellationToken)
         => await mediator.Send(new RateDishCommand(dishId, rating), cancellationToken);
 
+    [HttpGet]
+    [Route("userFavorited")]
+    public async Task<IEnumerable<DishCutDto>> GetMyFavoritedDishes(CancellationToken cancellationToken)
+    => await mediator.Send(new GetFavoritedDishesQuery(), cancellationToken);
+    
     [HttpPut]
     [Route("{dishId}/private")]
     public async Task<Unit> MakeDishPrivate(int dishId, CancellationToken cancellationToken)
