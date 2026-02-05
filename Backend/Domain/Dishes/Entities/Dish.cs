@@ -92,6 +92,12 @@ public sealed class Dish : EntityBase
         MarkAsUpdated();
     }
 
+    public void MarkAsPrivate()
+    {
+        IsPublic = false;
+        MarkAsUpdated();
+    }
+
     public void UpdateRating(decimal newRating)
     {
         Rates = newRating;

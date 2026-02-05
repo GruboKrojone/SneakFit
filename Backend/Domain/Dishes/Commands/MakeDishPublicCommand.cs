@@ -29,10 +29,13 @@ internal sealed class MakeDishPublicCommandHandler(
             throw new DomainException("User is not allowed to make this dish public",
                 (int)CommonErrorCode.Unauthorized);
 
-        dish.MarkAsPublic();
-        dishRepository.Update(dish);
+        if (!dish.IsPublic)
+        {
+            dish.MarkAsPublic();
+            dishRepository.Update(dish);
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
 
         return Unit.Value;
     }
