@@ -1537,6 +1537,18 @@ classDiagram
         Integer carbs
         Integer fat
     }
+    class DishRating {
+        Integer id
+        DateTime createdAt
+        DateTime updatedAt
+        Bool isDeleted
+        DateTime deletedAt
+        Integer userId
+        User user
+        Integer dishId
+        Dish dish
+        Double rating
+    }
 ```
 </details>
 
@@ -1548,6 +1560,54 @@ classDiagram
     class IngredientDTO {
         String name
         String description
+    }
+    class IngredientParams {
+        String name
+        String description
+    }
+```
+</details>
+
+<details>
+<summary>Image</summary>
+
+```mermaid
+classDiagram
+    class Image {
+        Integer id
+        DateTime createdAt
+        DateTime updatedAt
+        Bool isDeleted
+        DateTime deletedAt
+        String url
+        Integer ownerId
+        User owner
+    }
+    class ImageDto {
+        Integer imageId
+        Integer ownerId
+        String url
+        String position
+    }
+```
+</details>
+
+<details>
+<summary>Steps</summary>
+
+```mermaid
+classDiagram
+    class Step {
+        Integer id
+        DateTime createdAt
+        DateTime updatedAt
+        Bool isDeleted
+        DateTime deletedAt
+        String name
+        String description
+        Integer order
+        Integer dishId
+        Dish dish
     }
 ```
 </details>
