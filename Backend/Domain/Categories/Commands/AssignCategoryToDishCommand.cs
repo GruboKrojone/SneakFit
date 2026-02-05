@@ -14,10 +14,11 @@ internal class AssignCategoryToDishCommandHandler(
 {
     public async Task<Unit> Handle(AssignCategoryToDishCommand command, CancellationToken cancellationToken)
     {
-        var dish = await dbContext.Dishes
-            .Include(d => d.Categories)
-            .FirstOrDefaultAsync(d => d.Id == command.DishId, cancellationToken)
-            ?? throw new DomainException("Dish not found", (int)CommonErrorCode.EntityNotFound);
+        var dishExists = await dbContext.Dishes
+            .AnyAsync(d => d.Id == command.DishId, cancellationToken);
+
+        if (!dishExists)
+            throw new DomainException("Dish not found", (int)CommonErrorCode.EntityNotFound);
 
         var categoryExists = await dbContext.Categories
             .AnyAsync(c => c.Id == command.CategoryId, cancellationToken);
@@ -25,17 +26,22 @@ internal class AssignCategoryToDishCommandHandler(
         if (!categoryExists)
             throw new DomainException("Category not found", (int)CommonErrorCode.EntityNotFound);
 
-        if (dish.Categories.Any(c => c.Id == command.CategoryId))
-        {
-            await unitOfWork.SaveChangesAsync(cancellationToken);
+        var relationshipExists = await dbContext.Dishes
+            .Where(d => d.Id == command.DishId)
+            .SelectMany(d => d.Categories)
+            .AnyAsync(c => c.Id == command.CategoryId, cancellationToken);
+
+        if (relationshipExists)
             return Unit.Value;
-        }
 
-        var category = await dbContext.Categories.FindAsync([command.CategoryId], cancellationToken);
+        var dish = await dbContext.Dishes
+            .Include(d => d.Categories)
+            .FirstAsync(d => d.Id == command.DishId, cancellationToken);
 
-        if (category != null)
-            dish.Categories.Add(category);
+        var category = await dbContext.Categories
+            .FirstAsync(c => c.Id == command.CategoryId, cancellationToken);
 
+        dish.Categories.Add(category);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;
