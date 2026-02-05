@@ -1,13 +1,16 @@
 using Domain.Dishes.Commands;
 using Domain.Dishes.Dto;
 using Domain.Dishes.Queries;
+using Domain.Users.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("dish")]
+[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Employee)},{nameof(UserRole.User)}")]
 public class DishController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
@@ -79,12 +82,12 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("{dishId}/unfavorite")]
     public async Task<Unit> UnmarkDishAsFavorite(int dishId, CancellationToken cancellationToken)
         => await mediator.Send(new UnmarkDishFavoriteCommand(dishId), cancellationToken);
-        
+
     [HttpGet]
     [Route("userFavorited")]
     public async Task<IEnumerable<DishCutDto>> GetMyFavoritedDishes(CancellationToken cancellationToken)
         => await mediator.Send(new GetFavoritedDishesQuery(), cancellationToken);
-    
+
     [HttpPut]
     [Route("{dishId}/private")]
     public async Task<Unit> MakeDishPrivate(int dishId, CancellationToken cancellationToken)
