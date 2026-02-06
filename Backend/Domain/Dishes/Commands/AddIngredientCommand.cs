@@ -8,25 +8,19 @@ using MediatR;
 
 namespace Domain.Dishes.Commands;
 
-public record AddIngredientCommand(IngredientParams Params) : ICommand<Unit>;
+public record AddIngredientCommand(IngredientParams Params) : ICommand<int>;
 
 internal sealed class AddIngredientCommandHandler(
     IIngredientRepository ingredientRepository,
-    IUnitOfWork unitOfWork) : ICommandHandler<AddIngredientCommand, Unit>
+    IUnitOfWork unitOfWork) : ICommandHandler<AddIngredientCommand, int>
 {
-    public async Task<Unit> Handle(AddIngredientCommand command, CancellationToken cancellationToken)
+    public async Task<int> Handle(AddIngredientCommand command, CancellationToken cancellationToken)
     {
         var ingredient = new Ingredient(command.Params.Name, command.Params.Description);
-
-        var isExisting = await ingredientRepository
-            .AnyAsync(i => i.Name == ingredient.Name, cancellationToken);
-
-        if (isExisting)
-            throw new DomainException("Ingredient already exists in db", (int)CommonErrorCode.EntityAlreadyExists);
 
         ingredientRepository.Add(ingredient);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return ingredient.Id;
     }
 }

@@ -6,12 +6,14 @@ import Close from "@mui/icons-material/Close";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import AddIcon from "@mui/icons-material/Add";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
 import DishesService from "../services/DishesService";
-import ImageService from "../services/ImageService";
+import ImagesService from "../services/ImagesService";
+import IngredientsService from "../services/IngredientsService";
 import type { Dish } from "../services/DishesService";
-import type { PreviewImage } from "../services/ImageService";
+import type { PreviewImage } from "../services/ImagesService";
 import "./styles/CreateDishModal.css";
 
 interface CreateDishModalProps {
@@ -31,16 +33,26 @@ const createDishSchemaType = z.object({
 
 type CreateDishFormData = z.infer<typeof createDishSchemaType>;
 
+interface LocalIngredient {
+  id: string;
+  name: string;
+  description: string;
+}
+
 export default function CreateDishModal({
   isOpen,
   onClose,
   onDishAdded,
 }: CreateDishModalProps) {
   const { t } = useTranslation();
-  const [step, setStep] = useState<1 | 2>(1);
+  const [step, setStep] = useState<1 | 2 | 3>(1);
   const [dishFormData, setDishFormData] = useState<CreateDishFormData | null>(null);
+  const [ingredients, setIngredients] = useState<LocalIngredient[]>([]);
+  const [ingredientName, setIngredientName] = useState("");
+  const [ingredientDescription, setIngredientDescription] = useState("");
   const [images, setImages] = useState<PreviewImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const createDishSchema = z.object({
@@ -87,6 +99,31 @@ export default function CreateDishModal({
   const onStep1Submit = (data: CreateDishFormData) => {
     setDishFormData(data);
     setStep(2);
+  };
+
+  const handleAddIngredient = () => {
+    if (!ingredientName.trim()) {
+      toast.error(t("create_dish_modal_ingredient_name_required"));
+      return;
+    }
+    if (!ingredientDescription.trim()) {
+      toast.error(t("create_dish_modal_ingredient_quantity_required"));
+      return;
+    }
+
+    const newIngredient: LocalIngredient = {
+      id: crypto.randomUUID(),
+      name: ingredientName.trim(),
+      description: ingredientDescription.trim(),
+    };
+
+    setIngredients((prev) => [...prev, newIngredient]);
+    setIngredientName("");
+    setIngredientDescription("");
+  };
+
+  const handleRemoveIngredient = (id: string) => {
+    setIngredients((prev) => prev.filter((ing) => ing.id !== id));
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -150,16 +187,28 @@ export default function CreateDishModal({
       const dishResult = await DishesService.createDish(newDish);
       const dishId = dishResult.id;
 
-      const uploadPromises = images.map(img => ImageService.uploadImage(img.file));
+      const uploadPromises = images.map(img => ImagesService.uploadImage(img.file));
       const uploadResults = await Promise.all(uploadPromises);
       
       const uploadedImageIds = uploadResults.map((result) => result.id);
       
-      if (uploadedImageIds.length === 0) {
-        throw new Error(t("create_dish_modal_invalid_images"));
+      if (uploadedImageIds.length > 0) {
+        await ImagesService.assignImagesToDish(dishId, uploadedImageIds);
       }
 
-      await ImageService.assignImagesToDish(dishId, uploadedImageIds);
+      if (ingredients.length > 0) {
+        const ingredientIds: number[] = [];
+        
+        for (const ing of ingredients) {
+          const result = await IngredientsService.addIngredient({
+            name: ing.name,
+            description: ing.description,
+          });
+          ingredientIds.push(result.id);
+        }
+        
+        await IngredientsService.assignMultipleIngredientsToDish(ingredientIds, dishId);
+      }
       
       toast.success(t("create_dish_modal_success"));
       if (onDishAdded) onDishAdded();
@@ -180,15 +229,24 @@ export default function CreateDishModal({
     reset();
     setStep(1);
     setDishFormData(null);
+    setIngredients([]);
+    setIngredientName("");
+    setIngredientDescription("");
     setImages([]);
     onClose();
   };
 
   const handleDragStart = (e: React.DragEvent, index: number) => {
     e.dataTransfer.setData("index", index.toString());
+    setDraggedIndex(index);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
   };
 
   const handleDrop = (e: React.DragEvent, targetIndex: number) => {
+    e.preventDefault();
     const sourceIndex = Number.parseInt(e.dataTransfer.getData("index"), 10);
     if (sourceIndex === targetIndex) return;
 
@@ -196,10 +254,50 @@ export default function CreateDishModal({
     const [movedImage] = newImages.splice(sourceIndex, 1);
     newImages.splice(targetIndex, 0, movedImage);
     setImages(newImages);
+    setDraggedIndex(null);
   };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
+  };
+
+  const handleKeyboardReorder = (index: number, direction: 'up' | 'down') => {
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    if (targetIndex < 0 || targetIndex >= images.length) return;
+
+    const newImages = [...images];
+    const [movedImage] = newImages.splice(index, 1);
+    newImages.splice(targetIndex, 0, movedImage);
+    setImages(newImages);
+  };
+
+  const handleImageCardKeyDown = (e: React.KeyboardEvent, index: number) => {
+    if (e.key === 'ArrowUp' && index > 0) {
+      e.preventDefault();
+      handleKeyboardReorder(index, 'up');
+    } else if (e.key === 'ArrowDown' && index < images.length - 1) {
+      e.preventDefault();
+      handleKeyboardReorder(index, 'down');
+    }
+  };
+
+  const getStepTitle = () => {
+    switch (step) {
+      case 1:
+        return t("create_dish_modal_step_1");
+      case 2:
+        return t("create_dish_modal_step_2");
+      case 3:
+        return t("create_dish_modal_step_3");
+      default:
+        return "";
+    }
+  };
+
+  const getStepClass = (stepNumber: 1 | 2 | 3) => {
+    if (step === stepNumber) return 'active';
+    if (step > stepNumber) return 'completed';
+    return '';
   };
 
   return (
@@ -216,21 +314,21 @@ export default function CreateDishModal({
           <Close className="close-icon" />
         </button>
 
-        <h2 className="modal-title">
-          {step === 1 ? t("create_dish_modal_step_1") : t("create_dish_modal_step_2")}
-        </h2>
+        <h2 className="modal-title">{getStepTitle()}</h2>
 
+        <ol className="step-markers">
+          <li className={`step-item ${getStepClass(1)}`} aria-current={step === 1 ? 'step' : undefined}>
+            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 1`}></div>
+          </li>
+          <li className={`step-item ${getStepClass(2)}`} aria-current={step === 2 ? 'step' : undefined}>
+            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 2`}></div>
+          </li>
+          <li className={`step-item ${getStepClass(3)}`} aria-current={step === 3 ? 'step' : undefined}>
+            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 3`}></div>
+          </li>
+        </ol>
 
-        <div className="step-indicator">
-          <div className={`step-item ${step === 1 ? 'active' : 'completed'}`}>
-            <div className="step-marker"></div>
-          </div>
-          <div className={`step-item ${step === 2 ? 'active' : ''}`}>
-            <div className="step-marker"></div>
-          </div>
-        </div>
-
-        {step === 1 ? (
+        {step === 1 && (
           <form onSubmit={handleSubmit(onStep1Submit)} className="form-container">
             <div className="form-group">
               <label htmlFor="name">{t("create_dish_modal_name")}</label>
@@ -321,7 +419,85 @@ export default function CreateDishModal({
               {isSubmitting ? t("submitting") : t("create_dish_modal_next_button")}
             </button>
           </form>
-        ) : (
+        )}
+
+        {step === 2 && (
+          <div className="ingredients-step-container">
+            <p className="step-hint">{t("create_dish_modal_ingredients_hint")}</p>
+            
+            <div className="ingredient-input-group">
+              <div className="form-group">
+                <label htmlFor="ingredient-name">{t("create_dish_modal_ingredient_name")}</label>
+                <input
+                  type="text"
+                  id="ingredient-name"
+                  placeholder={t("create_dish_modal_ingredient_name_placeholder")}
+                  value={ingredientName}
+                  onChange={(e) => setIngredientName(e.target.value)}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="ingredient-quantity">{t("create_dish_modal_ingredient_quantity")}</label>
+                <input
+                  type="text"
+                  id="ingredient-quantity"
+                  placeholder={t("create_dish_modal_ingredient_quantity_placeholder")}
+                  value={ingredientDescription}
+                  onChange={(e) => setIngredientDescription(e.target.value)}
+                />
+              </div>
+              
+              <button 
+                type="button"
+                className="add-ingredient-button" 
+                onClick={handleAddIngredient}
+              >
+                <AddIcon /> {t("create_dish_modal_add_ingredient")}
+              </button>
+            </div>
+
+            <div className="ingredients-list">
+              {ingredients.length === 0 ? (
+                <p className="no-ingredients-text">{t("create_dish_modal_no_ingredients")}</p>
+              ) : (
+                ingredients.map((ingredient) => (
+                  <div key={ingredient.id} className="ingredient-item">
+                    <div className="ingredient-info">
+                      <span className="ingredient-name">{ingredient.name}</span>
+                      <span className="ingredient-quantity">{ingredient.description}</span>
+                    </div>
+                    <button
+                      type="button"
+                      className="remove-ingredient-btn"
+                      onClick={() => handleRemoveIngredient(ingredient.id)}
+                      aria-label={`${t("remove")} ${ingredient.name}`}
+                    >
+                      <DeleteIcon />
+                    </button>
+                  </div>
+                ))
+              )}
+            </div>
+
+            <div className="step-actions">
+              <button 
+                className="back-button" 
+                onClick={() => setStep(1)}
+              >
+                {t("create_dish_modal_back_button")}
+              </button>
+              <button 
+                className="submit-button" 
+                onClick={() => setStep(3)}
+              >
+                {t("create_dish_modal_next_button")}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 3 && (
           <div className="image-step-container">
             <p className="step-hint">
               {t("create_dish_modal_main_image_hint")}
@@ -329,49 +505,64 @@ export default function CreateDishModal({
             </p>
             <p className="step-subhint">{t("create_dish_modal_drag_hint")}</p>
             
-            <div className="images-grid">
-              {images.map((image, index) => (
-                <div
-                  key={image.id}
-                  className={`image-card ${index === 0 ? 'main' : ''}`}
-                  draggable
-                  onDragStart={(e) => handleDragStart(e, index)}
-                  onDragOver={handleDragOver}
-                  onDrop={(e) => handleDrop(e, index)}
-                  aria-label={index === 0 ? t("create_dish_modal_main_image_hint") : undefined}
-                >
-                  <div className="drag-handle">
-                    <DragIndicatorIcon />
-                  </div>
-                  <img src={image.url} alt={`Dish ${index + 1}`} />
-                  <button 
-                    className="remove-image-btn" 
-                    onClick={() => removeImage(image.id)}
-                    title={t("remove")}
-                  >
-                    <DeleteIcon />
-                  </button>
-                  {index === 0 && <span className="main-badge">MAIN</span>}
-                </div>
-              ))}
+            <ul className="images-grid">
+              {images.map((image, index) => {
+                const mainImageLabel = index === 0 ? ` - ${t("create_dish_modal_main_image")}` : '';
+                const imageLabel = `${t("create_dish_modal_image")} ${index + 1}${mainImageLabel}. ${t("create_dish_modal_use_arrows_to_reorder")}`;
+                return (
+                  <li key={image.id} className={`image-card-wrapper ${index === 0 ? 'main' : ''}`}>
+                    <button
+                      type="button"
+                      className={`image-card ${draggedIndex === index ? 'dragging' : ''}`}
+                      draggable
+                      onDragStart={(e) => handleDragStart(e, index)}
+                      onDragEnd={handleDragEnd}
+                      onDragOver={handleDragOver}
+                      onDrop={(e) => handleDrop(e, index)}
+                      onKeyDown={(e) => handleImageCardKeyDown(e, index)}
+                      aria-label={imageLabel}
+                    >
+                      <div className="drag-handle" aria-hidden="true">
+                        <DragIndicatorIcon />
+                      </div>
+                      <img src={image.url} alt={`${t("create_dish_modal_dish_image")} ${index + 1}`} />
+                      {index === 0 && <span className="main-badge" aria-label={t("create_dish_modal_main_image")}>MAIN</span>}
+                    </button>
+                    <button 
+                      type="button"
+                      className="remove-image-btn" 
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeImage(image.id);
+                      }}
+                      aria-label={`${t("remove")} ${t("create_dish_modal_image")} ${index + 1}`}
+                      title={t("remove")}
+                    >
+                      <DeleteIcon />
+                    </button>
+                  </li>
+                );
+              })}
               
               {images.length < 3 && (
-                <button 
-                  className="add-image-card" 
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                >
-                  {isUploading ? (
-                    <div className="spinner-small" />
-                  ) : (
-                    <>
-                      <AddPhotoAlternateIcon className="add-photo-icon" />
-                      <span>{t("create_dish_modal_upload_images")}</span>
-                    </>
-                  )}
-                </button>
+                <li className="add-image-wrapper">
+                  <button 
+                    className="add-image-card" 
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                  >
+                    {isUploading ? (
+                      <div className="spinner-small" />
+                    ) : (
+                      <>
+                        <AddPhotoAlternateIcon className="add-photo-icon" />
+                        <span>{t("create_dish_modal_upload_images")}</span>
+                      </>
+                    )}
+                  </button>
+                </li>
               )}
-            </div>
+            </ul>
 
             <input
               type="file"
@@ -385,15 +576,16 @@ export default function CreateDishModal({
             <div className="step-actions">
               <button 
                 className="back-button" 
-                onClick={() => setStep(1)}
+                onClick={() => setStep(2)}
               >
                 {t("create_dish_modal_back_button")}
               </button>
               <button 
                 className="submit-button" 
                 onClick={handleFinish}
+                disabled={isUploading}
               >
-                {t("create_dish_modal_save_finish")}
+                {isUploading ? t("submitting") : t("create_dish_modal_save_finish")}
               </button>
             </div>
           </div>

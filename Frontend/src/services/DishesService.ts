@@ -10,7 +10,7 @@ export interface Category {
 export interface Ingredient {
   id: number;
   name: string;
-  quantity: string;
+  description: string;
 }
 
 export interface Dish {

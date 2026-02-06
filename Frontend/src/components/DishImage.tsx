@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
-import ImageService from "../services/ImageService";
+import ImagesService from "../services/ImagesService";
 
 interface DishImageProps {
   readonly dishId: number;
@@ -19,7 +19,7 @@ export default function DishImage({ dishId, alt, className, placeholderClassName
     const fetchImage = async () => {
       setLoading(true);
       try {
-        const url = await ImageService.getMainImage(dishId);
+        const url = await ImagesService.getMainImage(dishId);
         if (isMounted) {
           setImageUrl(url);
         }

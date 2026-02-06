@@ -333,8 +333,8 @@
 
 .ingredients-ul {
   margin: 0;
-  padding-left: 1.25rem;
-  list-style-type: disc;
+  padding-left: 0;
+  list-style-type: none;
 }
 
 .ingredients-ul li {
@@ -589,4 +589,91 @@
 .settings-gear-icon {
   font-size: 2.7rem !important;
   color: #888888;
+}
+
+.ingredients-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.copy-ingredients-btn {
+  background: var(--gradient);
+  color: #ffffff;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0.125rem 0.5rem var(--shadow);
+}
+
+.copy-ingredients-btn:hover {
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.25rem 1rem #ff6b3566;
+}
+
+.copy-ingredients-btn:active {
+  transform: translateY(0);
+}
+
+.copy-icon {
+  font-size: 1rem !important;
+}
+
+
+.ingredient-item {
+  list-style: none;
+  margin-bottom: 0.75rem;
+}
+
+.ingredient-label {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+}
+
+.ingredient-checkbox {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.ingredient-name {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  transition: all 0.3s ease;
+  flex: 1;
+}
+
+.ingredient-name.checked {
+  text-decoration: line-through;
+  opacity: 0.5;
+  color: var(--text-light);
+}
+
+.ingredient-quantity {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-light);
+  transition: all 0.3s ease;
+  text-align: right;
+  margin-left: auto;
+}
+
+.ingredient-quantity.checked {
+  text-decoration: line-through;
+  opacity: 0.5;
+  color: var(--text-light);
 }

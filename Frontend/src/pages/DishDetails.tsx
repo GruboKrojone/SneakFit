@@ -10,10 +10,12 @@ import PlayCircle from "@mui/icons-material/PlayCircle";
 import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
+import ContentCopy from "@mui/icons-material/ContentCopy";
 import MacroCircle from "../components/MacroCircle";
 import CommentsModal from "../components/CommentsModal";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 
 export default function DishDetails() {
   const { t } = useTranslation();
@@ -25,6 +27,7 @@ export default function DishDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
   const hasFetched = useRef<number | null>(null);
   const totalImages = 5;
   const emptyCategories = t("no_categories");
@@ -91,6 +94,61 @@ export default function DishDetails() {
 
   const handleCommentAdded = (comment: Comment) => {
     setComments((prevComments) => [...prevComments, comment]);
+  };
+
+  const toggleIngredientCheck = (ingredientId: number) => {
+    setCheckedIngredients((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(ingredientId)) {
+        newSet.delete(ingredientId);
+      } else {
+        newSet.add(ingredientId);
+      }
+      return newSet;
+    });
+  };
+
+  const scaleIngredientQuantity = (description: string | null | undefined): string => {
+    if (!description) return "";
+    
+    const regex = /^(\d+(?:[.,]\d+)?)\s*(.*)$/;
+    const match = regex.exec(description);
+    
+    if (match) {
+      const quantity = Number.parseFloat(match[1].replace(',', '.'));
+      const unit = match[2];
+      const scaledQuantity = quantity * servings;
+      
+      const formattedQuantity = scaledQuantity % 1 === 0 
+        ? scaledQuantity.toString() 
+        : scaledQuantity.toFixed(1).replace('.', ',');
+      
+      return `${formattedQuantity}${unit ? ' ' + unit : ''}`;
+    }
+    
+    return description;
+  };
+
+  const copyIngredientsToClipboard = () => {
+    if (!dish?.ingredients || dish.ingredients.length === 0) {
+      toast.warning(t("dish_details_page_no_ingredients_to_copy"));
+      return;
+    }
+
+    const ingredientsText = dish.ingredients
+      .map((ing) => {
+        const scaledQuantity = scaleIngredientQuantity(ing.description);
+        return `${ing.name} ${scaledQuantity}`.trim();
+      })
+      .join("\n");
+
+    navigator.clipboard.writeText(ingredientsText)
+      .then(() => {
+        toast.success(t("dish_details_page_ingredients_copied"));
+      })
+      .catch(() => {
+        toast.error(t("dish_details_page_copy_failed"));
+      });
   };
 
   if (isLoading)
@@ -208,17 +266,45 @@ export default function DishDetails() {
         <div className="grid-item grid-3">
           <div className="grid-3-left">
             <div className="ingredients-box">
-              <h3 className="section-title">
-                {t("dish_details_page_ingredients")}
-              </h3>
+              <div className="ingredients-header">
+                <h3 className="section-title">
+                  {t("dish_details_page_ingredients")}
+                </h3>
+                {dish.ingredients && dish.ingredients.length > 0 && (
+                  <button
+                    className="copy-ingredients-btn"
+                    onClick={copyIngredientsToClipboard}
+                    title={t("dish_details_page_copy_ingredients")}
+                  >
+                    <ContentCopy className="copy-icon" />
+                    {t("dish_details_page_copy_ingredients")}
+                  </button>
+                )}
+              </div>
               <div className="ingredients-list">
                 {dish.ingredients && dish.ingredients.length > 0 ? (
                   <ul className="ingredients-ul">
-                    {dish.ingredients.map((ing) => (
-                      <li key={ing.id}>
-                        {ing.name}: {ing.quantity}
-                      </li>
-                    ))}
+                    {dish.ingredients.map((ing) => {
+                      const scaledQuantity = scaleIngredientQuantity(ing.description);
+                      return (
+                        <li key={ing.id} className="ingredient-item">
+                          <label className="ingredient-label">
+                            <input
+                              type="checkbox"
+                              className="ingredient-checkbox"
+                              checked={checkedIngredients.has(ing.id)}
+                              onChange={() => toggleIngredientCheck(ing.id)}
+                            />
+                            <span className={checkedIngredients.has(ing.id) ? "ingredient-name checked" : "ingredient-name"}>
+                              {ing.name}
+                            </span>
+                            <span className={checkedIngredients.has(ing.id) ? "ingredient-quantity checked" : "ingredient-quantity"}>
+                              {scaledQuantity}
+                            </span>
+                          </label>
+                        </li>
+                      );
+                    })}
                   </ul>
                 ) : (
                   <p>{t("dish_details_page_empty_ingredients")}</p>

@@ -12,7 +12,7 @@ export interface PreviewImage {
   file: File;
 }
 
-class ImageService {
+class ImagesService {
   private static readonly baseUrl = "https://localhost:7059";
 
   static async uploadImage(file: File): Promise<ImageResponse> {
@@ -36,7 +36,6 @@ class ImageService {
 
       const result = await response.json();
       
-      // Ensure we return the correct structure
       return {
         id: result.id || result,
         url: result.url || "",
@@ -51,7 +50,6 @@ class ImageService {
   }
 
   static async assignImagesToDish(dishId: number, imageIds: number[]): Promise<void> {
-    // API expects: mainId, secondId, thirdId as query parameters
     const params = new URLSearchParams();
     
     if (imageIds.length > 0) params.append("mainId", imageIds[0].toString());
@@ -101,9 +99,6 @@ class ImageService {
   }
 
   static async unassignImageFromDish(imageId: number, dishId: number): Promise<void> {
-    // The user wrote: DELETE baseUrl/ingredient/{id}/unassignFromDish/{dishId}
-    // But description says: usuwanie przypisania zdjęcia do dania
-    // I will use what they wrote but it's suspicious. Actually, I'll follow the exact path they gave.
     const response = await fetch(`${this.baseUrl}/ingredient/${imageId}/unassignFromDish/${dishId}`, {
       method: "DELETE",
       headers: {
@@ -117,4 +112,4 @@ class ImageService {
   }
 }
 
-export default ImageService;
+export default ImagesService;
