@@ -77,8 +77,8 @@
   background: var(--gradient);
   border: none;
   border-radius: 50%;
-  width: 3dvw;
-  height: 3dvw;
+  width: 2.5dvw;
+  height: 2.5dvw;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,7 +91,7 @@
 }
 
 .carousel-arrow:hover {
-  transform: translateY(-0.125rem) scale(1.1);
+  transform: translateY(-0.125rem) scale(1);
   box-shadow: 0 0.375rem 1.5rem #ff6b3566;
 }
 
@@ -325,7 +325,7 @@
   font-size: 0.9rem;
   line-height: 1.6;
   color: var(--text-light);
-  max-height: 100%;
+  max-height: 30rem;
   overflow-y: auto;
   margin-top: 0.75rem;
   scrollbar-color: var(--border) var(--bg);
@@ -630,24 +630,39 @@
 
 .ingredient-item {
   list-style: none;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.5rem;
 }
 
 .ingredient-label {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 1rem;
   cursor: pointer;
   user-select: none;
   width: 100%;
+  padding: 0.625rem 0.75rem;
+  border-radius: 0.75rem;
+  transition: all 0.2s ease;
 }
 
-.ingredient-checkbox {
-  width: 1.25rem;
-  height: 1.25rem;
-  cursor: pointer;
-  accent-color: var(--accent);
+.ingredient-label:hover {
+  background-color: var(--tag-bg);
+}
+
+.ingredient-checked-icon {
+  color: #2e7d32;
+  font-size: 1.5rem !important;
   flex-shrink: 0;
+}
+
+.ingredient-unchecked-icon {
+  color: var(--text-light);
+  font-size: 1.5rem !important;
+  flex-shrink: 0;
+}
+
+body.dark .ingredient-checked-icon {
+  color: #4caf50;
 }
 
 .ingredient-name {

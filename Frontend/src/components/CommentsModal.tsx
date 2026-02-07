@@ -70,10 +70,7 @@ export default function CommentsModal({
   const onSubmit = async (data: CommentFormData) => {
     const user = AuthService.getCurrentUser();
     if (!user) {
-      toast.error(t("comments_modal_login_required"), {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      toast.error(t("comments_modal_login_required"));
       return;
     }
 
@@ -85,10 +82,7 @@ export default function CommentsModal({
     );
 
     if (isDuplicate) {
-      toast.error(t("comments_modal_duplicate_error"), {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error(t("comments_modal_duplicate_error"));
       return;
     }
 
@@ -104,18 +98,12 @@ export default function CommentsModal({
       onCommentAdded(newCommentObj);
       reset();
 
-      toast.success(t("comments_modal_success"), {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      toast.success(t("comments_modal_success"));
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : t("comments_modal_error");
 
-      toast.error("✗ " + errorMessage, {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      toast.error("✗ " + errorMessage);
     }
   };
 
@@ -140,16 +128,10 @@ export default function CommentsModal({
         const updatedComments = localComments.filter((_, i) => i !== index);
         setLocalComments(updatedComments);
 
-        toast.success(t("comments_modal_delete_success"), {
-          position: "top-center",
-          autoClose: 2000,
-        });
+        toast.success(t("comments_modal_delete_success"));
       } catch (err) {
         console.error("Error deleting comment:", err);
-        toast.error(t("comments_modal_delete_error"), {
-          position: "top-center",
-          autoClose: 2000,
-        });
+        toast.error(t("comments_modal_delete_error"));
       }
     }
   };
@@ -216,16 +198,10 @@ export default function CommentsModal({
         };
         setLocalComments(updatedComments);
 
-        toast.success(t("comments_modal_edit_success"), {
-          position: "top-center",
-          autoClose: 2000,
-        });
+        toast.success(t("comments_modal_edit_success"));
       } catch (err) {
         console.error("Error editing comment:", err);
-        toast.error(t("comments_modal_edit_error"), {
-          position: "top-center",
-          autoClose: 2000,
-        });
+        toast.error(t("comments_modal_edit_error"));
       }
     }
   };

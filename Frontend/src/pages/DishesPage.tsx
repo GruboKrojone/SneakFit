@@ -41,7 +41,22 @@ export default function DishesPage() {
   return (
     <div className="dishes-page">
       {loading ? (
-        <p>{t("dishes_page_loading")}</p>
+        <>
+          <div className="page-title">{t("dishes_page_title")}</div>
+          <div className="page-subtitle">
+            <AutoAwesomeIcon id="auto-awesome-icon" />
+            <AddBoxIcon
+              id="add-box-icon"
+              onClick={() => setIsModalOpen(true)}
+            />
+            <FilterAltIcon id="filter-alt-icon" />
+          </div>
+          <div className="dishes-container">
+            <div className="dishes-loading">
+              {t("loading")}
+            </div>
+          </div>
+        </>
       ) : (
         <>
           <div className="page-title">{t("dishes_page_title")}</div>

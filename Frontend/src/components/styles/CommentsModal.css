@@ -36,9 +36,9 @@
   background: var(--card);
   border: 0.0625rem solid var(--border);
   border-radius: 1.25rem 1.25rem 0 0;
-  padding: 2.5rem 2rem 2rem 2rem;
-  width: 90vw;
-  max-width: 75rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 45rem;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -83,11 +83,10 @@
 .comments-modal-title {
   margin: 0 0 1.5rem 0;
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--text);
   text-align: center;
-  padding-right: 3rem;
 }
 
 .comments-modal-form {
@@ -262,8 +261,8 @@
   max-width: 100%;
   background: var(--card);
   border: 0.0625rem solid var(--border);
-  border-radius: 0.875rem;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
   color: var(--text);
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
@@ -325,8 +324,6 @@
   cursor: not-allowed;
   transform: none;
 }
-
-
 
 .swal2-popup-custom {
   font-family: inherit !important;

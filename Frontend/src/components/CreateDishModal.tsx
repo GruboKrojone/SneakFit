@@ -47,10 +47,6 @@ export default function CreateDishModal({
   const { t } = useTranslation();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [dishFormData, setDishFormData] = useState<CreateDishFormData | null>(null);
-  const [ingredients, setIngredients] = useState<LocalIngredient[]>([]);
-  const [ingredientName, setIngredientName] = useState("");
-  const [ingredientDescription, setIngredientDescription] = useState("");
-  const [images, setImages] = useState<PreviewImage[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -76,12 +72,34 @@ export default function CreateDishModal({
       .trim(),
   });
 
+  const step2Schema = z.object({
+    ingredientName: z
+      .string()
+      .trim()
+      .min(1, t("create_dish_modal_ingredient_name_required")),
+    ingredientDescription: z
+      .string()
+      .trim()
+      .min(1, t("create_dish_modal_ingredient_quantity_required")),
+    ingredientsList: z
+      .array(
+        z.object({
+          id: z.string(),
+          name: z.string(),
+          description: z.string(),
+        })
+      )
+      .min(1, t("create_dish_modal_min_ingredients_required")),
+  });
+
+  type Step2FormData = z.infer<typeof step2Schema>;
+
   const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-    reset,
-    watch,
+    register: registerStep1,
+    handleSubmit: handleSubmitStep1,
+    formState: { errors: errorsStep1, isSubmitting: isSubmittingStep1 },
+    reset: resetStep1,
+    watch: watchStep1,
   } = useForm<CreateDishFormData>({
     resolver: zodResolver(createDishSchema) as any,
     defaultValues: {
@@ -94,36 +112,89 @@ export default function CreateDishModal({
     },
   });
 
-  const description = watch("description");
+  const {
+    register: registerStep2,
+    formState: { errors: errorsStep2 },
+    trigger: triggerStep2,
+    setValue: setValueStep2,
+    watch: watchStep2,
+    reset: resetStep2,
+    getValues: getValuesStep2,
+  } = useForm<Step2FormData>({
+    resolver: zodResolver(step2Schema),
+    defaultValues: {
+      ingredientsList: [],
+      ingredientName: "",
+      ingredientDescription: "",
+    },
+  });
+
+  const description = watchStep1("description");
+  const ingredients = watchStep2("ingredientsList");
+  const ingredientName = watchStep2("ingredientName");
+  const ingredientDescription = watchStep2("ingredientDescription");
+
+  const step3Schema = z.object({
+    imagesList: z
+      .array(z.any())
+      .min(1, t("create_dish_modal_images_required")),
+  });
+
+  type Step3FormData = z.infer<typeof step3Schema>;
+
+  const {
+    formState: { errors: errorsStep3 },
+    setValue: setValueStep3,
+    watch: watchStep3,
+    trigger: triggerStep3,
+    reset: resetStep3,
+  } = useForm<Step3FormData>({
+    resolver: zodResolver(step3Schema),
+    defaultValues: {
+      imagesList: [],
+    },
+  });
+
+  const images = watchStep3("imagesList");
 
   const onStep1Submit = (data: CreateDishFormData) => {
     setDishFormData(data);
     setStep(2);
   };
 
-  const handleAddIngredient = () => {
-    if (!ingredientName.trim()) {
-      toast.error(t("create_dish_modal_ingredient_name_required"));
-      return;
-    }
-    if (!ingredientDescription.trim()) {
-      toast.error(t("create_dish_modal_ingredient_quantity_required"));
-      return;
-    }
+  const handleAddIngredient = async () => {
+    const isValid = await triggerStep2(["ingredientName", "ingredientDescription"]);
+    
+    if (isValid) {
+      const newIngredient: LocalIngredient = {
+        id: crypto.randomUUID(),
+        name: ingredientName.trim(),
+        description: ingredientDescription.trim(),
+      };
 
-    const newIngredient: LocalIngredient = {
-      id: crypto.randomUUID(),
-      name: ingredientName.trim(),
-      description: ingredientDescription.trim(),
-    };
-
-    setIngredients((prev) => [...prev, newIngredient]);
-    setIngredientName("");
-    setIngredientDescription("");
+      const currentIngredients = getValuesStep2("ingredientsList");
+      setValueStep2("ingredientsList", [...currentIngredients, newIngredient], {
+        shouldValidate: true,
+      });
+      setValueStep2("ingredientName", "");
+      setValueStep2("ingredientDescription", "");
+    }
   };
 
   const handleRemoveIngredient = (id: string) => {
-    setIngredients((prev) => prev.filter((ing) => ing.id !== id));
+    const currentIngredients = getValuesStep2("ingredientsList");
+    setValueStep2(
+      "ingredientsList",
+      currentIngredients.filter((ing) => ing.id !== id),
+      { shouldValidate: true }
+    );
+  };
+  
+  const handleStep2Next = async () => {
+    const isValid = await triggerStep2("ingredientsList");
+    if (isValid) {
+      setStep(3);
+    }
   };
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,28 +212,28 @@ export default function CreateDishModal({
       file: file,
     }));
 
-    setImages((prev) => [...prev, ...newImages]);
+    setValueStep3("imagesList", [...images, ...newImages], { shouldValidate: true });
 
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const removeImage = (imageId: string) => {
-    setImages((prev) => {
-      const imageToRemove = prev.find(img => img.id === imageId);
-      if (imageToRemove) {
-        URL.revokeObjectURL(imageToRemove.url);
-      }
-      return prev.filter((img) => img.id !== imageId);
-    });
+    const imageToRemove = images.find(img => img.id === imageId);
+    if (imageToRemove) {
+      URL.revokeObjectURL(imageToRemove.url);
+    }
+    setValueStep3(
+      "imagesList",
+      images.filter((img) => img.id !== imageId),
+      { shouldValidate: true }
+    );
   };
 
   const handleFinish = async () => {
     if (!dishFormData) return;
     
-    if (images.length === 0) {
-      toast.error(t("create_dish_modal_images_required"));
-      return;
-    }
+    const isValid = await triggerStep3("imagesList");
+    if (!isValid) return;
 
     setIsUploading(true);
 
@@ -196,10 +267,11 @@ export default function CreateDishModal({
         await ImagesService.assignImagesToDish(dishId, uploadedImageIds);
       }
 
-      if (ingredients.length > 0) {
+      const currentIngredients = getValuesStep2("ingredientsList");
+      if (currentIngredients.length > 0) {
         const ingredientIds: number[] = [];
         
-        for (const ing of ingredients) {
+        for (const ing of currentIngredients) {
           const result = await IngredientsService.addIngredient({
             name: ing.name,
             description: ing.description,
@@ -226,13 +298,11 @@ export default function CreateDishModal({
   const handleClose = () => {
     images.forEach(img => URL.revokeObjectURL(img.url));
     
-    reset();
+    resetStep1();
+    resetStep2();
+    resetStep3();
     setStep(1);
     setDishFormData(null);
-    setIngredients([]);
-    setIngredientName("");
-    setIngredientDescription("");
-    setImages([]);
     onClose();
   };
 
@@ -253,7 +323,7 @@ export default function CreateDishModal({
     const newImages = [...images];
     const [movedImage] = newImages.splice(sourceIndex, 1);
     newImages.splice(targetIndex, 0, movedImage);
-    setImages(newImages);
+    setValueStep3("imagesList", newImages, { shouldValidate: true });
     setDraggedIndex(null);
   };
 
@@ -268,7 +338,7 @@ export default function CreateDishModal({
     const newImages = [...images];
     const [movedImage] = newImages.splice(index, 1);
     newImages.splice(targetIndex, 0, movedImage);
-    setImages(newImages);
+    setValueStep3("imagesList", newImages, { shouldValidate: true });
   };
 
   const handleImageCardKeyDown = (e: React.KeyboardEvent, index: number) => {
@@ -329,68 +399,71 @@ export default function CreateDishModal({
         </ol>
 
         {step === 1 && (
-          <form onSubmit={handleSubmit(onStep1Submit)} className="form-container">
+          <form onSubmit={handleSubmitStep1(onStep1Submit)} className="form-container">
             <div className="form-group">
-              <label htmlFor="name">{t("create_dish_modal_name")}</label>
+              <label htmlFor="name">{t("create_dish_modal_name")}:
+                <span className="required-indicator"> *</span>
+              </label>
               <input
                 type="text"
                 id="name"
                 placeholder={t("create_dish_modal_name_placeholder")}
-                {...register("name")}
+                {...registerStep1("name")}
               />
-              {errors.name && <span className="error-text">{errors.name.message}</span>}
+              {errorsStep1.name && <span className="error-text">{errorsStep1.name.message}</span>}
             </div>
 
             <div className="form-group">
-              <label htmlFor="calories">
-                {t("create_dish_modal_calories")}
+              <label htmlFor="calories">  
+                {t("create_dish_modal_calories")}:
+                <span className="required-indicator"> *</span>
               </label>
               <input
                 type="number"
                 id="calories"
                 placeholder={t("create_dish_modal_calories_placeholder")}
-                {...register("calories")}
+                {...registerStep1("calories")}
               />
-              {errors.calories && (
-                <span className="error-text">{errors.calories.message}</span>
+              {errorsStep1.calories && (
+                <span className="error-text">{errorsStep1.calories.message}</span>
               )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="protein">{t("create_dish_modal_protein")}</label>
+              <label htmlFor="protein">{t("create_dish_modal_protein")}:</label>
               <input
                 type="number"
                 id="protein"
                 placeholder={t("create_dish_modal_protein_placeholder")}
-                {...register("protein")}
+                {...registerStep1("protein")}
               />
-              {errors.protein && (
-                <span className="error-text">{errors.protein.message}</span>
+              {errorsStep1.protein && (
+                <span className="error-text">{errorsStep1.protein.message}</span>
               )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="carbs">{t("create_dish_modal_carbs")}</label>
+              <label htmlFor="carbs">{t("create_dish_modal_carbs")}:</label>
               <input
                 type="number"
                 id="carbs"
                 placeholder={t("create_dish_modal_carbs_placeholder")}
-                {...register("carbs")}
+                {...registerStep1("carbs")}
               />
-              {errors.carbs && (
-                <span className="error-text">{errors.carbs.message}</span>
+              {errorsStep1.carbs && (
+                <span className="error-text">{errorsStep1.carbs.message}</span>
               )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="fat">{t("create_dish_modal_fat")}</label>
+              <label htmlFor="fat">{t("create_dish_modal_fat")}:</label>
               <input
                 type="number"
                 id="fat"
                 placeholder={t("create_dish_modal_fat_placeholder")}
-                {...register("fat")}
+                {...registerStep1("fat")}
               />
-              {errors.fat && <span className="error-text">{errors.fat.message}</span>}
+              {errorsStep1.fat && <span className="error-text">{errorsStep1.fat.message}</span>}
             </div>
 
             <div
@@ -398,54 +471,65 @@ export default function CreateDishModal({
               style={{ position: "relative" }}
             >
               <label htmlFor="description">
-                {t("create_dish_modal_description")}
+                {t("create_dish_modal_description")}:
+                <span className="required-indicator"> *</span>
               </label>
               <textarea
                 id="description"
                 placeholder={t("create_dish_modal_description_placeholder")}
                 maxLength={500}
                 style={{ paddingBottom: "2.2rem" }}
-                {...register("description")}
+                {...registerStep1("description")}
               />
               <div className="char-count">
                 {description.length}/500
               </div>
-              {errors.description && (
-                <span className="error-text">{errors.description.message}</span>
+              {errorsStep1.description && (
+                <span className="error-text">{errorsStep1.description.message}</span>
               )}
             </div>
 
-            <button type="submit" className="submit-button" disabled={isSubmitting}>
-              {isSubmitting ? t("submitting") : t("create_dish_modal_next_button")}
+            <button type="submit" className="submit-button" disabled={isSubmittingStep1}>
+              {isSubmittingStep1 ? t("submitting") : t("create_dish_modal_next_button")}
             </button>
           </form>
         )}
 
         {step === 2 && (
           <div className="ingredients-step-container">
-            <p className="step-hint">{t("create_dish_modal_ingredients_hint")}</p>
+            <p className="step-hint">{t("create_dish_modal_ingredients_hint")}
+              <span className="required-indicator"> *</span>
+            </p>
             
             <div className="ingredient-input-group">
               <div className="form-group">
-                <label htmlFor="ingredient-name">{t("create_dish_modal_ingredient_name")}</label>
+                <label htmlFor="ingredient-name">{t("create_dish_modal_ingredient_name")}:
+                  <span className="required-indicator"> *</span>
+                </label>
                 <input
                   type="text"
                   id="ingredient-name"
                   placeholder={t("create_dish_modal_ingredient_name_placeholder")}
-                  value={ingredientName}
-                  onChange={(e) => setIngredientName(e.target.value)}
+                  {...registerStep2("ingredientName")}
                 />
+                {errorsStep2.ingredientName && (
+                  <span className="error-text">{errorsStep2.ingredientName.message}</span>
+                )}
               </div>
               
               <div className="form-group">
-                <label htmlFor="ingredient-quantity">{t("create_dish_modal_ingredient_quantity")}</label>
+                <label htmlFor="ingredient-quantity">{t("create_dish_modal_ingredient_quantity")}:
+                  <span className="required-indicator"> *</span>
+                </label>
                 <input
                   type="text"
                   id="ingredient-quantity"
                   placeholder={t("create_dish_modal_ingredient_quantity_placeholder")}
-                  value={ingredientDescription}
-                  onChange={(e) => setIngredientDescription(e.target.value)}
+                  {...registerStep2("ingredientDescription")}
                 />
+                {errorsStep2.ingredientDescription && (
+                  <span className="error-text">{errorsStep2.ingredientDescription.message}</span>
+                )}
               </div>
               
               <button 
@@ -479,6 +563,11 @@ export default function CreateDishModal({
                 ))
               )}
             </div>
+            {errorsStep2.ingredientsList && (
+              <div className="error-text" style={{ marginTop: "1rem", textAlign: "center" }}>
+                {errorsStep2.ingredientsList.message}
+              </div>
+            )}
 
             <div className="step-actions">
               <button 
@@ -489,7 +578,7 @@ export default function CreateDishModal({
               </button>
               <button 
                 className="submit-button" 
-                onClick={() => setStep(3)}
+                onClick={handleStep2Next}
               >
                 {t("create_dish_modal_next_button")}
               </button>
@@ -505,7 +594,7 @@ export default function CreateDishModal({
             </p>
             <p className="step-subhint">{t("create_dish_modal_drag_hint")}</p>
             
-            <ul className="images-grid">
+            <ul className={`images-grid ${images.length === 0 ? 'empty' : ''}`}>
               {images.map((image, index) => {
                 const mainImageLabel = index === 0 ? ` - ${t("create_dish_modal_main_image")}` : '';
                 const imageLabel = `${t("create_dish_modal_image")} ${index + 1}${mainImageLabel}. ${t("create_dish_modal_use_arrows_to_reorder")}`;
@@ -563,6 +652,12 @@ export default function CreateDishModal({
                 </li>
               )}
             </ul>
+
+            {errorsStep3.imagesList && (
+              <div className="error-text" style={{ marginTop: "1rem", textAlign: "center" }}>
+                {errorsStep3.imagesList.message}
+              </div>
+            )}
 
             <input
               type="file"

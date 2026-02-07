@@ -1,7 +1,7 @@
 .auth-input {
   width: 50dvw;
-  height: 6dvh;
-  border-radius: 3.125rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
   text-align: center;
   margin: 0.5rem;
   background: var(--bg);

@@ -1,7 +1,7 @@
 .profile-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: #00000000;
+  background-color: rgba(0, 0, 0, 0);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -14,7 +14,7 @@
 .profile-modal-overlay.open {
   opacity: 1;
   pointer-events: auto;
-  background-color: #00000099;
+  background-color: rgba(0, 0, 0, 0.6);
 }
 
 .profile-modal-content {
@@ -31,6 +31,9 @@
   transition: transform 0.4s ease;
   box-shadow: 0 -0.5rem 2rem var(--shadow);
   border: none;
+  width: 100%;
+  max-width: 45rem;
+  margin: 0 auto;
 }
 
 .profile-modal-overlay.open .profile-modal-content {
@@ -80,6 +83,8 @@
   border-radius: 0.8rem;
   padding: 1.5rem 1.2rem 1.8rem 1.2rem;
   box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-form-group {
@@ -95,20 +100,22 @@
 }
 
 .profile-form-group input {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
   background: var(--card);
-  padding: 1.25rem;
   border: 0.0625rem solid var(--border);
-  border-radius: 0.875rem;
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
   color: var(--text);
   transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-form-group input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 0.1875rem #ff6b351a;
+  box-shadow: 0 0 0 0.1875rem var(--shadow);
 }
 
 .profile-form-group input[type="number"]::-webkit-outer-spin-button,
@@ -135,7 +142,7 @@
 }
 
 .profile-submit-button {
-  padding: 1.05rem 3.5rem;
+  padding: 1.05rem 2rem;
   background: var(--gradient);
   color: #ffffff;
   border: none;
@@ -146,6 +153,11 @@
   margin-top: 1rem;
   transition: all 0.3s ease;
   box-shadow: 0 0.25rem 1rem var(--shadow);
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-submit-button:hover:not(:disabled) {

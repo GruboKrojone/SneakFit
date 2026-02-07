@@ -130,6 +130,7 @@
   "create_dish_modal_no_ingredients": "Nie dodano jeszcze składników",
   "create_dish_modal_ingredient_name_required": "Nazwa składnika jest wymagana",
   "create_dish_modal_ingredient_quantity_required": "Ilość jest wymagana",
+  "create_dish_modal_min_ingredients_required": "Wymagany jest przynajmniej jeden składnik",
   "ingredients_service_add_failed": "Nie udało się dodać składnika",
   "ingredients_service_assign_failed": "Nie udało się przypisać składnika do dania",
   "ingredients_service_unassign_failed": "Nie udało się odpiąć składnika od dania",

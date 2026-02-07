@@ -11,6 +11,8 @@ import ChevronLeft from "@mui/icons-material/ChevronLeft";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import ContentCopy from "@mui/icons-material/ContentCopy";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import MacroCircle from "../components/MacroCircle";
 import CommentsModal from "../components/CommentsModal";
 import "./styles/DishDetails.css";
@@ -287,21 +289,24 @@ export default function DishDetails() {
                     {dish.ingredients.map((ing) => {
                       const scaledQuantity = scaleIngredientQuantity(ing.description);
                       return (
-                        <li key={ing.id} className="ingredient-item">
-                          <label className="ingredient-label">
-                            <input
-                              type="checkbox"
-                              className="ingredient-checkbox"
-                              checked={checkedIngredients.has(ing.id)}
-                              onChange={() => toggleIngredientCheck(ing.id)}
-                            />
+                        <li 
+                          key={ing.id} 
+                          className="ingredient-item"
+                          onClick={() => toggleIngredientCheck(ing.id)}
+                        >
+                          <div className="ingredient-label">
+                            {checkedIngredients.has(ing.id) ? (
+                              <CheckCircleIcon className="ingredient-checked-icon" />
+                            ) : (
+                              <RadioButtonUncheckedIcon className="ingredient-unchecked-icon" />
+                            )}
                             <span className={checkedIngredients.has(ing.id) ? "ingredient-name checked" : "ingredient-name"}>
                               {ing.name}
                             </span>
                             <span className={checkedIngredients.has(ing.id) ? "ingredient-quantity checked" : "ingredient-quantity"}>
                               {scaledQuantity}
                             </span>
-                          </label>
+                          </div>
                         </li>
                       );
                     })}

@@ -52,32 +52,20 @@ export default function ProfileSettingsModal({
     try {
       console.log("Profile data:", data);
 
-      toast.success(t("profile_settings_success"), {
-        position: "bottom-right",
-        autoClose: 2000,
-      });
+      toast.success(t("profile_settings_success"));
 
       onClose();
     } catch (error) {
-      toast.error(t("profile_settings_error" + error), {
-        position: "bottom-right",
-        autoClose: 2000,
-      });
+      toast.error(t("profile_settings_error" + error));
     }
   };
 
   const handleClearChoices = async () => {
     try {
       await clearAllChoices();
-      toast.success(t("choices_cleared_message"), {
-        position: "bottom-right",
-        autoClose: 2000,
-      });
+      toast.success(t("choices_cleared_message"));
     } catch (error) {
-      toast.error(`${t("error_clearing_choices")}: ${error}`, {
-        position: "bottom-right",
-        autoClose: 2000,
-      });
+      toast.error(`${t("error_clearing_choices")}: ${error}`);
     }
   };
 
