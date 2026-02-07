@@ -1,4 +1,5 @@
-﻿using Core.CQRS;
+﻿using Core.Authentication;
+using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
 using Domain.Categories.Entities;
@@ -12,10 +13,14 @@ public record AddCategoryCommand(CategoryRequest CategoryRequest) : ICommand<Uni
 
 internal class AddCategoryCommandHandler(
     ICategoryRepository categoryRepository,
+    IUserContext userContext,
     IUnitOfWork unitOfWork) : ICommandHandler<AddCategoryCommand, Unit>
 {
     public async Task<Unit> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
     {
+        var userId = userContext.UserId
+            ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
+
         if (categoryRepository.AnyAsync(c => c.Name == request.CategoryRequest.Name, cancellationToken).Result)
             throw new DomainException("Category with the same name already exists.", (int)CommonErrorCode.InvalidOperation);
 

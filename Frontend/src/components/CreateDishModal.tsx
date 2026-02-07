@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import DishesService from "../services/DishesService";
 import ImagesService from "../services/ImagesService";
 import IngredientsService from "../services/IngredientsService";
+import CategoriesService, { Category } from "../services/CategoriesService";
 import type { Dish } from "../services/DishesService";
 import type { PreviewImage } from "../services/ImagesService";
 import "./styles/CreateDishModal.css";
@@ -45,8 +46,11 @@ export default function CreateDishModal({
   onDishAdded,
 }: CreateDishModalProps) {
   const { t } = useTranslation();
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [dishFormData, setDishFormData] = useState<CreateDishFormData | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
+  const [newCategoryName, setNewCategoryName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -157,6 +161,56 @@ export default function CreateDishModal({
 
   const images = watchStep3("imagesList");
 
+  useEffect(() => {
+    const fetchCategories = async () => {
+      const data = await CategoriesService.getAllCategories();
+      setCategories(data);
+    };
+    fetchCategories();
+  }, []);
+
+  const toggleCategory = (id: number) => {
+    setSelectedCategoryIds((prev) =>
+      prev.includes(id) ? prev.filter((cId) => cId !== id) : [...prev, id]
+    );
+  };
+
+  const handleAddCategory = async () => {
+    const trimmedName = newCategoryName.trim();
+    if (!trimmedName) return;
+
+    const existingCategory = categories.find(
+      (c) => c.name.toLowerCase() === trimmedName.toLowerCase()
+    );
+
+    if (existingCategory) {
+      if (!selectedCategoryIds.includes(existingCategory.id)) {
+        toggleCategory(existingCategory.id);
+        toast.info(t("create_dish_modal_category_already_exists_selected"));
+      } else {
+        toast.info(t("create_dish_modal_category_already_selected"));
+      }
+      setNewCategoryName("");
+    } else {
+      try {
+        await CategoriesService.addCategory(trimmedName);
+        
+        const freshCategories = await CategoriesService.getAllCategories();
+        setCategories(freshCategories);
+        
+        const newCat = freshCategories.find(c => c.name.toLowerCase() === trimmedName.toLowerCase());
+        if (newCat) {
+          setSelectedCategoryIds((prev) => [...prev, newCat.id]);
+        }
+        
+        setNewCategoryName("");
+        toast.success(t("create_dish_modal_category_added"));
+      } catch (error) {
+        toast.error(t("create_dish_modal_category_add_error\n"+error));
+      }
+    }
+  };
+
   const onStep1Submit = (data: CreateDishFormData) => {
     setDishFormData(data);
     setStep(2);
@@ -229,15 +283,26 @@ export default function CreateDishModal({
     );
   };
 
+  const handleStep3Next = async () => {
+    const isValid = await triggerStep3("imagesList");
+    if (isValid) {
+      setStep(4);
+    }
+  };
+
   const handleFinish = async () => {
     if (!dishFormData) return;
     
-    const isValid = await triggerStep3("imagesList");
-    if (!isValid) return;
 
     setIsUploading(true);
 
     try {
+      if (selectedCategoryIds.length === 0) {
+        toast.error(t("create_dish_modal_category_required"));
+        setIsUploading(false);
+        return;
+      }
+
       const newDish: Omit<Dish, "id"> = {
         name: dishFormData.name,
         description: dishFormData.description,
@@ -281,6 +346,13 @@ export default function CreateDishModal({
         
         await IngredientsService.assignMultipleIngredientsToDish(ingredientIds, dishId);
       }
+
+      if (selectedCategoryIds.length > 0) {
+        for (const catId of selectedCategoryIds) {
+          await CategoriesService.assignToDish(catId, dishId);
+        }
+      }
+      
       
       toast.success(t("create_dish_modal_success"));
       if (onDishAdded) onDishAdded();
@@ -302,6 +374,7 @@ export default function CreateDishModal({
     resetStep2();
     resetStep3();
     setStep(1);
+    setSelectedCategoryIds([]);
     setDishFormData(null);
     onClose();
   };
@@ -359,12 +432,14 @@ export default function CreateDishModal({
         return t("create_dish_modal_step_2");
       case 3:
         return t("create_dish_modal_step_3");
+      case 4:
+        return t("create_dish_modal_step_4");
       default:
         return "";
     }
   };
 
-  const getStepClass = (stepNumber: 1 | 2 | 3) => {
+  const getStepClass = (stepNumber: 1 | 2 | 3 | 4) => {
     if (step === stepNumber) return 'active';
     if (step > stepNumber) return 'completed';
     return '';
@@ -395,6 +470,9 @@ export default function CreateDishModal({
           </li>
           <li className={`step-item ${getStepClass(3)}`} aria-current={step === 3 ? 'step' : undefined}>
             <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 3`}></div>
+          </li>
+          <li className={`step-item ${getStepClass(4)}`} aria-current={step === 4 ? 'step' : undefined}>
+            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 4`}></div>
           </li>
         </ol>
 
@@ -672,6 +750,71 @@ export default function CreateDishModal({
               <button 
                 className="back-button" 
                 onClick={() => setStep(2)}
+              >
+                {t("create_dish_modal_back_button")}
+              </button>
+              <button 
+                className="submit-button" 
+                onClick={handleStep3Next}
+                disabled={isUploading}
+              >
+                {t("create_dish_modal_next_button")}
+              </button>
+            </div>
+          </div>
+        )}
+
+        {step === 4 && (
+          <div className="categories-step-container">
+            <p className="step-hint">
+              {t("create_dish_modal_categories_hint")}
+              <span className="required-indicator"> *</span>
+            </p>
+            
+            <div className="category-input-group">
+              <input
+                type="text"
+                value={newCategoryName}
+                onChange={(e) => setNewCategoryName(e.target.value)}
+                placeholder={t("create_dish_modal_add_category_placeholder")}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleAddCategory();
+                  }
+                }}
+              />
+              <button 
+                type="button" 
+                className="add-category-button"
+                onClick={handleAddCategory}
+                disabled={!newCategoryName.trim()}
+              >
+                <AddIcon />
+              </button>
+            </div>
+
+            <div className="categories-list">
+              {categories.length === 0 ? (
+                <p className="no-categories-text">{t("create_dish_modal_no_categories")}</p>
+              ) : (
+                categories.map((category) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    className={`category-tag ${selectedCategoryIds.includes(category.id) ? 'selected' : ''}`}
+                    onClick={() => toggleCategory(category.id)}
+                  >
+                    {category.name}
+                  </button>
+                ))
+              )}
+            </div>
+
+            <div className="step-actions">
+              <button 
+                className="back-button" 
+                onClick={() => setStep(3)}
               >
                 {t("create_dish_modal_back_button")}
               </button>

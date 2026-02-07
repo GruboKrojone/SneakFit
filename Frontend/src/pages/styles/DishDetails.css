@@ -643,6 +643,10 @@
   padding: 0.625rem 0.75rem;
   border-radius: 0.75rem;
   transition: all 0.2s ease;
+  background: none;
+  border: none;
+  font-family: inherit;
+  text-align: left;
 }
 
 .ingredient-label:hover {
@@ -681,7 +685,7 @@ body.dark .ingredient-checked-icon {
 .ingredient-quantity {
   font-size: 0.9rem;
   font-weight: 700;
-  color: var(--text-light);
+  color: var(--text) !important;
   transition: all 0.3s ease;
   text-align: right;
   margin-left: auto;

@@ -1,4 +1,6 @@
 ﻿using Domain.Categories.Commands;
+using Domain.Categories.Dto;
+using Domain.Categories.Queries;
 using Domain.Dishes.Dto;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -8,9 +10,13 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("category")]
-[Authorize(Roles = "Admin")]
 public class CategoryController(IMediator mediator) : ControllerBase
 {
+    [HttpGet]
+    [Route("/categories")]
+    public async Task<IEnumerable<CategoryDto>> GetAllCategories(CancellationToken cancellationToken)
+        => await mediator.Send(new GetAllCategoriesQuery(), cancellationToken);
+
     [HttpPost]
     [Route("add")]
     public async Task<Unit> AddCategory(CategoryRequest request, CancellationToken cancellationToken)

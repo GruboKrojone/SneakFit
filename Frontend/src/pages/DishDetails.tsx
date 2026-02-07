@@ -292,9 +292,12 @@ export default function DishDetails() {
                         <li 
                           key={ing.id} 
                           className="ingredient-item"
-                          onClick={() => toggleIngredientCheck(ing.id)}
                         >
-                          <div className="ingredient-label">
+                          <button 
+                            className="ingredient-label"
+                            onClick={() => toggleIngredientCheck(ing.id)}
+                            aria-label={checkedIngredients.has(ing.id) ? `Mark ${ing.name} as incomplete` : `Mark ${ing.name} as complete`}
+                          >
                             {checkedIngredients.has(ing.id) ? (
                               <CheckCircleIcon className="ingredient-checked-icon" />
                             ) : (
@@ -306,7 +309,7 @@ export default function DishDetails() {
                             <span className={checkedIngredients.has(ing.id) ? "ingredient-quantity checked" : "ingredient-quantity"}>
                               {scaledQuantity}
                             </span>
-                          </div>
+                          </button>
                         </li>
                       );
                     })}

@@ -1,4 +1,5 @@
-﻿using Core.CQRS;
+﻿using Core.Authentication;
+using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
 using MediatR;
@@ -10,10 +11,14 @@ public record UnassignCategoryFromDishCommand(int CategoryId, int DishId) : ICom
 
 internal class UnassignCategoryFromDishCommandHandler(
     SneakFitDbContext dbContext,
+    IUserContext userContext,
     IUnitOfWork unitOfWork) : ICommandHandler<UnassignCategoryFromDishCommand, Unit>
 {
     public async Task<Unit> Handle(UnassignCategoryFromDishCommand command, CancellationToken cancellationToken)
     {
+        var userId = userContext.UserId
+            ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
+
         var dish = await dbContext.Dishes
             .Include(d => d.Categories)
             .FirstOrDefaultAsync(d => d.Id == command.DishId, cancellationToken)

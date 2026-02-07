@@ -1,4 +1,5 @@
-﻿using Core.CQRS;
+﻿using Core.Authentication;
+using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
 using Domain.Categories.Repositories;
@@ -12,10 +13,14 @@ public record AssignCategoryToDishCommand(int CategoryId, int DishId) : ICommand
 internal class AssignCategoryToDishCommandHandler(
     IDishRepository dishRepository,
     ICategoryRepository categoryRepository,
+    IUserContext userContext,
     IUnitOfWork unitOfWork) : ICommandHandler<AssignCategoryToDishCommand, Unit>
 {
     public async Task<Unit> Handle(AssignCategoryToDishCommand command, CancellationToken cancellationToken)
     {
+        var userId = userContext.UserId
+            ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
+
         var dish = await dishRepository.FindAsync(command.DishId, cancellationToken)
             ?? throw new DomainException("Dish not found", (int)CommonErrorCode.EntityNotFound);
 
