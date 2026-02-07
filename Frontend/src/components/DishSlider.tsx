@@ -509,16 +509,16 @@ export default function DishSlider() {
             <div className="dish-header">
               <h2 className="dish-name">{dish.name}</h2>
             </div>
+            <div className="dish-categories">
+              {dish.categories && dish.categories.length > 0 && (
+                <span className="slider-category-tag">
+                  {dish.categories.map((cat) => cat.name).join(", ")}
+                </span>
+              )}
+            </div>
             <p className="dish-description">
               {dish.description || t("empty_description")}
             </p>
-            <div className="dish-categories">
-              {dish.categories.map((cat) => (
-                <span key={cat.id} className="category-tag">
-                  {cat.name}
-                </span>
-              ))}
-            </div>
             {renderActionButtons(true)}
           </div>
         </div>,
@@ -591,16 +591,16 @@ export default function DishSlider() {
               <div className="dish-header">
                 <h2 className="dish-name">{dish.name}</h2>
               </div>
+              <div className="dish-categories">
+                {dish.categories && dish.categories.length > 0 && (
+                  <span className="slider-category-tag">
+                    {dish.categories.map((cat) => cat.name).join(", ")}
+                  </span>
+                )}
+              </div>
               <p className="dish-description">
                 {dish.description || t("empty_description")}
               </p>
-              <div className="dish-categories">
-                {dish.categories.map((cat) => (
-                  <span key={cat.id} className="category-tag">
-                    {cat.name}
-                  </span>
-                ))}
-              </div>
               {renderActionButtons(false)}
             </div>
           </div>

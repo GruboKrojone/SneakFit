@@ -166,6 +166,7 @@
   justify-content: space-between;
   box-sizing: border-box;
   overflow-y: auto;
+  gap: 1rem;
 }
 
 .dish-header {
@@ -212,25 +213,26 @@
 
 .dish-description {
   color: var(--text);
-  font-size: 1.5dvh;
+  font-size: 0.9rem;
   line-height: 1.6;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   overflow: hidden;
   background: var(--bg);
   border: 0.0625rem solid var(--border);
-  padding: 1.5dvh;
+  padding: 0.75rem;
   border-radius: 0.875rem;
-  height: 18dvh;
+  height: 15dvh;
 }
 
 .dish-categories {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  width: 100%;
 }
 
-.category-tag {
+.slider-category-tag {
   background: var(--tag-bg);
   color: var(--tag-text);
   padding: 0.4rem 1rem;
@@ -238,6 +240,9 @@
   font-size: 0.75rem;
   font-weight: 600;
   border: 0.0625rem solid var(--accent);
+  width: 100%;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .dish-actions {
@@ -245,7 +250,6 @@
   gap: 0.9375rem;
   justify-content: space-evenly;
   align-items: center;
-  margin-top: 0.9375rem;
   padding: 0.9375rem;
   background: var(--bg);
   border: 0.0625rem solid var(--border);
