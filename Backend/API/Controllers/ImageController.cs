@@ -1,13 +1,16 @@
 ﻿using Domain.Images.Commands;
 using Domain.Images.Dto;
 using Domain.Images.Queries;
+using Domain.Users.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("image")]
+[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Employee)},{nameof(UserRole.User)}")]
 public class ImageController(IMediator mediator) : ControllerBase
 {
     [HttpPost]

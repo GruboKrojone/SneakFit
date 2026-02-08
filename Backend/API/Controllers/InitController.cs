@@ -1,4 +1,5 @@
 using Domain.Init.Commands;
+using Domain.Users.Enums;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ public class InitController(IMediator mediator) : ControllerBase
 
     [HttpGet]
     [Route("restrict")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Employee)},{nameof(UserRole.User)}")]
     public bool GetRestrict() => true;
 
     [HttpPost]

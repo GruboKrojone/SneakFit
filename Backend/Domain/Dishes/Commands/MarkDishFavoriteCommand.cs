@@ -39,7 +39,6 @@ internal sealed class MarkDishAsFavoriteCommandHandler(
         {
             if (existingFavorite.IsDeleted)
             {
-                // Restore the soft-deleted favorite
                 existingFavorite.Restore();
                 favoritedRepository.Update(existingFavorite);
                 await unitOfWork.SaveChangesAsync(cancellationToken);
@@ -54,7 +53,6 @@ internal sealed class MarkDishAsFavoriteCommandHandler(
             return Unit.Value;
         }
 
-        // Create new favorite relationship
         var favoriteDish = new Favorited(userId, dish.Id);
         favoritedRepository.Add(favoriteDish);
         await unitOfWork.SaveChangesAsync(cancellationToken);
