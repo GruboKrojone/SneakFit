@@ -4,7 +4,11 @@ import { toast } from "react-toastify";
 
 export interface Category {
   id: number;
-  name: string;
+  nameEn: string;
+  namePl: string;
+  nameDe: string;
+  nameEs: string;
+  color: string;
 }
 
 export interface Ingredient {

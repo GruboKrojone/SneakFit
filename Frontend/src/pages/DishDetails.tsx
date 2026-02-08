@@ -20,7 +20,7 @@ import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 
 export default function DishDetails() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [dish, setDish] = useState<Dish | null>(null);
@@ -247,9 +247,26 @@ export default function DishDetails() {
           </div>
           <div className="categories-box">
             <div className="categories-content">
-              {dish.categories && dish.categories.length > 0
-                ? dish.categories.map((c) => c.name).join(", ")
-                : emptyCategories}
+              {dish.categories && dish.categories.length > 0 ? (
+                dish.categories.map((c) => (
+                  <span 
+                    key={c.id} 
+                    className="category-detail-tag"
+                    style={{ 
+                      background: `${c.color}15`,
+                      color: c.color,
+                      borderColor: `${c.color}40`
+                    }}
+                  >
+                    {i18n.language === "pl" ? c.namePl :
+                     i18n.language === "de" ? c.nameDe :
+                     i18n.language === "es" ? c.nameEs :
+                     c.nameEn}
+                  </span>
+                ))
+              ) : (
+                <span className="no-categories-text">{emptyCategories}</span>
+              )}
             </div>
           </div>
         </div>

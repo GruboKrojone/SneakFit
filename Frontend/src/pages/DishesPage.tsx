@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useMemo } from "react";
 import DishesService, { Dish } from "../services/DishesService";
 import DishImage from "../components/DishImage";
 import "./styles/DishesPage.css";
@@ -8,16 +8,26 @@ import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useNavigate, useParams } from "react-router-dom";
 import CreateDishModal from "../components/CreateDishModal";
+import FiltersModal from "../components/FiltersModal";
 
 export default function DishesPage() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { locale } = useParams<{ locale: string }>();
   const [dishes, setDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [filterCategories, setFilterCategories] = useState<number[]>([]);
   const hasFetched = useRef(false);
   const emptyCategories = t("no_categories");
+
+  const filteredDishes = useMemo(() => {
+    if (filterCategories.length === 0) return dishes;
+    return dishes.filter((dish) =>
+      dish.categories && dish.categories.some((cat) => filterCategories.includes(cat.id))
+    );
+  }, [dishes, filterCategories]);
 
   const fetchDishes = async () => {
     setLoading(true);
@@ -66,11 +76,14 @@ export default function DishesPage() {
               id="add-box-icon"
               onClick={() => setIsModalOpen(true)}
             />
-            <FilterAltIcon id="filter-alt-icon" />
+            <FilterAltIcon 
+              id="filter-alt-icon" 
+              onClick={() => setIsFiltersOpen(true)}
+            />
           </div>
           <div className="dishes-container">
             <div className="dishes-grid">
-              {dishes.map((dish) => (
+              {filteredDishes.map((dish) => (
                 <div
                   className="dishes-box"
                   key={dish.id}
@@ -89,7 +102,26 @@ export default function DishesPage() {
                     <div className="dishes-name">{dish.name}</div>
                     <div className="dishes-categories">
                       {dish.categories && dish.categories.length > 0
-                        ? dish.categories.map((c) => c.name).join(", ")
+                        ? dish.categories.map((c) => {
+                            let localizedName = c.nameEn;
+                            if (i18n.language === "pl") localizedName = c.namePl || c.nameEn;
+                            else if (i18n.language === "de") localizedName = c.nameDe || c.nameEn;
+                            else if (i18n.language === "es") localizedName = c.nameEs || c.nameEn;
+                            
+                            return (
+                              <span 
+                                key={c.id} 
+                                className="dishes-category-tag"
+                                style={{ 
+                                  borderColor: c.color,
+                                  color: c.color,
+                                  background: `${c.color}15`
+                                }}
+                              >
+                                {localizedName}
+                              </span>
+                            );
+                          })
                         : emptyCategories}
                     </div>
                   </div>
@@ -103,6 +135,13 @@ export default function DishesPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onDishAdded={fetchDishes}
+      />
+      <FiltersModal
+        isOpen={isFiltersOpen}
+        onClose={() => setIsFiltersOpen(false)}
+        selectedCategories={filterCategories}
+        onApplyFilters={setFilterCategories}
+        onClearFilters={() => setFilterCategories([])}
       />
     </div>
   );

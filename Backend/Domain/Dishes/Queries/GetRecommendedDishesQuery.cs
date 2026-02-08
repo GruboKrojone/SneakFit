@@ -1,8 +1,10 @@
-﻿using Algorithm;
+﻿using System.Linq;
+using Algorithm;
 using Core.Authentication;
 using Core.CQRS;
 using Core.Middlewares;
 using Domain.Categories.Dto;
+using Domain.Categories.Entities;
 using Domain.Dishes.Dto;
 using Domain.Dishes.Repositories;
 using Domain.Users.Repositories;
@@ -65,7 +67,7 @@ internal sealed class GetRecommendedDishesQueryHandler(
                 d.Owner!.Name,
                 d.IsPublic,
                 d.Categories != null
-                    ? [.. d.Categories.Select(c => new CategoryDto(c.Id, c.Name))]
+                    ? [.. d.Categories.Select(c => new CategoryDto(c.Id, c.NameEn, c.NamePl, c.NameDe, c.NameEs, c.Color))]
                     : [],
                 null,
                 null,

@@ -18,7 +18,7 @@ export default function FavouriteModal({
   isOpen,
   onClose,
 }: FavouriteModalProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { locale } = useParams<{ locale: string }>();
   const { dishes } = useFetchDishes();
@@ -145,7 +145,10 @@ export default function FavouriteModal({
                     <div className="favourite-dish-categories">
                       {dish.categories.slice(0, 2).map(cat => (
                         <span key={cat.id} className="favourite-category-tag">
-                          {cat.name}
+                          {i18n.language === "pl" ? cat.namePl :
+                           i18n.language === "de" ? cat.nameDe :
+                           i18n.language === "es" ? cat.nameEs :
+                           cat.nameEn}
                         </span>
                       ))}
                     </div>

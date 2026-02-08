@@ -22,7 +22,7 @@ import DishesService from "../services/DishesService";
 type ActionType = "pass" | "loved" | "smash" | null;
 
 export default function DishSlider() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
   const { dishes, isLoading, refetchDishes } = useFetchDishes();
   const [usedIndices, setUsedIndices] = useState<Set<number>>(new Set());
@@ -510,11 +510,22 @@ export default function DishSlider() {
               <h2 className="dish-name">{dish.name}</h2>
             </div>
             <div className="dish-categories">
-              {dish.categories && dish.categories.length > 0 && (
-                <span className="slider-category-tag">
-                  {dish.categories.map((cat) => cat.name).join(", ")}
+              {dish.categories?.map((cat) => (
+                <span 
+                  key={cat.id} 
+                  className="slider-category-tag"
+                  style={{ 
+                    background: `${cat.color}15`,
+                    color: cat.color,
+                    borderColor: `${cat.color}40`
+                  }}
+                >
+                  {i18n.language === "pl" ? cat.namePl :
+                   i18n.language === "de" ? cat.nameDe :
+                   i18n.language === "es" ? cat.nameEs :
+                   cat.nameEn}
                 </span>
-              )}
+              ))}
             </div>
             <p className="dish-description">
               {dish.description || t("empty_description")}
@@ -593,9 +604,28 @@ export default function DishSlider() {
               </div>
               <div className="dish-categories">
                 {dish.categories && dish.categories.length > 0 && (
-                  <span className="slider-category-tag">
-                    {dish.categories.map((cat) => cat.name).join(", ")}
-                  </span>
+                  <>
+                    {dish.categories.map((cat) => {
+                      let localizedName = cat.nameEn;
+                      if (i18n.language === "pl") localizedName = cat.namePl || cat.nameEn;
+                      else if (i18n.language === "de") localizedName = cat.nameDe || cat.nameEn;
+                      else if (i18n.language === "es") localizedName = cat.nameEs || cat.nameEn;
+
+                      return (
+                        <span 
+                          key={cat.id} 
+                          className="slider-category-tag"
+                          style={{ 
+                            borderColor: cat.color,
+                            color: cat.color,
+                            background: `${cat.color}15`
+                          }}
+                        >
+                          {localizedName}
+                        </span>
+                      );
+                    })}
+                  </>
                 )}
               </div>
               <p className="dish-description">

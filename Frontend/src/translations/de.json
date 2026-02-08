@@ -254,5 +254,14 @@
   "create_dish_modal_category_added": "Kategorie erfolgreich hinzugefügt",
   "create_dish_modal_category_add_error": "Fehler beim Hinzufügen der Kategorie",
   "create_dish_modal_category_required": "Bitte wählen Sie mindestens eine Kategorie aus",
-  "create_dish_modal_add_category_placeholder": "Neue Kategorie hinzufügen..."
+  "create_dish_modal_add_category_placeholder": "Neue Kategorie hinzufügen...",
+  "admin_panel": "Administrator-Panel",
+  "manage_categories": "Kategorien verwalten",
+  "back_to_profile": "Zurück zum profil",
+  "existing_categories": "Vorhandene Kategorien",
+  "category_color": "Kategoriefarbe",
+  "custom_color": "Benutzerdefinierte Farbe",
+  "selected_color": "Ausgewählte Farbe",
+  "please_fill_all_languages": "Bitte füllen Sie Namen für alle Sprachen aus",
+  "create_dish_modal_max_categories": "Die maximale Anzahl an Kategorien beträgt 5"
 }

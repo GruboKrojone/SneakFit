@@ -255,5 +255,18 @@
   "create_dish_modal_category_added": "Kategoria została pomyślnie dodana",
   "create_dish_modal_category_add_error": "Nie udało się dodać kategorii",
   "create_dish_modal_category_required": "Proszę wybrać przynajmniej jedną kategorię",
-  "create_dish_modal_add_category_placeholder": "Dodaj nową kategorię..."
+  "create_dish_modal_add_category_placeholder": "Dodaj nową kategorię...",
+  "admin_panel": "Panel administratora",
+  "manage_categories": "Zarządzaj kategoriami",
+  "back_to_profile": "Powrót do profilu",
+  "existing_categories": "Istniejące kategorie",
+  "category_color": "Kolor kategorii",
+  "custom_color": "Własny kolor",
+  "selected_color": "Wybrany kolor",
+  "please_fill_all_languages": "Proszę uzupełnić nazwy we wszystkich językach",
+  "create_dish_modal_max_categories": "Maksymalna liczba kategorii to 5",
+  "filters_title": "Filtry",
+  "filter_by_category": "Filtruj po kategorii",
+  "clear_filters": "Wyczyść",
+  "apply_filters": "Zastosuj"
 }

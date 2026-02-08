@@ -45,12 +45,11 @@ export default function CreateDishModal({
   onClose,
   onDishAdded,
 }: CreateDishModalProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
   const [dishFormData, setDishFormData] = useState<CreateDishFormData | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
-  const [newCategoryName, setNewCategoryName] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -170,46 +169,18 @@ export default function CreateDishModal({
   }, []);
 
   const toggleCategory = (id: number) => {
-    setSelectedCategoryIds((prev) =>
-      prev.includes(id) ? prev.filter((cId) => cId !== id) : [...prev, id]
-    );
+    setSelectedCategoryIds((prev) => {
+      if (prev.includes(id)) {
+        return prev.filter((cId) => cId !== id);
+      }
+      if (prev.length >= 5) {
+        return prev;
+      }
+      return [...prev, id];
+    });
   };
 
-  const handleAddCategory = async () => {
-    const trimmedName = newCategoryName.trim();
-    if (!trimmedName) return;
 
-    const existingCategory = categories.find(
-      (c) => c.name.toLowerCase() === trimmedName.toLowerCase()
-    );
-
-    if (existingCategory) {
-      if (!selectedCategoryIds.includes(existingCategory.id)) {
-        toggleCategory(existingCategory.id);
-        toast.info(t("create_dish_modal_category_already_exists_selected"));
-      } else {
-        toast.info(t("create_dish_modal_category_already_selected"));
-      }
-      setNewCategoryName("");
-    } else {
-      try {
-        await CategoriesService.addCategory(trimmedName);
-        
-        const freshCategories = await CategoriesService.getAllCategories();
-        setCategories(freshCategories);
-        
-        const newCat = freshCategories.find(c => c.name.toLowerCase() === trimmedName.toLowerCase());
-        if (newCat) {
-          setSelectedCategoryIds((prev) => [...prev, newCat.id]);
-        }
-        
-        setNewCategoryName("");
-        toast.success(t("create_dish_modal_category_added"));
-      } catch (error) {
-        toast.error(t("create_dish_modal_category_add_error\n"+error));
-      }
-    }
-  };
 
   const onStep1Submit = (data: CreateDishFormData) => {
     setDishFormData(data);
@@ -770,29 +741,7 @@ export default function CreateDishModal({
               {t("create_dish_modal_categories_hint")}
               <span className="required-indicator"> *</span>
             </p>
-            
-            <div className="category-input-group">
-              <input
-                type="text"
-                value={newCategoryName}
-                onChange={(e) => setNewCategoryName(e.target.value)}
-                placeholder={t("create_dish_modal_add_category_placeholder")}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleAddCategory();
-                  }
-                }}
-              />
-              <button 
-                type="button" 
-                className="add-category-button"
-                onClick={handleAddCategory}
-                disabled={!newCategoryName.trim()}
-              >
-                <AddIcon />
-              </button>
-            </div>
+            <p className="step-subhint">{selectedCategoryIds.length}/5</p>
 
             <div className="categories-list">
               {categories.length === 0 ? (
@@ -804,8 +753,18 @@ export default function CreateDishModal({
                     type="button"
                     className={`category-tag ${selectedCategoryIds.includes(category.id) ? 'selected' : ''}`}
                     onClick={() => toggleCategory(category.id)}
+                    style={{ 
+                      borderColor: category.color,
+                      color: selectedCategoryIds.includes(category.id) ? '#fff' : category.color,
+                      background: selectedCategoryIds.includes(category.id) ? category.color : `${category.color}15`,
+                      padding: "0.5rem 1rem",
+                      fontSize: "0.8rem"
+                    }}
                   >
-                    {category.name}
+                    {i18n.language === "pl" ? category.namePl :
+                     i18n.language === "de" ? category.nameDe :
+                     i18n.language === "es" ? category.nameEs :
+                     category.nameEn}
                   </button>
                 ))
               )}

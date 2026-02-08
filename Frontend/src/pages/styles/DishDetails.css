@@ -196,26 +196,31 @@
 }
 
 .categories-box {
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03125rem;
-  background: var(--tag-bg);
-  color: var(--tag-text);
-  padding: 0.5rem 1.2rem;
-  border-radius: 62.4375rem;
-  border: 0.0625rem solid var(--accent);
-  text-align: center;
-}
-
-.categories-label {
   display: flex;
-  font-weight: 600;
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
   justify-content: center;
 }
 
 .categories-content {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.category-detail-tag {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 62.4375rem;
+  border: 0.0625rem solid transparent;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.no-categories-text {
+  color: var(--text-light);
+  font-style: italic;
   font-size: 0.9rem;
 }
 

@@ -21,10 +21,15 @@ internal class AddCategoryCommandHandler(
         var userId = userContext.UserId
             ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
 
-        if (categoryRepository.AnyAsync(c => c.Name == request.CategoryRequest.Name, cancellationToken).Result)
+        if (categoryRepository.AnyAsync(c => c.NameEn == request.CategoryRequest.NameEn, cancellationToken).Result)
             throw new DomainException("Category with the same name already exists.", (int)CommonErrorCode.InvalidOperation);
 
-        Category category = new(request.CategoryRequest.Name);
+        Category category = new(
+            request.CategoryRequest.NameEn, 
+            request.CategoryRequest.NamePl, 
+            request.CategoryRequest.NameDe, 
+            request.CategoryRequest.NameEs, 
+            request.CategoryRequest.Color);
 
         categoryRepository.Add(category);
         await unitOfWork.SaveChangesAsync(cancellationToken);

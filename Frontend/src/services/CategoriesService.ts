@@ -3,7 +3,11 @@ import i18n from "../translations/service/i18n";
 
 export interface Category {
   id: number;
-  name: string;
+  nameEn: string;
+  namePl: string;
+  nameDe: string;
+  nameEs: string;
+  color: string;
 }
 
 const BASE_URL = "https://localhost:7059";
@@ -32,7 +36,13 @@ class CategoriesService {
     }
   }
 
-  static async addCategory(name: string): Promise<Category> {
+  static async addCategory(
+    nameEn: string, 
+    namePl: string, 
+    nameDe: string, 
+    nameEs: string, 
+    color: string
+  ): Promise<Category> {
     try {
       const response = await fetch(`${BASE_URL}/category/add`, {
         method: "POST",
@@ -41,7 +51,7 @@ class CategoriesService {
           "Content-Type": "application/json",
           ...AuthService.getAuthHeader(),
         },
-        body: JSON.stringify({ name }),
+        body: JSON.stringify({ nameEn, namePl, nameDe, nameEs, color }),
       });
 
       if (!response.ok) {

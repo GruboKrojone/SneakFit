@@ -1,8 +1,10 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Linq;
+using System.Text.RegularExpressions;
 using Core.CQRS;
 using Domain.AI.Dto;
 using Domain.Integrations.Gemini;
 using Domain.Integrations.Gemini.Dto;
+using Domain.Users.Enums;
 
 namespace Domain.AI.Queries;
 
@@ -12,7 +14,15 @@ internal class GetAiResponseQueryHandler(IAIIntegration integration) : IQueryHan
 {
     public async Task<string> Handle(GetAiResponseQuery request, CancellationToken cancellationToken)
     {
-        var prequest = $"You are a professional chef. Return your response in {request.Props.Lang} language.\r\nGenerate a dish recipe (1 portion) based on these parameters:\r\n- Categories: {string.Join(", ", request.Props.Categories.Select(c => c.Name))}\r\n- Tastes: {string.Join(", ", request.Props.Tastes.Select(FormatEnumValue))}\r\n- Available tools: {string.Join(", ", request.Props.RequiredTools.Select(FormatEnumValue))} (optimize recipe for these tools)\r\n\r\nPlease use the following Markdown structure strictly:\r\n\r\n## Recipe Name\r\n\r\n**Categories:** [List of categories]\r\n**Required Tools:** [List of tools used]\r\n\r\n### Ingredients (1 portion):\r\n* [Quantity] [Unit] - [Ingredient Name]\r\n* ...\r\n\r\n### Preparation Steps:\r\n1. [Step 1]\r\n2. [Step 2]\r\n...\r\n\r\n### Estimates (per portion):\r\n* **Time:** [Minutes]\r\n* **Calories:** [kcal]\r\n* **Carbs:** [g]\r\n* **Proteins:** [g]\r\n* **Fat:** [g]";
+        var categoryNames = request.Props.Categories.Select(c => request.Props.Lang switch
+        {
+            Lang.PL => c.NamePl,
+            Lang.DE => c.NameDe,
+            Lang.ES => c.NameEs,
+            _ => c.NameEn
+        });
+
+        var prequest = $"You are a professional chef. Return your response in {request.Props.Lang} language.\r\nGenerate a dish recipe (1 portion) based on these parameters:\r\n- Categories: {string.Join(", ", categoryNames)}\r\n- Tastes: {string.Join(", ", request.Props.Tastes.Select(FormatEnumValue))}\r\n- Available tools: {string.Join(", ", request.Props.RequiredTools.Select(FormatEnumValue))} (optimize recipe for these tools)\r\n\r\nPlease use the following Markdown structure strictly:\r\n\r\n## Recipe Name\r\n\r\n**Categories:** [List of categories]\r\n**Required Tools:** [List of tools used]\r\n\r\n### Ingredients (1 portion):\r\n* [Quantity] [Unit] - [Ingredient Name]\r\n* ...\r\n\r\n### Preparation Steps:\r\n1. [Step 1]\r\n2. [Step 2]\r\n...\r\n\r\n### Estimates (per portion):\r\n* **Time:** [Minutes]\r\n* **Calories:** [kcal]\r\n* **Carbs:** [g]\r\n* **Proteins:** [g]\r\n* **Fat:** [g]";
 
         var geminiRequest = new GeminiRequest(
             Contents:

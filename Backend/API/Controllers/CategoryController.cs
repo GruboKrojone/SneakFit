@@ -10,6 +10,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("category")]
+[Authorize(Roles = "Admin")]
 public class CategoryController(IMediator mediator) : ControllerBase
 {
     [HttpGet]

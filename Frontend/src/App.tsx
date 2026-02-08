@@ -3,6 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import ProtectedLayout from "./components/ProtectedLayout";
+import AdminPanel from "./pages/AdminPanel";
 import DishDetails from "./pages/DishDetails";
 import DishesPage from "./pages/DishesPage";
 import HomePage from "./pages/HomePage";
@@ -66,6 +67,14 @@ function App() {
                     element={
                       <ProtectedLayout>
                         <ProfilePage />
+                      </ProtectedLayout>
+                    }
+                  />
+                  <Route
+                    path="admin"
+                    element={
+                      <ProtectedLayout>
+                        <AdminPanel />
                       </ProtectedLayout>
                     }
                   />
