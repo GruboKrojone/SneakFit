@@ -10,6 +10,11 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: block;
+  cursor: default;
 }
 
 .filter-modal-overlay.open {
@@ -95,11 +100,6 @@
   background-color: transparent;
 }
 
-.category-tag.selected {
-  /* Dynamic styles injected via inline props */
-  /* But we can ensure base styles here */
-}
-
 .filter-footer {
   padding: 1.5rem;
   border-top: 1px solid var(--border);
@@ -127,7 +127,7 @@
 .apply-button {
   padding: 0.5rem 1rem;
   background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-  color: white;
+  color: #ffffff;
   border: none;
   border-radius: 0.5rem;
   cursor: pointer;

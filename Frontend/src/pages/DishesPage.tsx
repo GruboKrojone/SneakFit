@@ -25,7 +25,7 @@ export default function DishesPage() {
   const filteredDishes = useMemo(() => {
     if (filterCategories.length === 0) return dishes;
     return dishes.filter((dish) =>
-      dish.categories && dish.categories.some((cat) => filterCategories.includes(cat.id))
+      dish.categories?.some((cat) => filterCategories.includes(cat.id))
     );
   }, [dishes, filterCategories]);
 

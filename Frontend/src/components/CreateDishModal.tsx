@@ -54,6 +54,15 @@ export default function CreateDishModal({
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const getCategoryName = (category: Category) => {
+    switch (i18n.language) {
+      case "pl": return category.namePl;
+      case "de": return category.nameDe;
+      case "es": return category.nameEs;
+      default: return category.nameEn;
+    }
+  };
+
   const createDishSchema = z.object({
     name: z.string().min(1, t("create_dish_modal_name_required")).trim(),
     calories: z.coerce
@@ -755,16 +764,13 @@ export default function CreateDishModal({
                     onClick={() => toggleCategory(category.id)}
                     style={{ 
                       borderColor: category.color,
-                      color: selectedCategoryIds.includes(category.id) ? '#fff' : category.color,
+                      color: selectedCategoryIds.includes(category.id) ? '#ffffff' : category.color,
                       background: selectedCategoryIds.includes(category.id) ? category.color : `${category.color}15`,
                       padding: "0.5rem 1rem",
                       fontSize: "0.8rem"
                     }}
                   >
-                    {i18n.language === "pl" ? category.namePl :
-                     i18n.language === "de" ? category.nameDe :
-                     i18n.language === "es" ? category.nameEs :
-                     category.nameEn}
+                    {getCategoryName(category)}
                   </button>
                 ))
               )}

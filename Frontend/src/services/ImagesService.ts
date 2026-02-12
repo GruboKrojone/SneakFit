@@ -36,9 +36,16 @@ class ImagesService {
 
       const result = await response.json();
       
+        let id = 0;
+      if (typeof result === 'number') {
+        id = result;
+      } else if (result && typeof result === 'object') {
+        id = result.id || result.imageId || result.Id || 0;
+      }
+
       return {
-        id: result.id || result,
-        url: result.url || "",
+        id: id,
+        url: result.url || result.Url || "",
       };
     } catch (error) {
       console.error("Error in uploadImage:", error);
@@ -97,6 +104,81 @@ class ImagesService {
       return null;
     }
   }
+
+  static async getSecondaryImage(dishId: number): Promise<string | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}/image/${dishId}/secondary`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.error("Error fetching secondary image:", error);
+      return null;
+    }
+  }
+
+  static async getThirdImage(dishId: number): Promise<string | null> {
+    try {
+      const response = await fetch(`${this.baseUrl}/image/${dishId}/third`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const data = await response.json();
+      return data.url;
+    } catch (error) {
+      console.error("Error fetching third image:", error);
+      return null;
+    }
+  }
+
+  static async getAllImages(dishId: number): Promise<ImageResponse[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/image/${dishId}/all`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        return [];
+      }
+
+      const data = await response.json();
+      
+      if (Array.isArray(data)) {
+        return data.map((item: any) => ({
+          id: item.id || item.imageId || item.Id || 0,
+          url: item.url || item.Url || ""
+        }));
+      }
+
+      return [];
+    } catch (error) {
+      console.error("Error fetching all images:", error);
+      return [];
+    }
+  }
+
 
   static async unassignImageFromDish(imageId: number, dishId: number): Promise<void> {
     const response = await fetch(`${this.baseUrl}/ingredient/${imageId}/unassignFromDish/${dishId}`, {

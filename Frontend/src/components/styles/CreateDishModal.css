@@ -316,8 +316,9 @@
 
 .ingredient-info {
   display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
   flex: 1;
 }
 
@@ -333,22 +334,21 @@
 }
 
 .remove-ingredient-btn {
-  background: rgba(255, 75, 75, 0.1);
+  background: transparent;
   border: none;
-  border-radius: 50%;
-  width: 2rem;
-  height: 2rem;
+  color: var(--text-secondary);
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ff4b4b;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  transition: all 0.2s;
 }
 
 .remove-ingredient-btn:hover {
-  background: rgba(255, 75, 75, 0.2);
-  transform: scale(1.1);
+  background: rgba(255, 77, 77, 0.1);
+  color: #ff4d4d;
 }
 
 
@@ -454,23 +454,23 @@
   position: absolute;
   top: -0.5rem;
   right: -0.5rem;
-  background: #ff4b4b;
-  border: 0.125rem solid var(--card);
-  border-radius: 50%;
-  width: 1.75rem;
-  height: 1.75rem;
+  background: var(--card);
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.5rem;
+  padding: 0.4rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--text-light);
   cursor: pointer;
   transition: all 0.2s ease;
   z-index: 3;
 }
 
 .image-card-wrapper .remove-image-btn:hover {
-  background: rgb(255, 75, 75);
-  transform: scale(1.1);
+  background: rgba(255, 77, 77, 0.1);
+  color: #ff4d4d;
+  border-color: #ff4d4d;
 }
 
 .main-badge {

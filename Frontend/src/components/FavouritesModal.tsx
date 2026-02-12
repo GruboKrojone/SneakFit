@@ -26,6 +26,15 @@ export default function FavouriteModal({
   const [selectedDishes, setSelectedDishes] = useState<Set<number>>(new Set());
   const [favouriteDishes, setFavouriteDishes] = useState<Dish[]>([]);
 
+  const getCategoryName = (category: any) => {
+    switch (i18n.language) {
+      case "pl": return category.namePl;
+      case "de": return category.nameDe;
+      case "es": return category.nameEs;
+      default: return category.nameEn;
+    }
+  };
+
   useEffect(() => {
     const favouriteIds = getFavouriteRecipeIds();
     const filteredDishes = dishes.filter(dish => favouriteIds.includes(dish.id));
@@ -145,10 +154,7 @@ export default function FavouriteModal({
                     <div className="favourite-dish-categories">
                       {dish.categories.slice(0, 2).map(cat => (
                         <span key={cat.id} className="favourite-category-tag">
-                          {i18n.language === "pl" ? cat.namePl :
-                           i18n.language === "de" ? cat.nameDe :
-                           i18n.language === "es" ? cat.nameEs :
-                           cat.nameEn}
+                          {getCategoryName(cat)}
                         </span>
                       ))}
                     </div>

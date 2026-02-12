@@ -13,11 +13,36 @@ import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import MacroCircle from "../components/MacroCircle";
 import CommentsModal from "../components/CommentsModal";
+import ImagesService from "../services/ImagesService";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
+
+const getSortedImages = (allImages: { id: number; url: string }[], dish: Dish) => {
+  const priorityIds = [dish.mainImageId, dish.secondaryImageId, dish.thirdImageId];
+  const sorted: { id: number; url: string }[] = [];
+
+  for (const id of priorityIds) {
+    if (!id) continue;
+    const found = allImages.find((img) => String(img.id) === String(id));
+    if (found && !sorted.some((s) => s.id === found.id)) sorted.push(found);
+  }
+
+  for (const img of allImages) {
+    if (!sorted.some((s) => s.id === img.id)) sorted.push(img);
+  }
+  return sorted;
+};
+
+const getCategoryName = (category: any, language: string) => {
+  if (language === "pl") return category.namePl;
+  if (language === "de") return category.nameDe;
+  if (language === "es") return category.nameEs;
+  return category.nameEn;
+};
 
 export default function DishDetails() {
   const { t, i18n } = useTranslation();
@@ -31,10 +56,20 @@ export default function DishDetails() {
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
   const hasFetched = useRef<number | null>(null);
-  const totalImages = 5;
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  
+  let displayImages = imageUrls.length > 0 ? [...imageUrls] : [];
+  if (imageUrls.length > 0) {
+      while (displayImages.length < 5) {
+          displayImages = [...displayImages, ...imageUrls];
+      }
+  }
+  
+  const totalImages = displayImages.length > 0 ? displayImages.length : 1;
+  const uniqueCount = imageUrls.length > 0 ? imageUrls.length : 1;
+
   const emptyCategories = t("no_categories");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [isPublic, setIsPublic] = useState(false);
 
   const getImageStyle = (index: number) => {
     let offset = index - currentImageIndex;
@@ -67,7 +102,6 @@ export default function DishDetails() {
         break;
       case 2:
         scale = 0.5;
-        opacity = 0.25;
         zIndex = 3;
         break;
     }
@@ -83,16 +117,33 @@ export default function DishDetails() {
 
     const load = async () => {
       setIsLoading(true);
-      const data = await DishesService.getDishById(dishId);
-      setDish(data);
+      try {
+        const data = await DishesService.getDishById(dishId);
+        if (data) {
+           setDish(data);
+           setServings(1);
+           
+           const commentsData = await CommentsService.getCommentsByDishId(dishId);
+           setComments(commentsData);
 
-      const commentsData = await CommentsService.getCommentsByDishId(dishId);
-      setComments(commentsData);
+           try {
+             const allImages = await ImagesService.getAllImages(dishId);
+             
+             const sorted = getSortedImages(allImages, data);
 
+             setImageUrls(sorted.map(s => s.url));
+             setCurrentImageIndex(0);
+           } catch(imgError) {
+             toast.error(t("error_loading_dish\n"+imgError));
+           }
+        }
+      } catch (error) {
+        toast.error(t("error_loading_dish\n"+error));
+      }
       setIsLoading(false);
     };
     load();
-  }, [id]);
+  }, [id, t]);
 
   const handleCommentAdded = (comment: Comment) => {
     setComments((prevComments) => [...prevComments, comment]);
@@ -153,6 +204,23 @@ export default function DishDetails() {
       });
   };
 
+  const addToShoppingList = () => {
+    if (!dish?.ingredients || dish.ingredients.length === 0) {
+      toast.warning(t("dish_details_page_no_ingredients_to_copy"));
+      return;
+    }
+
+    const currentList = JSON.parse(localStorage.getItem("sneakfit_shopping_list_v3") || "[]");
+    const newItems = dish.ingredients.map((ing, index) => ({
+      id: `${Date.now()}-${index}`,
+      name: `${ing.name} ${scaleIngredientQuantity(ing.description)}`.trim(),
+      completed: false
+    }));
+    
+    localStorage.setItem("sneakfit_shopping_list_v3", JSON.stringify([...newItems, ...currentList]));
+    toast.success(t("shopping_list_added_success"));
+  };
+
   if (isLoading)
     return (
       <div className="loading-container">
@@ -197,6 +265,8 @@ export default function DishDetails() {
                     const { scale, opacity, zIndex, translateX } =
                       getImageStyle(index);
 
+                    const imgUrl = displayImages[index];
+
                     return (
                       <div
                         key={`carousel-image-${dish.id}-${index}`}
@@ -207,10 +277,10 @@ export default function DishDetails() {
                           zIndex: zIndex,
                         }}
                       >
-                        {!dish.mainImageId || dish.mainImageId <= 1 ? (
-                          <RestaurantMenu className="carousel-placeholder-icon" />
+                        {imgUrl ? (
+                           <img src={imgUrl} alt={`${dish.name} ${t("dish_alt_text")} ${index + 1}`} />
                         ) : (
-                          <img alt={`${dish.name} view ${index + 1}`} />
+                           <RestaurantMenu className="carousel-placeholder-icon" />
                         )}
                       </div>
                     );
@@ -232,11 +302,11 @@ export default function DishDetails() {
             </div>
 
             <div className="carousel-indicators">
-              {Array.from({ length: totalImages }).map((_, index) => (
+              {Array.from({ length: uniqueCount }).map((_, index) => (
                 <button
                   key={`carousel-indicator-${dish.id}-${index}`}
                   className={`indicator ${
-                    index === currentImageIndex ? "active" : ""
+                    index === currentImageIndex % uniqueCount ? "active" : ""
                   }`}
                   onClick={() => setCurrentImageIndex(index)}
                   aria-label={`${t("carousel_go_to_image")} ${index + 1}`}
@@ -258,10 +328,7 @@ export default function DishDetails() {
                       borderColor: `${c.color}40`
                     }}
                   >
-                    {i18n.language === "pl" ? c.namePl :
-                     i18n.language === "de" ? c.nameDe :
-                     i18n.language === "es" ? c.nameEs :
-                     c.nameEn}
+                    {getCategoryName(c, i18n.language)}
                   </span>
                 ))
               ) : (
@@ -297,6 +364,17 @@ export default function DishDetails() {
                   >
                     <ContentCopy className="copy-icon" />
                     {t("dish_details_page_copy_ingredients")}
+                  </button>
+                )}
+                {dish.ingredients && dish.ingredients.length > 0 && (
+                  <button
+                    className="copy-ingredients-btn"
+                    onClick={addToShoppingList}
+                    title={t("add_to_shopping_list")}
+                    style={{ marginLeft: '0.5rem' }}
+                  >
+                    <AddShoppingCartIcon className="copy-icon" />
+                    {t("add_to_shopping_list")}
                   </button>
                 )}
               </div>
@@ -427,9 +505,27 @@ export default function DishDetails() {
       <DishSettingsModal
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        isPublic={isPublic}
-        onChangePublic={setIsPublic}
         dishId={dish.id}
+        onUpdate={() => {
+          hasFetched.current = null;
+          const load = async () => {
+            setIsLoading(true);
+            const data = await DishesService.getDishById(dish.id);
+            if (data) {
+                setDish(data);
+                try {
+                  const allImages = await ImagesService.getAllImages(dish.id);
+                  const sorted = getSortedImages(allImages, data);
+                  setImageUrls(sorted.map(s => s.url));
+                  setCurrentImageIndex(0);
+                } catch (e) {
+                   console.error("Failed to reload images", e);
+                }
+            }
+            setIsLoading(false);
+          };
+          load();
+        }}
       />
     </div>
   );

@@ -4,7 +4,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import "./styles/ShoppingListPage.css";
-import "./styles/ProfilePage.css"; // Reuse page-title styles
+import "./styles/ProfilePage.css";
 
 interface ShoppingItem {
   id: string;
@@ -14,13 +14,15 @@ interface ShoppingItem {
 
 export default function ShoppingListPage() {
   const { t } = useTranslation();
-  const [items, setItems] = useState<ShoppingItem[]>([]);
+  const [items, setItems] = useState<ShoppingItem[]>(() => {
+    try {
+      const saved = localStorage.getItem("sneakfit_shopping_list_v3");
+      return saved ? JSON.parse(saved) : [];
+    } catch {
+      return [];
+    }
+  });
   const [inputValue, setInputValue] = useState("");
-
-  useEffect(() => {
-    const saved = localStorage.getItem("sneakfit_shopping_list_v3");
-    if (saved) setItems(JSON.parse(saved));
-  }, []);
 
   useEffect(() => {
     localStorage.setItem("sneakfit_shopping_list_v3", JSON.stringify(items));
@@ -49,10 +51,15 @@ export default function ShoppingListPage() {
     setItems(items.filter(item => item.id !== id));
   };
 
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
+
   const clearAll = () => {
-    if (globalThis.confirm(t("confirm_clear"))) {
-      setItems([]);
-    }
+    setShowClearConfirm(true);
+  };
+
+  const confirmClear = () => {
+    setItems([]);
+    setShowClearConfirm(false);
   };
 
   return (
@@ -114,6 +121,29 @@ export default function ShoppingListPage() {
           </button>
         )}
       </div>
+
+      {showClearConfirm && (
+        <div className="delete-confirm-overlay" onPointerDown={(e) => e.stopPropagation()}>
+          <div className="delete-confirm-modal">
+            <h4>{t("shopping_list_clear_modal_title")}</h4>
+            <p>{t("shopping_list_clear_modal_message")}</p>
+            <div className="delete-confirm-actions">
+              <button
+                className="delete-confirm-btn cancel"
+                onClick={() => setShowClearConfirm(false)}
+              >
+                {t("cancel")}
+              </button>
+              <button
+                className="delete-confirm-btn confirm"
+                onClick={confirmClear}
+              >
+                {t("delete")}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

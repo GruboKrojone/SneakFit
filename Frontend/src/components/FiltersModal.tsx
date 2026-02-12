@@ -51,10 +51,6 @@ export default function FiltersModal({
 
   const handleApply = () => {
     onApplyFilters(localSelectedCategories);
-
-    // If nothing selected, maybe we want to keep it open?
-    // User usually expects filter panel to close on apply or stay open for multiple changes.
-    // Let's close it for better UX on mobile/slide-ins.
     onClose();
   };
 
@@ -79,9 +75,11 @@ export default function FiltersModal({
 
   return (
     <>
-      <div
+      <button
+        type="button"
         className={`filter-modal-overlay ${isOpen ? "open" : ""}`}
         onClick={onClose}
+        aria-label={t("common_close")}
       />
       <div className={`filter-modal-content ${isOpen ? "open" : ""}`}>
         <div className="filter-header">

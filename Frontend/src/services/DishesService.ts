@@ -113,7 +113,6 @@ class DishesService {
 
       const dishId = await response.json();
       
-      // Return the dish with the ID from backend
       return {
         ...dish,
         id: dishId,
@@ -216,6 +215,133 @@ class DishesService {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       throw new Error(`Failed to add dish ${dishId} to favorites: ${errorMessage}`);
+    }
+  }
+
+  static async getRecommendedDishes(): Promise<Dish[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/recommended`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_fetch_recommended_failed"));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching recommended dishes:", error);
+      return [];
+    }
+  }
+
+  static async addStep(dishId: number, description: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/addStep`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+        body: JSON.stringify(description),
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_add_step_failed"));
+      }
+    } catch (error) {
+      console.error("Error adding step:", error);
+      throw error;
+    }
+  }
+
+  static async updateStep(stepId: number, description: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/step/${stepId}/update`, {
+        method: "PUT",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+        body: JSON.stringify(description),
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_update_step_failed"));
+      }
+    } catch (error) {
+      console.error("Error updating step:", error);
+      throw error;
+    }
+  }
+
+  static async getSteps(dishId: number): Promise<any[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/steps`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_fetch_steps_failed"));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching steps:", error);
+      return [];
+    }
+  }
+
+  static async deleteStep(stepId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/step/${stepId}/delete`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_delete_step_failed"));
+      }
+    } catch (error) {
+      console.error("Error deleting step:", error);
+      throw error;
+    }
+  }
+
+  static async rateDish(dishId: number, rating: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/rate`, {
+        method: "PUT",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+        body: JSON.stringify(rating),
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_rate_failed"));
+      }
+    } catch (error) {
+      console.error("Error rating dish:", error);
+      throw error;
     }
   }
 }

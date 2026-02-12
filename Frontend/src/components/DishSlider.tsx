@@ -19,6 +19,13 @@ import {
 } from "../utils/recipeStorage";
 import DishesService from "../services/DishesService";
 
+const getCategoryName = (category: any, language: string) => {
+  if (language === "pl") return category.namePl;
+  if (language === "de") return category.nameDe;
+  if (language === "es") return category.nameEs;
+  return category.nameEn;
+};
+
 type ActionType = "pass" | "loved" | "smash" | null;
 
 export default function DishSlider() {
@@ -520,10 +527,7 @@ export default function DishSlider() {
                     borderColor: `${cat.color}40`
                   }}
                 >
-                  {i18n.language === "pl" ? cat.namePl :
-                   i18n.language === "de" ? cat.nameDe :
-                   i18n.language === "es" ? cat.nameEs :
-                   cat.nameEn}
+                  {getCategoryName(cat, i18n.language)}
                 </span>
               ))}
             </div>
