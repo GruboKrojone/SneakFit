@@ -281,5 +281,6 @@
   "add_to_shopping_list": "Añadir a la lista de la compra",
   "shopping_list_added_success": "Ingredientes añadidos a la lista de la compra",
   "shopping_list_clear_modal_title": "Borrar lista de compras",
-  "shopping_list_clear_modal_message": "¿Seguro que quieres borrar la lista de la compra?"
+  "shopping_list_clear_modal_message": "¿Seguro que quieres borrar la lista de la compra?",
+  "shopping_list_item": "Artículo"
 }

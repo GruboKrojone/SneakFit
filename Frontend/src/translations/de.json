@@ -281,5 +281,6 @@
   "add_to_shopping_list": "Zur Einkaufsliste hinzufügen",
   "shopping_list_added_success": "Zutaten zur Einkaufsliste hinzugefügt",
   "shopping_list_clear_modal_title": "Einkaufsliste löschen",
-  "shopping_list_clear_modal_message": "Sind Sie sicher, dass Sie die Einkaufsliste löschen möchten?"
+  "shopping_list_clear_modal_message": "Sind Sie sicher, dass Sie die Einkaufsliste löschen möchten?",
+  "shopping_list_item": "Artikel"
 }

@@ -287,5 +287,6 @@
   "add_to_shopping_list": "Add to shopping list",
   "shopping_list_added_success": "Ingredients added to shopping list",
   "shopping_list_clear_modal_title": "Clear Shopping List",
-  "shopping_list_clear_modal_message": "Are you sure you want to clear the shopping list?"
+  "shopping_list_clear_modal_message": "Are you sure you want to clear the shopping list?",
+  "shopping_list_item": "Item"
 }

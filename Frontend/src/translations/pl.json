@@ -282,5 +282,6 @@
   "add_to_shopping_list": "Dodaj do listy zakupów",
   "shopping_list_added_success": "Składniki dodane do listy zakupów",
   "shopping_list_clear_modal_title": "Wyczyść listę zakupów",
-  "shopping_list_clear_modal_message": "Czy na pewno chcesz wyczyścić listę zakupów?"
+  "shopping_list_clear_modal_message": "Czy na pewno chcesz wyczyścić listę zakupów?",
+  "shopping_list_item": "Produkt"
 }

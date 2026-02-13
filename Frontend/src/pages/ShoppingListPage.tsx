@@ -1,8 +1,15 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
+import * as XLSX from "xlsx";
+import { saveAs } from "file-saver";
 import DeleteIcon from "@mui/icons-material/Delete";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import AddIcon from "@mui/icons-material/Add";
+import PictureAsPdfIcon from "@mui/icons-material/PictureAsPdf";
+import GridOnIcon from "@mui/icons-material/GridOn";
 import "./styles/ShoppingListPage.css";
 import "./styles/ProfilePage.css";
 
@@ -62,6 +69,59 @@ export default function ShoppingListPage() {
     setShowClearConfirm(false);
   };
 
+  const exportToPdf = async () => {
+    const doc = new jsPDF();
+
+    const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
+      let binary = "";
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCodePoint(bytes[i]);
+      }
+      return globalThis.btoa(binary);
+    };
+
+    try {
+      const response = await fetch("/fonts/Roboto-Regular.ttf");
+      if (response.ok) {
+        const buffer = await response.arrayBuffer();
+        const fontBase64 = arrayBufferToBase64(buffer);
+        doc.addFileToVFS("Roboto-Regular.ttf", fontBase64);
+        doc.addFont("Roboto-Regular.ttf", "Roboto", "normal");
+        doc.setFont("Roboto");
+      }
+    } catch (error) {
+      console.error("Failed to load custom font", error);
+    }
+
+    doc.text(t("shopping_list_title"), 14, 20);
+    
+    const tableData = items.map(item => [
+      item.name
+    ]);
+
+    autoTable(doc, {
+      startY: 30,
+      head: [[t("shopping_list_item") || "Item"]],
+      body: tableData,
+      styles: { font: "Roboto", fontStyle: "normal" },
+    });
+
+    doc.save("shopping_list.pdf");
+  };
+
+  const exportToExcel = () => {
+    const worksheet = XLSX.utils.json_to_sheet(items.map(item => ({
+      [t("shopping_list_item") || "Item"]: item.name
+    })));
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Shopping List");
+    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const data = new Blob([excelBuffer], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8" });
+    saveAs(data, "shopping_list.xlsx");
+  };
+
   return (
     <div className="shopping-list-page">
       <div className="page-title">{t("shopping_list_title")}</div>
@@ -76,7 +136,7 @@ export default function ShoppingListPage() {
             placeholder={t("shopping_list_add_placeholder")}
           />
           <button className="shopping-list-add-btn" type="submit">
-            {t("shopping_list_add_button")}
+            <AddIcon /> {t("shopping_list_add_button")}
           </button>
         </form>
 
@@ -116,9 +176,19 @@ export default function ShoppingListPage() {
         </div>
 
         {items.length > 0 && (
-          <button className="shopping-list-clear-btn" onClick={clearAll}>
-            {t("shopping_list_clear_all")}
-          </button>
+          <div className="shopping-list-footer">
+            <div className="export-buttons">
+              <button onClick={exportToPdf} className="export-btn pdf" title="Export to PDF">
+                <PictureAsPdfIcon fontSize="small" />
+              </button>
+              <button onClick={exportToExcel} className="export-btn excel" title="Export to Excel">
+                <GridOnIcon fontSize="small" />
+              </button>
+            </div>
+            <button className="shopping-list-clear-btn" onClick={clearAll}>
+              {t("shopping_list_clear_all")}
+            </button>
+          </div>
         )}
       </div>
 
