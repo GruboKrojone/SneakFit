@@ -16,6 +16,7 @@ import {
   addNotLikedRecipe,
   addFavouriteRecipe,
   getAllRatedRecipeIds,
+  addToHistory,
 } from "../utils/recipeStorage";
 import DishesService from "../services/DishesService";
 
@@ -107,6 +108,9 @@ export default function DishSlider() {
             addFavouriteRecipe(currentDish.id);
             DishesService.addDishToFavorites(currentDish.id);
             break;
+        }
+        if (animationType) {
+          addToHistory(currentDish, animationType);
         }
       }
       

@@ -288,5 +288,9 @@
   "shopping_list_added_success": "Ingredients added to shopping list",
   "shopping_list_clear_modal_title": "Clear Shopping List",
   "shopping_list_clear_modal_message": "Are you sure you want to clear the shopping list?",
-  "shopping_list_item": "Item"
+  "shopping_list_item": "Item",
+  "history_title": "Activity History",
+  "history_empty": "No recent activity",
+  "clear_history": "Clear History",
+  "confirm_clear_history": "Are you sure you want to clear your activity history?"
 }

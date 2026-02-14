@@ -282,5 +282,9 @@
   "shopping_list_added_success": "Zutaten zur Einkaufsliste hinzugefügt",
   "shopping_list_clear_modal_title": "Einkaufsliste löschen",
   "shopping_list_clear_modal_message": "Sind Sie sicher, dass Sie die Einkaufsliste löschen möchten?",
-  "shopping_list_item": "Artikel"
+  "shopping_list_item": "Artikel",
+  "history_title": "Aktivitätsverlauf",
+  "history_empty": "Keine letzten Aktivitäten",
+  "clear_history": "Verlauf löschen",
+  "confirm_clear_history": "Möchten Sie Ihren Aktivitätsverlauf wirklich löschen?"
 }

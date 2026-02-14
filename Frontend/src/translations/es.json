@@ -282,5 +282,9 @@
   "shopping_list_added_success": "Ingredientes añadidos a la lista de la compra",
   "shopping_list_clear_modal_title": "Borrar lista de compras",
   "shopping_list_clear_modal_message": "¿Seguro que quieres borrar la lista de la compra?",
-  "shopping_list_item": "Artículo"
+  "shopping_list_item": "Artículo",
+  "history_title": "Historial de actividad",
+  "history_empty": "No hay actividad reciente",
+  "clear_history": "Borrar historial",
+  "confirm_clear_history": "¿Estás seguro de que deseas borrar tu historial de actividad?"
 }
