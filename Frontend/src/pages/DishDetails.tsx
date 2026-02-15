@@ -14,6 +14,9 @@ import ContentCopy from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
+import StarHalfIcon from "@mui/icons-material/StarHalf";
 import MacroCircle from "../components/MacroCircle";
 import CommentsModal from "../components/CommentsModal";
 import ImagesService from "../services/ImagesService";
@@ -70,6 +73,66 @@ export default function DishDetails() {
 
   const emptyCategories = t("no_categories");
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [isRatingEditing, setIsRatingEditing] = useState(false);
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+
+  useEffect(() => {
+    if (dish && !isRatingEditing) {
+      setRating(dish.rates || 0);
+    }
+  }, [dish, isRatingEditing]);
+
+  const handleSaveRating = () => {
+    handleRate(rating);
+    setIsRatingEditing(false);
+    setHoverRating(0);
+  };
+
+  const handleRatingEditClick = () => {
+    setRating(dish?.rates || 0);
+    setIsRatingEditing(true);
+  };
+
+  const handleStarClickInternal = (ratingValue: number) => {
+     setRating(ratingValue);
+  };
+
+  const incrementRating = () => setRating((prev) => Math.min(5, prev + 0.5));
+  const decrementRating = () => setRating((prev) => Math.max(0.5, prev - 0.5));
+
+  const renderStars = (value: number, interactive: boolean) => {
+    return [1, 2, 3, 4, 5].map((starValue) => {
+      const ratingToUse = (interactive && hoverRating > 0) ? hoverRating : value;
+      const filled = ratingToUse >= starValue;
+      const half = ratingToUse > starValue - 1 && ratingToUse < starValue;
+
+      let icon = <StarBorderIcon fontSize="inherit" />;
+      if (filled) icon = <StarIcon fontSize="inherit" />;
+      else if (half) icon = <StarHalfIcon fontSize="inherit" />;
+
+      return (
+        <button
+          key={starValue}
+          className={`star-icon ${filled ? "filled" : ""} ${half ? "half" : ""} ${interactive ? "interactive" : ""}`}
+            style={{
+            fontSize: "2rem",
+            display: "inline-flex",
+            background: "none",
+            border: "none",
+            padding: 0,
+          }}
+          onClick={() => interactive && handleStarClickInternal(starValue)}
+          onMouseEnter={() => interactive && setHoverRating(starValue)}
+          type="button"
+          disabled={!interactive}
+          aria-label={`Rate ${starValue} out of 5`}
+        >
+          {icon}
+        </button>
+      );
+    });
+  };
 
   const getImageStyle = (index: number) => {
     let offset = index - currentImageIndex;
@@ -219,6 +282,17 @@ export default function DishDetails() {
     
     localStorage.setItem("sneakfit_shopping_list_v3", JSON.stringify([...newItems, ...currentList]));
     toast.success(t("shopping_list_added_success"));
+  };
+
+  const handleRate = async (rating: number) => {
+    if (!dish) return;
+    try {
+      await DishesService.rateDish(dish.id, rating);
+      setDish((prev) => (prev ? { ...prev, rates: rating } : null));
+      toast.success(t("rating_saved_success") || "Rating saved!");
+    } catch (error) {
+      toast.error(t("service_unknown_error\n"+error));
+    }
   };
 
   if (isLoading)
@@ -479,7 +553,41 @@ export default function DishDetails() {
         </div>
 
         <div className="grid-item grid-4">
-          <div className="action-buttons">
+          <div className="grid-4-left">
+            <div className="rating-container-inner">
+              {isRatingEditing ? (
+                <div className="rating-edit-mode">
+                  <div className="rating-controls">
+                    <button className="rating-adjust-btn" onClick={decrementRating}>
+                      -
+                    </button>
+                    <div className="stars-wrapper" onMouseLeave={() => isRatingEditing && setHoverRating(0)}>{renderStars(rating, true)}</div>
+                    <button className="rating-adjust-btn" onClick={incrementRating}>
+                      +
+                    </button>
+                  </div>
+                  <div className="rating-value">{rating.toFixed(1)}</div>
+                  <div className="rating-actions">
+                    <button className="rating-save-btn" onClick={handleSaveRating}>
+                      {t("save_rating")}
+                    </button>
+                    <button className="rating-cancel-btn" onClick={() => setIsRatingEditing(false)}>
+                      {t("common_close")}
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="rating-view-mode">
+                  <div className="stars-wrapper">{renderStars(dish.rates || 0, false)}</div>
+                  <div className="rating-value">{(dish.rates || 0).toFixed(1)}</div>
+                  <button className="rating-edit-btn" onClick={handleRatingEditClick}>
+                    {t("rate_dish")}
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="grid-4-right action-buttons">
             <button className="btn btn-decline" onClick={() => navigate(-1)}>
               <Undo className="undo-icon" />
               {t("dish_details_page_back_button")}

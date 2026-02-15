@@ -75,18 +75,20 @@
 .close-btn {
   background: none;
   border: none;
-  color: var(--text-light);
+  color: var(--text);
   cursor: pointer;
   padding: 0.5rem;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.2s;
+  transition: all 0.3s ease;
 }
 
 .close-btn:hover {
-  background: var(--border);
+  color: var(--accent);
+  background: rgba(255, 107, 53, 0.1);
+  transform: none;
 }
 
 .history-list {

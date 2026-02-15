@@ -266,6 +266,7 @@
   "create_dish_modal_max_categories": "Die maximale Anzahl an Kategorien beträgt 5",
   "update_dish_photos_success": "Fotos erfolgreich aktualisiert",
   "update_dish_photos_error": "Fehler beim Aktualisieren der Fotos",
+  "no_matching_results": "Keine passenden Ergebnisse",
   "filters_title": "Filter",
   "filter_by_category": "Nach Kategorie filtern",
   "clear_filters": "Löschen",
@@ -286,5 +287,14 @@
   "history_title": "Aktivitätsverlauf",
   "history_empty": "Keine letzten Aktivitäten",
   "clear_history": "Verlauf löschen",
-  "confirm_clear_history": "Möchten Sie Ihren Aktivitätsverlauf wirklich löschen?"
+  "rate_dish": "Bewerten",
+  "save_rating": "Speichern",
+  "filter_min_rating": "Mindestbewertung",
+  "sort_by": "Sortieren nach",
+  "sort_rating_desc": "Höchste Bewertung",
+  "sort_rating_asc": "Niedrigste Bewertung",
+  "sort_default": "Standard",
+  "rating_saved_success": "Bewertung erfolgreich gespeichert!",
+  "rating_your_rating": "Ihre Bewertung:",
+  "rating_dish_rating": "Gerichtbewertung:"
 }

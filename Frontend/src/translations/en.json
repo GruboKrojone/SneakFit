@@ -272,6 +272,7 @@
   "create_dish_modal_max_categories": "The maximum number of categories is 5",
   "update_dish_photos_success": "Photos updated successfully",
   "update_dish_photos_error": "Error updating photos",
+  "no_matching_results": "No matching results",
   "filters_title": "Filters",
   "filter_by_category": "Filter by category",
   "clear_filters": "Clear",
@@ -292,5 +293,14 @@
   "history_title": "Activity History",
   "history_empty": "No recent activity",
   "clear_history": "Clear History",
-  "confirm_clear_history": "Are you sure you want to clear your activity history?"
+  "rate_dish": "Rate",
+  "save_rating": "Save",
+  "filter_min_rating": "Minimum Rating",
+  "sort_by": "Sort by",
+  "sort_rating_desc": "Highest rated",
+  "sort_rating_asc": "Lowest rated",
+  "sort_default": "Default",
+  "rating_saved_success": "Rating saved successfully!",
+  "rating_your_rating": "Your rating:",
+  "rating_dish_rating": "Dish rating:"
 }

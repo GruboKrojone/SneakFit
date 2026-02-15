@@ -47,15 +47,19 @@
   border: none;
   cursor: pointer;
   color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0.5rem;
-  transition: all 0.2s ease;
-  border-radius: 50%;
+  transition: all 0.3s ease;
   z-index: 10;
+  border-radius: 50%;
 }
 
 .close-button:hover {
-  color: #ff6b35;
-  background: #ff6b351a;
+  color: var(--accent);
+  background: rgba(255, 107, 53, 0.1);
+  transform: none;
 }
 
 .close-icon {

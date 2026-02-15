@@ -326,7 +326,7 @@ class DishesService {
 
   static async rateDish(dishId: number, rating: number): Promise<void> {
     try {
-      const response = await fetch(`${this.baseUrl}/dish/${dishId}/rate`, {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/rate?rating=${rating}`, {
         method: "PUT",
         headers: {
           accept: "application/json",

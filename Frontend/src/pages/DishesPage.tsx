@@ -19,15 +19,32 @@ export default function DishesPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
   const [filterCategories, setFilterCategories] = useState<number[]>([]);
+  const [sortBy, setSortBy] = useState<string>("none");
+  const [minRating, setMinRating] = useState(0);
   const hasFetched = useRef(false);
   const emptyCategories = t("no_categories");
 
   const filteredDishes = useMemo(() => {
-    if (filterCategories.length === 0) return dishes;
-    return dishes.filter((dish) =>
-      dish.categories?.some((cat) => filterCategories.includes(cat.id))
-    );
-  }, [dishes, filterCategories]);
+    let result = dishes;
+
+    if (filterCategories.length > 0) {
+      result = result.filter((dish) =>
+        dish.categories?.some((cat) => filterCategories.includes(cat.id))
+      );
+    }
+
+    if (minRating > 0) {
+      result = result.filter((dish) => (dish.rates || 0) >= minRating);
+    }
+
+    if (sortBy === "rating_desc") {
+      result = [...result].sort((a, b) => (b.rates || 0) - (a.rates || 0));
+    } else if (sortBy === "rating_asc") {
+      result = [...result].sort((a, b) => (a.rates || 0) - (b.rates || 0));
+    }
+
+    return result;
+  }, [dishes, filterCategories, sortBy, minRating]);
 
   const fetchDishes = async () => {
     setLoading(true);
@@ -82,52 +99,58 @@ export default function DishesPage() {
             />
           </div>
           <div className="dishes-container">
-            <div className="dishes-grid">
-              {filteredDishes.map((dish) => (
-                <div
-                  className="dishes-box"
-                  key={dish.id}
-                  onPointerUp={() => navigate(`/${locale}/dish/${dish.id}`)}
-                >
-                  <div className="dishes-owner">{dish.ownerName ?? "-"}</div>
-                  <div className="dishes-image-wrap">
-                    <DishImage 
-                      dishId={dish.id} 
-                      alt={dish.name} 
-                      className="dishes-image" 
-                      placeholderClassName="dishes-restaurant-icon"
-                    />
-                  </div>
-                  <div className="dishes-body">
-                    <div className="dishes-name">{dish.name}</div>
-                    <div className="dishes-categories">
-                      {dish.categories && dish.categories.length > 0
-                        ? dish.categories.map((c) => {
-                            let localizedName = c.nameEn;
-                            if (i18n.language === "pl") localizedName = c.namePl || c.nameEn;
-                            else if (i18n.language === "de") localizedName = c.nameDe || c.nameEn;
-                            else if (i18n.language === "es") localizedName = c.nameEs || c.nameEn;
-                            
-                            return (
-                              <span 
-                                key={c.id} 
-                                className="dishes-category-tag"
-                                style={{ 
-                                  borderColor: c.color,
-                                  color: c.color,
-                                  background: `${c.color}15`
-                                }}
-                              >
-                                {localizedName}
-                              </span>
-                            );
-                          })
-                        : emptyCategories}
+            {filteredDishes.length > 0 ? (
+              <div className="dishes-grid">
+                {filteredDishes.map((dish) => (
+                  <div
+                    className="dishes-box"
+                    key={dish.id}
+                    onPointerUp={() => navigate(`/${locale}/dish/${dish.id}`)}
+                  >
+                    <div className="dishes-owner">{dish.ownerName ?? "-"}</div>
+                    <div className="dishes-image-wrap">
+                      <DishImage 
+                        dishId={dish.id} 
+                        alt={dish.name} 
+                        className="dishes-image" 
+                        placeholderClassName="dishes-restaurant-icon"
+                      />
+                    </div>
+                    <div className="dishes-body">
+                      <div className="dishes-name">{dish.name}</div>
+                      <div className="dishes-categories">
+                        {dish.categories && dish.categories.length > 0
+                          ? dish.categories.map((c) => {
+                              let localizedName = c.nameEn;
+                              if (i18n.language === "pl") localizedName = c.namePl || c.nameEn;
+                              else if (i18n.language === "de") localizedName = c.nameDe || c.nameEn;
+                              else if (i18n.language === "es") localizedName = c.nameEs || c.nameEn;
+                              
+                              return (
+                                <span 
+                                  key={c.id} 
+                                  className="dishes-category-tag"
+                                  style={{ 
+                                    borderColor: c.color,
+                                    color: c.color,
+                                    background: `${c.color}15`
+                                  }}
+                                >
+                                  {localizedName}
+                                </span>
+                              );
+                            })
+                          : emptyCategories}
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            ) : (
+              <div className="no-results-text">
+                {t("no_matching_results")}
+              </div>
+            )}
           </div>
         </>
       )}
@@ -142,6 +165,10 @@ export default function DishesPage() {
         selectedCategories={filterCategories}
         onApplyFilters={setFilterCategories}
         onClearFilters={() => setFilterCategories([])}
+        selectedSort={sortBy}
+        onApplySort={setSortBy}
+        minRating={minRating}
+        onApplyMinRating={setMinRating}
       />
     </div>
   );

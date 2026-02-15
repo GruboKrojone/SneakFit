@@ -239,6 +239,14 @@
   animation: shimmer 1.5s infinite;
 }
 
+.no-results-text {
+  text-align: center;
+  font-size: 1.25rem;
+  color: var(--text-light);
+  margin-top: 3rem;
+  width: 100%;
+}
+
 .skeleton-owner {
   height: 1.3rem;
   width: 60%;

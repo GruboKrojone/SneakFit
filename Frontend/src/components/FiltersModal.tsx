@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import StarIcon from "@mui/icons-material/Star";
+import StarBorderIcon from "@mui/icons-material/StarBorder";
 import CategoriesService, { Category } from "../services/CategoriesService";
 import CloseIcon from "@mui/icons-material/Close";
 import "./styles/FiltersModal.css";
@@ -10,6 +12,10 @@ interface FiltersModalProps {
   readonly selectedCategories: number[];
   readonly onApplyFilters: (categoryIds: number[]) => void;
   readonly onClearFilters: () => void;
+  readonly selectedSort: string;
+  readonly onApplySort: (sort: string) => void;
+  readonly minRating: number;
+  readonly onApplyMinRating: (rating: number) => void;
 }
 
 export default function FiltersModal({
@@ -18,12 +24,19 @@ export default function FiltersModal({
   selectedCategories,
   onApplyFilters,
   onClearFilters,
+  selectedSort,
+  onApplySort,
+  minRating,
+  onApplyMinRating,
 }: FiltersModalProps) {
   const { t, i18n } = useTranslation();
   const [categories, setCategories] = useState<Category[]>([]);
   const [localSelectedCategories, setLocalSelectedCategories] = useState<number[]>(
     []
   );
+  const [localSort, setLocalSort] = useState<string>("none");
+  const [localMinRating, setLocalMinRating] = useState<number>(0);
+  const [hoverRating, setHoverRating] = useState<number>(0);
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -40,8 +53,10 @@ export default function FiltersModal({
   useEffect(() => {
     if (isOpen) {
       setLocalSelectedCategories(selectedCategories);
+      setLocalSort(selectedSort);
+      setLocalMinRating(minRating);
     }
-  }, [isOpen, selectedCategories]);
+  }, [isOpen, selectedCategories, selectedSort, minRating]);
 
   const toggleCategory = (id: number) => {
     setLocalSelectedCategories((prev) =>
@@ -51,12 +66,18 @@ export default function FiltersModal({
 
   const handleApply = () => {
     onApplyFilters(localSelectedCategories);
+    onApplySort(localSort);
+    onApplyMinRating(localMinRating);
     onClose();
   };
 
   const handleClear = () => {
     setLocalSelectedCategories([]);
+    setLocalSort("none");
+    setLocalMinRating(0);
     onClearFilters();
+    onApplySort("none");
+    onApplyMinRating(0);
     onClose();
   };
 
@@ -90,6 +111,52 @@ export default function FiltersModal({
         </div>
 
         <div className="filter-body">
+          <h3>{t("sort_by")}</h3>
+          <div className="sort-options">
+            <button
+              className={`sort-tag ${localSort === "none" ? "selected" : ""}`}
+              onClick={() => setLocalSort("none")}
+            >
+              {t("sort_default")}
+            </button>
+            <button
+              className={`sort-tag ${localSort === "rating_desc" ? "selected" : ""}`}
+              onClick={() => setLocalSort("rating_desc")}
+            >
+              {t("sort_rating_desc")}
+            </button>
+            <button
+              className={`sort-tag ${localSort === "rating_asc" ? "selected" : ""}`}
+              onClick={() => setLocalSort("rating_asc")}
+            >
+              {t("sort_rating_asc")}
+            </button>
+          </div>
+
+          <fieldset className="rating-fieldset" onMouseLeave={() => setHoverRating(0)}>
+            <h3>{t("filter_min_rating")}</h3>
+            <div className="rating-options">
+              {[1, 2, 3, 4, 5].map((star) => {
+                const isActive = (hoverRating || localMinRating) >= star;
+                return (
+                  <button
+                    key={star}
+                    type="button"
+                    className={`rating-star-btn ${isActive ? "active" : ""}`}
+                    onClick={() => setLocalMinRating(star === localMinRating ? 0 : star)}
+                    onMouseEnter={() => setHoverRating(star)}
+                  >
+                    {isActive ? (
+                      <StarIcon className="rating-star-icon" />
+                    ) : (
+                      <StarBorderIcon className="rating-star-icon" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
           <h3>{t("filter_by_category")}</h3>
           <div className="categories-list">
             {categories.map((cat) => (

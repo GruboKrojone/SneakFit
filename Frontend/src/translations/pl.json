@@ -267,6 +267,7 @@
   "create_dish_modal_max_categories": "Maksymalna liczba kategorii to 5",
   "update_dish_photos_success": "Zdjęcia zostały zaktualizowane",
   "update_dish_photos_error": "Błąd podczas aktualizacji zdjęć",
+  "no_matching_results": "Brak pasujących wyników",
   "filters_title": "Filtry",
   "filter_by_category": "Filtruj po kategorii",
   "clear_filters": "Wyczyść",
@@ -287,5 +288,14 @@
   "history_title": "Historia aktywności",
   "history_empty": "Brak ostatniej aktywności",
   "clear_history": "Wyczyść historię",
-  "confirm_clear_history": "Czy na pewno chcesz wyczyścić historię aktywności?"
+  "rate_dish": "Oceń",
+  "save_rating": "Zapisz",
+  "filter_min_rating": "Ocena minimalna",
+  "sort_by": "Sortuj według",
+  "sort_rating_desc": "Ocena: od najwyższej",
+  "sort_rating_asc": "Ocena: od najniższej",
+  "sort_default": "Domyślnie",
+  "rating_saved_success": "Ocena została zapisana!",
+  "rating_your_rating": "Twoja ocena:",
+  "rating_dish_rating": "Ocena dania:"
 }

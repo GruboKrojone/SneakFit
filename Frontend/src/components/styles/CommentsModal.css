@@ -73,11 +73,6 @@
 .comments-close-button:hover {
   color: var(--accent);
   background: rgba(255, 107, 53, 0.1);
-  transform: none;
-}
-
-.comments-close-icon {
-  font-size: 2rem !important;
 }
 
 .comments-modal-title {

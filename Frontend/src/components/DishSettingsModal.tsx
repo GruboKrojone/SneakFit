@@ -629,6 +629,9 @@ export default function DishSettingsModal({
       onPointerDown={handleModalClose}
     >
       <div className="modal-content" onPointerDown={(e) => e.stopPropagation()}>
+        <button className="close-button" onClick={handleModalClose}>
+          <Close />
+        </button>
         <div className="modal-header">
           {view !== "menu" && (
             <button className="back-arrow" onClick={handleBack}>
@@ -644,10 +647,6 @@ export default function DishSettingsModal({
             {view === "categories" && t("dish_settings_modal_edit_categories")}
             {view === "description" && t("dish_settings_modal_edit_description")}
           </h2>
-
-          <button className="close-button" onClick={handleModalClose}>
-            <Close />
-          </button>
         </div>
 
         {loading ? (
