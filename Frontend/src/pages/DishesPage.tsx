@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import DishesService, { Dish } from "../services/DishesService";
+import AuthService from "../services/AuthService";
 import DishImage from "../components/DishImage";
 import "./styles/DishesPage.css";
 import { useTranslation } from "react-i18next";
@@ -9,6 +10,9 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useNavigate, useParams } from "react-router-dom";
 import CreateDishModal from "../components/CreateDishModal";
 import FiltersModal from "../components/FiltersModal";
+import Star from "@mui/icons-material/Star";
+import StarBorder from "@mui/icons-material/StarBorder";
+import StarHalf from "@mui/icons-material/StarHalf";
 
 export default function DishesPage() {
   const { t, i18n } = useTranslation();
@@ -23,9 +27,18 @@ export default function DishesPage() {
   const [minRating, setMinRating] = useState(0);
   const hasFetched = useRef(false);
   const emptyCategories = t("no_categories");
+  
+  const currentUser = AuthService.getCurrentUser();
+  const currentUserId = currentUser?.id;
 
   const filteredDishes = useMemo(() => {
     let result = dishes;
+
+    if (currentUserId) {
+      result = result.filter(dish => dish.isPublic || dish.ownerId === currentUserId);
+    } else {
+      result = result.filter(dish => dish.isPublic);
+    }
 
     if (filterCategories.length > 0) {
       result = result.filter((dish) =>
@@ -64,6 +77,22 @@ export default function DishesPage() {
     hasFetched.current = true;
     fetchDishes();
   }, []);
+
+  const renderRating = (rating: number = 0) => {
+    return (
+      <div className="dish-rating">
+        {[1, 2, 3, 4, 5].map((starValue) => {
+          if (rating >= starValue) {
+            return <Star key={starValue} className="star-icon filled" />;
+          } else if (rating >= starValue - 0.5) {
+            return <StarHalf key={starValue} className="star-icon half" />;
+          } else {
+            return <StarBorder key={starValue} className="star-icon empty" />;
+          }
+        })}
+      </div>
+    );
+  };
 
   return (
     <div className="dishes-page">
@@ -118,6 +147,7 @@ export default function DishesPage() {
                     </div>
                     <div className="dishes-body">
                       <div className="dishes-name">{dish.name}</div>
+                      {renderRating(dish.rates)}
                       <div className="dishes-categories">
                         {dish.categories && dish.categories.length > 0
                           ? dish.categories.map((c) => {

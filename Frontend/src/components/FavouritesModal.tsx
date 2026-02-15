@@ -6,7 +6,6 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getFavouriteRecipeIds, removeFavouriteRecipe } from "../utils/recipeStorage";
 import { useFetchDishes } from "../hooks/useFetchDishes";
 import type { Dish } from "../services/DishesService";
-import "./styles/CreateDishModal.css";
 import "./styles/FavouritesModal.css";
 
 interface FavouriteModalProps {

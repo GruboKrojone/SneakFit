@@ -52,4 +52,16 @@ public sealed class User : EntityBase
         Age = age;
         MarkAsUpdated();
     }
+
+    public void UpdatePassword(string passwordHash)
+    {
+        Password = passwordHash;
+        MarkAsUpdated();
+    }
+
+    public void UpdateEmail(string email)
+    {
+        Email = email;
+        MarkAsUpdated();
+    }
 }

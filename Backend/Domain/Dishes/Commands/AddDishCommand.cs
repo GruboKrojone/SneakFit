@@ -29,7 +29,8 @@ internal sealed class AddDishCommandHandler(
             input.Calories ?? null,
             input.Protein ?? null,
             input.Carbs ?? null,
-            input.Fat ?? null
+            input.Fat ?? null,
+            input.IsPublic
         );
         dish.AssignToUser(userId);
 

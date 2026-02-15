@@ -13,6 +13,9 @@ import Add from "@mui/icons-material/Add";
 import AddPhotoAlternate from "@mui/icons-material/AddPhotoAlternate";
 import CategoryIcon from "@mui/icons-material/Category";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
+import PublicIcon from "@mui/icons-material/Public";
+import LockIcon from "@mui/icons-material/Lock";
+import Visibility from "@mui/icons-material/Visibility";
 import { toast } from "react-toastify";
 
 import DishesService, { Dish } from "../services/DishesService";
@@ -28,7 +31,7 @@ interface DishSettingsModalProps {
   readonly onUpdate?: () => void;
 }
 
-type ViewState = "menu" | "ingredients" | "macros" | "photos" | "description" | "categories";
+type ViewState = "menu" | "ingredients" | "macros" | "photos" | "description" | "categories" | "visibility";
 
 interface ImageSlot {
   id: number;
@@ -320,7 +323,6 @@ export default function DishSettingsModal({
       return;
     }
 
-    // Optimistic update
     if (isSelected) {
       setSelectedCategoryIds(prev => prev.filter(id => id !== categoryId));
     } else {
@@ -335,7 +337,7 @@ export default function DishSettingsModal({
       }
       setCategoriesChanged(true);
     } catch {
-      // Revert on error
+      
       if (isSelected) {
         setSelectedCategoryIds(prev => [...prev, categoryId]);
       } else {
@@ -431,6 +433,57 @@ export default function DishSettingsModal({
     }
   };
 
+  const renderVisibility = () => (
+    <div className="form-container">
+       <div className="visibility-status" style={{ textAlign: "center", marginBottom: "2rem" }}>
+          {dish?.isPublic ? (
+             <>
+               <PublicIcon style={{ fontSize: "4rem", color: "#4caf50" }} />
+               <h3>{t("dish_settings_modal_public")}</h3>
+             </>
+          ) : (
+             <>
+               <LockIcon style={{ fontSize: "4rem", color: "#ff9800" }} />
+               <h3>{t("dish_settings_modal_private")}</h3>
+             </>
+          )}
+       </div>
+
+       <div className="form-group">
+          <p style={{ textAlign: "center", marginBottom: "1rem" }}>
+             {t("dish_settings_modal_current_privacy")} <strong>{dish?.isPublic 
+                ? t("dish_settings_modal_public")
+                : t("dish_settings_modal_private")
+             }</strong>
+          </p>
+          
+          <button 
+            className="save-button" 
+            onClick={async () => {
+               if (!dish) return;
+               try {
+                  if (dish.isPublic) {
+                     await DishesService.setDishPrivate(dish.id);
+                  } else {
+                     await DishesService.setDishPublic(dish.id);
+                  }
+                  toast.success(t("dish_settings_modal_privacy_updated"));
+                  loadDish();
+               } catch (error) {
+                  toast.error(t("dish_settings_modal_privacy_update_error\n"+error));
+               }
+            }}
+            style={{ 
+              background: dish?.isPublic ? '#ff9800' : '#4caf50',
+              marginTop: '0'
+            }}
+          >
+             {dish?.isPublic ? t("dish_settings_modal_private") : t("dish_settings_modal_public")}
+          </button>
+       </div>
+    </div>
+  );
+
   const renderCategories = () => (
     <div className="form-container" style={{ display: 'flex', flexDirection: 'column' }}>
        <p className="step-hint">
@@ -496,6 +549,13 @@ export default function DishSettingsModal({
          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
            <CategoryIcon />
            {t("dish_settings_modal_edit_categories")}
+         </div>
+         <ChevronRight />
+      </button>
+      <button className="menu-button" onClick={() => setView("visibility")}>
+         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+           <Visibility />
+           {t("dish_settings_modal_privacy_title")}
          </div>
          <ChevronRight />
       </button>
@@ -646,6 +706,7 @@ export default function DishSettingsModal({
             {view === "photos" && t("dish_settings_modal_edit_photos")}
             {view === "categories" && t("dish_settings_modal_edit_categories")}
             {view === "description" && t("dish_settings_modal_edit_description")}
+            {view === "visibility" && t("dish_settings_modal_privacy_title")}
           </h2>
         </div>
 
@@ -661,6 +722,7 @@ export default function DishSettingsModal({
             {view === "photos" && renderPhotos()}
             {view === "categories" && renderCategories()}
             {view === "description" && renderDescription()}
+            {view === "visibility" && renderVisibility()}
           </>
         )}
 

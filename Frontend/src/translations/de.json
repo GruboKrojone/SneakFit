@@ -296,5 +296,18 @@
   "sort_default": "Standard",
   "rating_saved_success": "Bewertung erfolgreich gespeichert!",
   "rating_your_rating": "Ihre Bewertung:",
-  "rating_dish_rating": "Gerichtbewertung:"
+  "rating_dish_rating": "Gerichtbewertung:",
+  "profile_dishes_count": "Erstellte Gerichte",
+  "profile_my_dishes": "Meine Gerichte",
+  "profile_no_dishes": "Sie haben noch keine Gerichte erstellt.",
+  "profile_settings_basic_account": "Grundeinstellungen des Kontos",
+  "profile_settings_basic_account_desc": "Name, E-Mail und Passwort ändern",
+  "back": "Zurück",
+  "profile_settings_password_required": "Passwort ist erforderlich",
+  "profile_settings_current_password": "Aktuelles Passwort",
+  "profile_settings_current_password_placeholder": "Geben Sie das aktuelle Passwort ein",
+  "profile_settings_email_taken": "Diese E-Mail wird bereits verwendet.",
+  "profile_settings_clear_confirm_title": "Auswahl löschen",
+  "profile_settings_clear_confirm_message": "Sind Sie sicher, dass Sie alle Ihre Rezeptbewertungen und Auswahlen entfernen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+  "profile_settings_clear_confirm_confirm": "Löschen"
 }

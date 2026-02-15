@@ -20,6 +20,11 @@ public class DishController(IMediator mediator) : ControllerBase
     public async Task<Unit> MakeDishPublic(int dishId, CancellationToken cancellationToken)
         => await mediator.Send(new MakeDishPublicCommand(dishId), cancellationToken);
 
+    [HttpPut]
+    [Route("{dishId}/private")]
+    public async Task<Unit> MakeDishPrivate(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new MakeDishPrivateCommand(dishId), cancellationToken);
+
     [HttpGet]
     [Route("{dishId}")]
     public async Task<DishDetails> DishDetailsQuery(int dishId, CancellationToken cancellationToken)

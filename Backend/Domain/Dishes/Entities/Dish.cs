@@ -50,7 +50,8 @@ public sealed class Dish : EntityBase
         int? calories,
         int? protein,
         int? carbs,
-        int? fat) : this()
+        int? fat,
+        bool isPublic = false) : this()
     {
         Name = name;
         Description = description;
@@ -58,6 +59,7 @@ public sealed class Dish : EntityBase
         Protein = protein;
         Carbs = carbs;
         Fat = fat;
+        IsPublic = isPublic;
     }
 
     public void AssignToUser(int ownerId)
@@ -89,6 +91,12 @@ public sealed class Dish : EntityBase
     public void MarkAsPublic()
     {
         IsPublic = true;
+        MarkAsUpdated();
+    }
+
+    public void MarkAsPrivate()
+    {
+        IsPublic = false;
         MarkAsUpdated();
     }
 

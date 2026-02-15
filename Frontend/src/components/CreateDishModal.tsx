@@ -7,8 +7,11 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import DeleteIcon from "@mui/icons-material/Delete";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import AddIcon from "@mui/icons-material/Add";
+import PublicIcon from "@mui/icons-material/Public";
+import LockIcon from "@mui/icons-material/Lock";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
+import AuthService from "../services/AuthService";
 import DishesService from "../services/DishesService";
 import ImagesService from "../services/ImagesService";
 import IngredientsService from "../services/IngredientsService";
@@ -30,6 +33,7 @@ const createDishSchemaType = z.object({
   carbs: z.coerce.number(),
   fat: z.coerce.number(),
   description: z.string(),
+  isPublic: z.boolean(),
 });
 
 type CreateDishFormData = z.infer<typeof createDishSchemaType>;
@@ -82,6 +86,7 @@ export default function CreateDishModal({
       .min(1, t("create_dish_modal_description_required"))
       .max(500, t("create_dish_modal_description_max"))
       .trim(),
+    isPublic: z.boolean(),
   });
 
   const step2Schema = z.object({
@@ -112,6 +117,7 @@ export default function CreateDishModal({
     formState: { errors: errorsStep1, isSubmitting: isSubmittingStep1 },
     reset: resetStep1,
     watch: watchStep1,
+    setValue: setValueStep1,
   } = useForm<CreateDishFormData>({
     resolver: zodResolver(createDishSchema) as any,
     defaultValues: {
@@ -121,6 +127,7 @@ export default function CreateDishModal({
       protein: 0,
       fat: 0,
       description: "",
+      isPublic: true,
     },
   });
 
@@ -270,9 +277,51 @@ export default function CreateDishModal({
     }
   };
 
+  const uploadImages = async (): Promise<number[]> => {
+    const uploadedImageIds: number[] = [];
+    for (const img of images) {
+      try {
+        const result = await ImagesService.uploadImage(img.file);
+        uploadedImageIds.push(result.id);
+      } catch (e) {
+        console.error("Failed to upload image", e);
+        toast.error(t("image_service_upload_failed"));
+      }
+    }
+    return uploadedImageIds;
+  };
+
+  const addIngredients = async () => {
+    const currentIngredients = getValuesStep2("ingredientsList");
+    const ingredientIds: number[] = [];
+    
+    for (const ing of currentIngredients) {
+      try {
+          const result = await IngredientsService.addIngredient({
+            name: ing.name,
+            description: ing.description,
+          });
+          ingredientIds.push(result.id);
+      } catch(e) {
+          console.error("Failed to add ingredient", ing.name, e);
+           toast.error(`${t("ingredients_service_add_failed")}: ${ing.name}`);
+      }
+    }
+    return ingredientIds;
+  }
+
+  const assignCategories = async (dishId: number) => {
+    for (const catId of selectedCategoryIds) {
+      try {
+        await CategoriesService.assignToDish(catId, dishId);
+      } catch(e) {
+          console.error("Failed to assign category", catId, e);
+      }
+    }
+  }
+
   const handleFinish = async () => {
     if (!dishFormData) return;
-    
 
     setIsUploading(true);
 
@@ -283,6 +332,10 @@ export default function CreateDishModal({
         return;
       }
 
+      const currentUser = AuthService.getCurrentUser();
+      const ownerId = currentUser ? currentUser.id : 0;
+      const ownerName = currentUser ? currentUser.name || currentUser.email : "";
+
       const newDish: Omit<Dish, "id"> = {
         name: dishFormData.name,
         description: dishFormData.description,
@@ -291,9 +344,10 @@ export default function CreateDishModal({
         protein: dishFormData.protein,
         fat: dishFormData.fat,
         rates: 0,
-        ownerId: 0,
-        ownerName: "",
-        isPublic: false,
+        ownerId: ownerId,
+        userId: ownerId,
+        ownerName: ownerName,
+        isPublic: dishFormData.isPublic,
         categories: [],
         mainImageId: 1,
         secondaryImageId: null,
@@ -303,36 +357,17 @@ export default function CreateDishModal({
       const dishResult = await DishesService.createDish(newDish);
       const dishId = dishResult.id;
 
-      const uploadPromises = images.map(img => ImagesService.uploadImage(img.file));
-      const uploadResults = await Promise.all(uploadPromises);
-      
-      const uploadedImageIds = uploadResults.map((result) => result.id);
-      
+      const uploadedImageIds = await uploadImages();
       if (uploadedImageIds.length > 0) {
         await ImagesService.assignImagesToDish(dishId, uploadedImageIds);
       }
 
-      const currentIngredients = getValuesStep2("ingredientsList");
-      if (currentIngredients.length > 0) {
-        const ingredientIds: number[] = [];
-        
-        for (const ing of currentIngredients) {
-          const result = await IngredientsService.addIngredient({
-            name: ing.name,
-            description: ing.description,
-          });
-          ingredientIds.push(result.id);
-        }
-        
+      const ingredientIds = await addIngredients();
+      if (ingredientIds.length > 0) {
         await IngredientsService.assignMultipleIngredientsToDish(ingredientIds, dishId);
       }
 
-      if (selectedCategoryIds.length > 0) {
-        for (const catId of selectedCategoryIds) {
-          await CategoriesService.assignToDish(catId, dishId);
-        }
-      }
-      
+      await assignCategories(dishId);
       
       toast.success(t("create_dish_modal_success"));
       if (onDishAdded) onDishAdded();
@@ -427,19 +462,19 @@ export default function CreateDishModal({
 
   return (
     <div
-      className={`modal-overlay ${isOpen ? "open" : ""}`}
+      className={`create-dish-modal-overlay ${isOpen ? "open" : ""}`}
       onPointerDown={handleClose}
     >
-      <div className="modal-content" onPointerDown={(e) => e.stopPropagation()}>
+      <div className="create-dish-modal-content" onPointerDown={(e) => e.stopPropagation()}>
         <button
-          className="close-button"
+          className="create-dish-close-button"
           onClick={handleClose}
           title={t("create_dish_modal_close_button")}
         >
           <Close className="close-icon" />
         </button>
 
-        <h2 className="modal-title">{getStepTitle()}</h2>
+        <h2 className="create-dish-modal-title">{getStepTitle()}</h2>
 
         <ol className="step-markers">
           <li className={`step-item ${getStepClass(1)}`} aria-current={step === 1 ? 'step' : undefined}>
@@ -545,6 +580,24 @@ export default function CreateDishModal({
               {errorsStep1.description && (
                 <span className="error-text">{errorsStep1.description.message}</span>
               )}
+            </div>
+
+            <div className="form-group visibility-group">
+               <label htmlFor="isPublic" className="visibility-label">
+                  {watchStep1("isPublic") ? <PublicIcon id="public-icon" /> : <LockIcon id="lock-icon" />}
+                  {t("dish_settings_modal_privacy_title")}:
+               </label>
+               <button
+                 type="button"
+                 onClick={() => setValueStep1("isPublic", !watchStep1("isPublic"))}
+                 className="visibility-toggle-btn"
+                 style={{ 
+                    background: watchStep1("isPublic") ? '#4caf50' : '#ff9800',
+                 }}
+               >
+                  {watchStep1("isPublic") ? t("dish_settings_modal_public") : t("dish_settings_modal_private")}
+               </button>
+               <input type="checkbox" id="isPublic" {...registerStep1("isPublic")} style={{ display: 'none' }} />
             </div>
 
             <button type="submit" className="submit-button" disabled={isSubmittingStep1}>

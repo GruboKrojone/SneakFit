@@ -302,5 +302,18 @@
   "sort_default": "Default",
   "rating_saved_success": "Rating saved successfully!",
   "rating_your_rating": "Your rating:",
-  "rating_dish_rating": "Dish rating:"
+  "rating_dish_rating": "Dish rating:",
+  "profile_dishes_count": "Created Dishes",
+  "profile_my_dishes": "My Dishes",
+  "profile_no_dishes": "You haven't created any dishes yet.",
+  "profile_settings_basic_account": "Basic Account Settings",
+  "profile_settings_basic_account_desc": "Changes name, email and password",
+  "back": "Back",
+  "profile_settings_password_required": "Password is required",
+  "profile_settings_current_password": "Current Password",
+  "profile_settings_current_password_placeholder": "Enter current password",
+  "profile_settings_email_taken": "This email is already taken.",
+  "profile_settings_clear_confirm_title": "Clear Choices",
+  "profile_settings_clear_confirm_message": "Are you sure you want to remove all your recipe ratings and choices? This action cannot be undone.",
+  "profile_settings_clear_confirm_confirm": "Clean"
 }

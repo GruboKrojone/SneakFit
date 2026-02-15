@@ -23,6 +23,7 @@ export interface Dish {
   description?: string;
   rates: number;
   ownerId: number;
+  userId?: number;
   ownerName: string;
   isPublic: boolean;
   categories: Category[];
@@ -162,14 +163,42 @@ class DishesService {
       });
 
       if (!response.ok) {
-        throw new Error(i18n.t("dishes_service_visibility_failed"));
+        const errorText = await response.text();
+        console.error("Set public failed:", response.status, errorText);
+        throw new Error(errorText || i18n.t("dishes_service_visibility_failed"));
       }
     } catch (error) {
       console.error("Error updating dish visibility:", error);
       const errorMessage =
         error instanceof Error ? error.message : i18n.t("service_unknown_error");
       throw new Error(
-        `${i18n.t("dishes_service_visibility_failed")} ${dishId}: ${errorMessage}`
+        `${i18n.t("dishes_service_visibility_failed")}: ${errorMessage}`
+      );
+    }
+  }
+
+  static async setDishPrivate(dishId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/private`, {
+        method: "PUT",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Set private failed:", response.status, errorText);
+        throw new Error(errorText || i18n.t("dishes_service_visibility_failed"));
+      }
+    } catch (error) {
+      console.error("Error updating dish visibility:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(
+        `${i18n.t("dishes_service_visibility_failed")}: ${errorMessage}`
       );
     }
   }

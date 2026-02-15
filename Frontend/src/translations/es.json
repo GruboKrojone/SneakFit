@@ -296,5 +296,18 @@
   "sort_default": "Por defecto",
   "rating_saved_success": "¡Valoración guardada con éxito!",
   "rating_your_rating": "Tu calificación:",
-  "rating_dish_rating": "Calificación del plato:"
+  "rating_dish_rating": "Calificación del plato:",
+  "profile_dishes_count": "Platos Creados",
+  "profile_my_dishes": "Mis Platos",
+  "profile_no_dishes": "Aún no has creado ningún plato.",
+  "profile_settings_basic_account": "Configuración básica de la cuenta",
+  "profile_settings_basic_account_desc": "Cambiar nombre, correo electrónico y contraseña",
+  "back": "Atrás",
+  "profile_settings_password_required": "Se requiere contraseña",
+  "profile_settings_current_password": "Contraseña actual",
+  "profile_settings_current_password_placeholder": "Ingresa la contraseña actual",
+  "profile_settings_email_taken": "Este correo electrónico ya está en uso.",
+  "profile_settings_clear_confirm_title": "Borrar elecciones",
+  "profile_settings_clear_confirm_message": "¿Estás seguro de que quieres eliminar todas tus calificaciones y elecciones de recetas? Esta acción no se puede deshacer.",
+  "profile_settings_clear_confirm_confirm": "Limpiar"
 }

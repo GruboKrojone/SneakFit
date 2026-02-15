@@ -4,9 +4,13 @@ import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
 import ThumbUp from "@mui/icons-material/ThumbUp";
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
+import Star from "@mui/icons-material/Star";
+import StarBorder from "@mui/icons-material/StarBorder";
+import StarHalf from "@mui/icons-material/StarHalf";
 import { ClipLoader } from "react-spinners";
 import CreateDishModal from "./CreateDishModal";
 import DishImage from "./DishImage";
+import AuthService from "../services/AuthService";
 import "./styles/DishSlider.css";
 import { useTranslation } from "react-i18next";
 import { useFetchDishes } from "../hooks/useFetchDishes";
@@ -54,12 +58,18 @@ export default function DishSlider() {
 
   useCleanTempLists();
 
+  const currentUser = AuthService.getCurrentUser();
+  const currentUserId = currentUser?.id;
+
   const ratedRecipeIds = getAllRatedRecipeIds();
   const visibleCards = dishes
     .map((dish, index) => ({ dish, originalIndex: index }))
-    .filter(({ originalIndex, dish }) => 
-      !usedIndices.has(originalIndex) && !ratedRecipeIds.includes(dish.id)
-    );
+    .filter(({ originalIndex, dish }) => {
+        const isPublicOrOwner = dish.isPublic || (currentUserId && dish.ownerId === currentUserId);
+        return !usedIndices.has(originalIndex) && 
+               !ratedRecipeIds.includes(dish.id) && 
+               isPublicOrOwner;
+    });
 
   useEffect(() => {
     if (visibleCards.length === 0 && !showAddRecipeCard) {
@@ -482,6 +492,22 @@ export default function DishSlider() {
     );
   };
 
+  const renderRating = (rating: number = 0) => {
+    return (
+      <div className="dish-rating">
+        {[1, 2, 3, 4, 5].map((starValue) => {
+          if (rating >= starValue) {
+            return <Star key={starValue} className="star-icon filled" />;
+          } else if (rating >= starValue - 0.5) {
+            return <StarHalf key={starValue} className="star-icon half" />;
+          } else {
+            return <StarBorder key={starValue} className="star-icon empty" />;
+          }
+        })}
+      </div>
+    );
+  };
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -519,6 +545,7 @@ export default function DishSlider() {
           <div className="dish-info">
             <div className="dish-header">
               <h2 className="dish-name">{dish.name}</h2>
+              {renderRating(dish.rates)}
             </div>
             <div className="dish-categories">
               {dish.categories?.map((cat) => (
@@ -609,6 +636,7 @@ export default function DishSlider() {
             <div className="dish-info">
               <div className="dish-header">
                 <h2 className="dish-name">{dish.name}</h2>
+                {renderRating(dish.rates)}
               </div>
               <div className="dish-categories">
                 {dish.categories && dish.categories.length > 0 && (

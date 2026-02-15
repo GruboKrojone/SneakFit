@@ -6,7 +6,6 @@ using Domain.Dishes.Dto;
 using Domain.Dishes.Entities;
 using Domain.Dishes.Repositories;
 using FluentAssertions;
-using MediatR;
 using Moq;
 
 namespace Domain.Tests.Dishes;

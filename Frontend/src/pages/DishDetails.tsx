@@ -561,7 +561,13 @@ export default function DishDetails() {
                     <button className="rating-adjust-btn" onClick={decrementRating}>
                       -
                     </button>
-                    <div className="stars-wrapper" onMouseLeave={() => isRatingEditing && setHoverRating(0)}>{renderStars(rating, true)}</div>
+                    <fieldset 
+                      className="stars-wrapper" 
+                      style={{ border: "none", padding: 0, margin: 0 }}
+                      onMouseLeave={() => isRatingEditing && setHoverRating(0)}
+                    >
+                      {renderStars(rating, true)}
+                    </fieldset>
                     <button className="rating-adjust-btn" onClick={incrementRating}>
                       +
                     </button>

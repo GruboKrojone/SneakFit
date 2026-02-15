@@ -297,5 +297,18 @@
   "sort_default": "Domyślnie",
   "rating_saved_success": "Ocena została zapisana!",
   "rating_your_rating": "Twoja ocena:",
-  "rating_dish_rating": "Ocena dania:"
+  "rating_dish_rating": "Ocena dania:",
+  "profile_dishes_count": "Utworzone przepisy",
+  "profile_my_dishes": "Moje przepisy",
+  "profile_no_dishes": "Nie utworzyłeś jeszcze żadnych przepisów.",
+  "profile_settings_basic_account": "Podstawowe ustawienia konta",
+  "profile_settings_basic_account_desc": "Zmiana nazwy, adresu e-mail i hasła",
+  "back": "Wróć",
+  "profile_settings_password_required": "Hasło jest wymagane",
+  "profile_settings_current_password": "Obecne hasło",
+  "profile_settings_current_password_placeholder": "Wpisz obecne hasło",
+  "profile_settings_email_taken": "Ten e-mail jest już zajęty.",
+  "profile_settings_clear_confirm_title": "Usuwanie wyborów",
+  "profile_settings_clear_confirm_message": "Czy na pewno chcesz usunąć wszystkie swoje oceny i wybory przepisów? Tej operacji nie można cofnąć.",
+  "profile_settings_clear_confirm_confirm": "Wyczyść"
 }
