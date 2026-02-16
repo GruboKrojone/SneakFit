@@ -10,6 +10,7 @@ import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 import { useNavigate, useParams } from "react-router-dom";
 import CreateDishModal from "../components/CreateDishModal";
 import FiltersModal from "../components/FiltersModal";
+import AiRecipeModal from "../components/AiRecipeModal";
 import Star from "@mui/icons-material/Star";
 import StarBorder from "@mui/icons-material/StarBorder";
 import StarHalf from "@mui/icons-material/StarHalf";
@@ -22,6 +23,7 @@ export default function DishesPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isFiltersOpen, setIsFiltersOpen] = useState(false);
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [filterCategories, setFilterCategories] = useState<number[]>([]);
   const [sortBy, setSortBy] = useState<string>("none");
   const [minRating, setMinRating] = useState(0);
@@ -100,7 +102,10 @@ export default function DishesPage() {
         <>
           <div className="page-title">{t("dishes_page_title")}</div>
           <div className="page-subtitle">
-            <AutoAwesomeIcon id="auto-awesome-icon" />
+            <AutoAwesomeIcon 
+              id="auto-awesome-icon" 
+              onClick={() => setIsAiModalOpen(true)}
+            />
             <AddBoxIcon
               id="add-box-icon"
               onClick={() => setIsModalOpen(true)}
@@ -117,7 +122,10 @@ export default function DishesPage() {
         <>
           <div className="page-title">{t("dishes_page_title")}</div>
           <div className="page-subtitle">
-            <AutoAwesomeIcon id="auto-awesome-icon" />
+            <AutoAwesomeIcon 
+              id="auto-awesome-icon" 
+              onClick={() => setIsAiModalOpen(true)}
+            />
             <AddBoxIcon
               id="add-box-icon"
               onClick={() => setIsModalOpen(true)}
@@ -199,6 +207,10 @@ export default function DishesPage() {
         onApplySort={setSortBy}
         minRating={minRating}
         onApplyMinRating={setMinRating}
+      />
+      <AiRecipeModal
+        isOpen={isAiModalOpen}
+        onClose={() => setIsAiModalOpen(false)}
       />
     </div>
   );

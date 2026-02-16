@@ -309,5 +309,14 @@
   "profile_settings_email_taken": "Diese E-Mail wird bereits verwendet.",
   "profile_settings_clear_confirm_title": "Auswahl löschen",
   "profile_settings_clear_confirm_message": "Sind Sie sicher, dass Sie alle Ihre Rezeptbewertungen und Auswahlen entfernen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
-  "profile_settings_clear_confirm_confirm": "Löschen"
+  "profile_settings_clear_confirm_confirm": "Löschen",
+  "ai_modal_title": "KI-Rezeptgenerator",
+  "ai_modal_categories": "Kategorien",
+  "ai_modal_tastes": "Geschmäcker",
+  "ai_modal_tools": "Küchenwerkzeuge",
+  "ai_modal_generate": "Rezept generieren",
+  "ai_modal_generating": "Generierung...",
+  "ai_modal_select_category_warn": "Bitte wählen Sie mindestens eine Kategorie aus",
+  "ai_modal_error": "Rezept konnte nicht generiert werden",
+  "ai_modal_new_recipe": "Anderes generieren"
 }

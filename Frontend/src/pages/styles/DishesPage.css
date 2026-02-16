@@ -150,6 +150,13 @@
   width: 1.875rem;
   height: 1.875rem;
   filter: drop-shadow(0 0.125rem 0.25rem #ff8c4240);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#auto-awesome-icon:hover {
+  transform: scale(1.2) rotate(15deg);
+  filter: drop-shadow(0 0.25rem 0.5rem #ff8c4260);
 }
 
 #add-box-icon {

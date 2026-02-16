@@ -315,5 +315,14 @@
   "profile_settings_email_taken": "This email is already taken.",
   "profile_settings_clear_confirm_title": "Clear Choices",
   "profile_settings_clear_confirm_message": "Are you sure you want to remove all your recipe ratings and choices? This action cannot be undone.",
-  "profile_settings_clear_confirm_confirm": "Clean"
+  "profile_settings_clear_confirm_confirm": "Clean",
+  "ai_modal_title": "AI Recipe Generator",
+  "ai_modal_categories": "Categories",
+  "ai_modal_tastes": "Tastes",
+  "ai_modal_tools": "Kitchen Tools",
+  "ai_modal_generate": "Generate Recipe",
+  "ai_modal_generating": "Generating...",
+  "ai_modal_select_category_warn": "Please select at least one category",
+  "ai_modal_error": "Failed to generate recipe",
+  "ai_modal_new_recipe": "Generate Another"
 }

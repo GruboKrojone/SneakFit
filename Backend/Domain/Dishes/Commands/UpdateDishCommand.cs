@@ -36,7 +36,8 @@ internal sealed class UpdateDishCommandHandler(
             input.Calories ?? dish.Calories,
             input.Protein ?? dish.Protein,
             input.Carbs ?? dish.Carbs,
-            input.Fat ?? dish.Fat);
+            input.Fat ?? dish.Fat,
+            input.IsPublic);
 
         dishRepository.Update(dish);
         await unitOfWork.SaveChangesAsync(cancellationToken);

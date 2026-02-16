@@ -309,5 +309,14 @@
   "profile_settings_email_taken": "Este correo electrónico ya está en uso.",
   "profile_settings_clear_confirm_title": "Borrar elecciones",
   "profile_settings_clear_confirm_message": "¿Estás seguro de que quieres eliminar todas tus calificaciones y elecciones de recetas? Esta acción no se puede deshacer.",
-  "profile_settings_clear_confirm_confirm": "Limpiar"
+  "profile_settings_clear_confirm_confirm": "Limpiar",
+  "ai_modal_title": "Generador de Recetas con IA",
+  "ai_modal_categories": "Categorías",
+  "ai_modal_tastes": "Gustos",
+  "ai_modal_tools": "Utensilios de Cocina",
+  "ai_modal_generate": "Generar Receta",
+  "ai_modal_generating": "Generando...",
+  "ai_modal_select_category_warn": "Por favor, selecciona al menos una categoría",
+  "ai_modal_error": "Error al generar la receta",
+  "ai_modal_new_recipe": "Generar otra"
 }

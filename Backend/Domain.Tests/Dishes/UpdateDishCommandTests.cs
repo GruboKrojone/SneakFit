@@ -44,7 +44,8 @@ public class UpdateDishCommandTests
             Calories: 200,
             Protein: 20,
             Carbs: 20,
-            Fat: 20);
+            Fat: 20,
+            IsPublic: true);
 
         _userContext.Setup(x => x.UserId).Returns(1);
         _dishRepository.Setup(x => x.FindAsync(existingDish.Id, It.IsAny<CancellationToken>()))
@@ -80,7 +81,8 @@ public class UpdateDishCommandTests
             Calories: 200,
             Protein: 20,
             Carbs: 20,
-            Fat: 20);
+            Fat: 20,
+            IsPublic: true);
         _userContext.Setup(x => x.UserId).Returns(1);
         _dishRepository.Setup(x => x.FindAsync(existingDish.Id, It.IsAny<CancellationToken>()))
             .ReturnsAsync(existingDish);
@@ -107,7 +109,8 @@ public class UpdateDishCommandTests
             Calories: 200,
             Protein: 20,
             Carbs: 20,
-            Fat: 20);
+            Fat: 20,
+            IsPublic: true);
         _userContext.Setup(x => x.UserId).Returns(1);
         _dishRepository.Setup(x => x.FindAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
             .ReturnsAsync((Dish?)null);

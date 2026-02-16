@@ -3,6 +3,7 @@ using Core.Database;
 using Core.Middlewares;
 using Domain.Authentication.Enums;
 using Domain.Authentication.Services;
+using Domain.Users.Enums;
 using Domain.Users.Repositories;
 using MediatR;
 

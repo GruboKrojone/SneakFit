@@ -74,7 +74,8 @@ public sealed class Dish : EntityBase
         int? calories,
         int? protein,
         int? carbs,
-        int? fat)
+        int? fat,
+        bool isPublic)
     {
         Name = name;
         Description = description;
@@ -82,6 +83,7 @@ public sealed class Dish : EntityBase
         Protein = protein;
         Carbs = carbs;
         Fat = fat;
+        IsPublic = isPublic;
         MarkAsUpdated();
     }
 

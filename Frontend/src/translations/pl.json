@@ -310,5 +310,14 @@
   "profile_settings_email_taken": "Ten e-mail jest już zajęty.",
   "profile_settings_clear_confirm_title": "Usuwanie wyborów",
   "profile_settings_clear_confirm_message": "Czy na pewno chcesz usunąć wszystkie swoje oceny i wybory przepisów? Tej operacji nie można cofnąć.",
-  "profile_settings_clear_confirm_confirm": "Wyczyść"
+  "profile_settings_clear_confirm_confirm": "Wyczyść",
+  "ai_modal_title": "Generator Przepisów AI",
+  "ai_modal_categories": "Kategorie",
+  "ai_modal_tastes": "Smaki",
+  "ai_modal_tools": "Narzędzia Kuchenne",
+  "ai_modal_generate": "Generuj Przepis",
+  "ai_modal_generating": "Generowanie...",
+  "ai_modal_select_category_warn": "Proszę wybrać przynajmniej jedną kategorię",
+  "ai_modal_error": "Nie udało się wygenerować przepisu",
+  "ai_modal_new_recipe": "Generuj Kolejny"
 }

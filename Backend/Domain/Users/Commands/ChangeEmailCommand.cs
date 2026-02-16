@@ -1,6 +1,7 @@
 using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
+using Domain.Users.Enums;
 using Domain.Users.Repositories;
 using MediatR;
 

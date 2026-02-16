@@ -37,7 +37,8 @@ public class AddDishCommandTests
             Calories: 165,
             Protein: 31,
             Carbs: 0,
-            Fat: 4
+            Fat: 4,
+            IsPublic: true
         );
         var command = new AddDishCommand(dishParams);
 
@@ -70,7 +71,8 @@ public class AddDishCommandTests
             Calories: 100,
             Protein: 10,
             Carbs: 20,
-            Fat: 5
+            Fat: 5,
+            IsPublic: true
         );
         var command = new AddDishCommand(dishParams);
 
@@ -99,7 +101,8 @@ public class AddDishCommandTests
             Calories: null,
             Protein: null,
             Carbs: null,
-            Fat: null
+            Fat: null,
+            IsPublic: true
         );
         var command = new AddDishCommand(dishParams);
 
@@ -125,7 +128,8 @@ public class AddDishCommandTests
             Calories: 200,
             Protein: 40,
             Carbs: 10,
-            Fat: 2
+            Fat: 2,
+            IsPublic: true
         );
         var command = new AddDishCommand(dishParams);
 
