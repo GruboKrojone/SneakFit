@@ -23,6 +23,12 @@ public class AddDishCommandTests
         _userContext = new Mock<IUserContext>();
         _unitOfWork = new Mock<IUnitOfWork>();
         _handler = new AddDishCommandHandler(_dishRepository.Object, _userContext.Object, _unitOfWork.Object);
+
+        _dishRepository.Setup(x => x.Add(It.IsAny<Dish>()))
+            .Callback<Dish>(d =>
+            {
+                typeof(EntityBase).GetProperty("Id")?.SetValue(d, 1);
+            });
     }
 
 
