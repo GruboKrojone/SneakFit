@@ -22,7 +22,32 @@ internal class GetAiResponseQueryHandler(IAIIntegration integration) : IQueryHan
             _ => c.NameEn
         });
 
-        var prequest = $"You are a professional chef. Return your response in {request.Props.Lang} language.\r\nGenerate a dish recipe (1 portion) based on these parameters:\r\n- Categories: {string.Join(", ", categoryNames)}\r\n- Tastes: {string.Join(", ", request.Props.Tastes.Select(FormatEnumValue))}\r\n- Available tools: {string.Join(", ", request.Props.RequiredTools.Select(FormatEnumValue))} (optimize recipe for these tools)\r\n\r\nPlease use the following Markdown structure strictly:\r\n\r\n## Recipe Name\r\n\r\n**Categories:** [List of categories]\r\n**Required Tools:** [List of tools used]\r\n\r\n### Ingredients (1 portion):\r\n* [Quantity] [Unit] - [Ingredient Name]\r\n* ...\r\n\r\n### Preparation Steps:\r\n1. [Step 1]\r\n2. [Step 2]\r\n...\r\n\r\n### Estimates (per portion):\r\n* **Time:** [Minutes]\r\n* **Calories:** [kcal]\r\n* **Carbs:** [g]\r\n* **Proteins:** [g]\r\n* **Fat:** [g]";
+        var prequest = $"You are a professional chef. Return your response STRICTLY in {request.Props.Lang} language.\r\n" +
+                       $"Generate a dish recipe (1 portion) based on these parameters:\r\n" +
+                       $"- Categories: {string.Join(", ", categoryNames)}\r\n" +
+                       $"- Tastes: {string.Join(", ", request.Props.Tastes)}\r\n" +
+                       $"- Available tools: {string.Join(", ", request.Props.RequiredTools)} (optimize recipe for these tools)\r\n\r\n" +
+                       $"IMPORTANT: Translate EVERYTHING to {request.Props.Lang}, including:\r\n" +
+                       $"- The recipe name\r\n" +
+                       $"- The list of categories (use valid names in target language)\r\n" +
+                       $"- The list of required tools (use valid names in target language)\r\n" +
+                       $"- Ingredient names and units\r\n" +
+                       $"- Preparation steps\r\n" +
+                       $"- Section headers (e.g., 'Ingredients', 'Preparation Steps', 'Estimates')\r\n\r\n" +
+                       $"Please return the response as a valid JSON object with the following structure:\r\n" +
+                       $"{{\r\n" +
+                       $"  \"name\": \"[Recipe Name]\",\r\n" +
+                       $"  \"categories\": [\"[Category 1]\", \"[Category 2]\"],\r\n" +
+                       $"  \"ingredients\": [\"[Quantity unit ingredient]\", \"...\"],\r\n" +
+                       $"  \"steps\": [\"[Step 1]\", \"[Step 2]\"],\r\n" +
+                       $"  \"macros\": {{\r\n" +
+                       $"    \"calories\": [number],\r\n" +
+                       $"    \"carbs\": [number],\r\n" +
+                       $"    \"protein\": [number],\r\n" +
+                       $"    \"fat\": [number]\r\n" +
+                       $"  }}\r\n" +
+                       $"}}\r\n" +
+                       $"Do not include any markdown formatting (like ```json). Return RAW JSON only.";
 
         var geminiRequest = new GeminiRequest(
             Contents:

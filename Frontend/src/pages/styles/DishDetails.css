@@ -511,6 +511,36 @@
   width: 100%;
 }
 
+.ai-dish-details {
+  background: var(--bg);
+  min-height: 100vh;
+  width: 100%;
+  padding-bottom: 2rem;
+  padding-top: 1rem;
+}
+
+.ai-placeholder-container {
+  background: var(--back-lighter) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1rem;
+  overflow: hidden;
+  height: 100%;
+}
+
+.ai-placeholder-icon {
+  font-size: 5rem !important;
+  color: var(--text-secondary);
+  opacity: 0.5;
+}
+
+.ai-recipe-markdown h1,
+.ai-recipe-markdown h2,
+.ai-recipe-markdown h3 {
+  display: none !important; 
+}
+
 .rating-view-mode, .rating-edit-mode {
   display: flex;
   flex-direction: column;
@@ -835,4 +865,40 @@ body.dark .ingredient-checked-icon {
 
 .rating-cancel-btn:active {
   transform: translateY(0);
+}
+
+/* AI Dish Details Specific Styles */
+.center-mode-item.ai-static-item {
+  transform: translateX(0px) scale(0.9);
+  opacity: 1;
+  z-index: 10;
+}
+
+.category-detail-tag.orange {
+  background: rgba(255, 107, 53, 0.15);
+  color: #FF6B35;
+  border-color: #FF6B35;
+}
+
+.category-detail-tag.green {
+  background: rgba(76, 175, 80, 0.15);
+  color: #4CAF50;
+  border-color: #4CAF50;
+}
+
+.category-detail-tag.blue {
+  background: rgba(33, 150, 243, 0.15);
+  color: #2196F3;
+  border-color: #2196F3;
+}
+
+.categories-box.ai-extra {
+  margin-top: 0.625rem;
+}
+
+.comments-button-spacer {
+  opacity: 0;
+  pointer-events: none;
+  border: none !important;
+  background: transparent !important;
 }

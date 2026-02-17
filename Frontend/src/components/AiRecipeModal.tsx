@@ -4,9 +4,9 @@ import Close from "@mui/icons-material/Close";
 import AiService, { AiGeneratedDishProperties, DishTaste, KitchenItem, Lang } from "../services/AiService";
 import CategoriesService from "../services/CategoriesService";
 import { Category } from "../services/DishesService";
-import ReactMarkdown from "react-markdown";
 import { toast } from "react-toastify";
 import "./styles/AiRecipeModal.css";
+import { useNavigate, useParams } from "react-router-dom";
 
 interface AiRecipeModalProps {
   readonly isOpen: boolean;
@@ -16,16 +16,17 @@ interface AiRecipeModalProps {
 export default function AiRecipeModal({ isOpen, onClose }: AiRecipeModalProps) {
   const { t, i18n } = useTranslation();
   const [loading, setLoading] = useState(false);
-  const [recipe, setRecipe] = useState<string | null>(null);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
   const [selectedTastes, setSelectedTastes] = useState<DishTaste[]>([]);
   const [selectedTools, setSelectedTools] = useState<KitchenItem[]>([]);
+  
+  const navigate = useNavigate();
+  const { locale } = useParams<{ locale: string }>();
 
   useEffect(() => {
     if (isOpen) {
       loadCategories();
-      setRecipe(null);
     }
   }, [isOpen]);
 
@@ -61,7 +62,13 @@ export default function AiRecipeModal({ isOpen, onClose }: AiRecipeModalProps) {
       };
 
       const result = await AiService.askAi(props);
-      setRecipe(result);
+      
+      onClose();
+      setSelectedCategoryIds([]);
+      setSelectedTastes([]);
+      setSelectedTools([]);
+      navigate(`/${locale}/ai-dish`, { state: { recipe: result, params: props } });
+
     } catch (error) {
       toast.error(t("ai_modal_error") || "Failed to generate recipe");
       console.error(error);
@@ -102,74 +109,66 @@ export default function AiRecipeModal({ isOpen, onClose }: AiRecipeModalProps) {
         
         <h2 className="ai-modal-title">{t("ai_modal_title") || "AI Recipe Generator"}</h2>
 
-        {recipe ? (
-          <div className="ai-result-container">
-            <div className="ai-recipe-markdown">
-              <ReactMarkdown>{recipe}</ReactMarkdown>
+        <div className="ai-setup-container">
+          <div className="ai-section">
+            <h3>{t("ai_modal_categories") || "Categories"}</h3>
+            <div className="ai-tags-grid">
+              {categories.map(c => (
+                <button 
+                  key={c.id} 
+                  className={`ai-tag ${selectedCategoryIds.includes(c.id) ? "active" : ""}`}
+                  onClick={() => toggleCategory(c.id)}
+                  style={{ borderColor: c.color }}
+                >
+                  {i18n.language === "pl" ? c.namePl : c.nameEn}
+                </button>
+              ))}
             </div>
-            <button className="ai-reset-button" onClick={() => setRecipe(null)}>
-              {t("ai_modal_new_recipe") || "Generate Another"}
-            </button>
           </div>
-        ) : (
-          <div className="ai-setup-container">
-            <div className="ai-section">
-              <h3>{t("ai_modal_categories") || "Categories"}</h3>
-              <div className="ai-tags-grid">
-                {categories.map(c => (
-                  <button 
-                    key={c.id} 
-                    className={`ai-tag ${selectedCategoryIds.includes(c.id) ? "active" : ""}`}
-                    onClick={() => toggleCategory(c.id)}
-                    style={{ borderColor: c.color }}
-                  >
-                    {i18n.language === "pl" ? c.namePl : c.nameEn}
-                  </button>
-                ))}
-              </div>
-            </div>
 
-            <div className="ai-section">
-              <h3>{t("ai_modal_tastes") || "Tastes"}</h3>
-              <div className="ai-tags-grid">
-                {Object.values(DishTaste).filter(v => typeof v === "number").map(tId => (
+          <div className="ai-section">
+            <h3>{t("ai_modal_tastes") || "Tastes"}</h3>
+            <div className="ai-tags-grid">
+              {Object.values(DishTaste)
+                .filter((v): v is DishTaste => typeof v === "number")
+                .map((tId) => (
                   <button 
                     key={tId} 
-                    className={`ai-tag ${selectedTastes.includes(tId as DishTaste) ? "active" : ""}`}
-                    onClick={() => toggleTaste(tId as DishTaste)}
+                    className={`ai-tag ${selectedTastes.includes(tId) ? "active" : ""}`}
+                    onClick={() => toggleTaste(tId)}
                   >
-                    {DishTaste[tId as number]}
+                    {t(`dish_taste_${DishTaste[tId].toLowerCase()}`)}
                   </button>
                 ))}
-              </div>
             </div>
+          </div>
 
-            <div className="ai-section">
-              <h3>{t("ai_modal_tools") || "Kitchen Tools"}</h3>
-              <div className="ai-tags-grid">
-                {Object.values(KitchenItem).filter(v => typeof v === "number").map(toolId => (
+          <div className="ai-section">
+            <h3>{t("ai_modal_tools") || "Kitchen Tools"}</h3>
+            <div className="ai-tags-grid">
+              {Object.values(KitchenItem)
+                .filter((v): v is KitchenItem => typeof v === "number")
+                .map((toolId) => (
                   <button 
                     key={toolId} 
-                    className={`ai-tag ${selectedTools.includes(toolId as KitchenItem) ? "active" : ""}`}
-                    onClick={() => toggleTool(toolId as KitchenItem)}
+                    className={`ai-tag ${selectedTools.includes(toolId) ? "active" : ""}`}
+                    onClick={() => toggleTool(toolId)}
                   >
-                    {KitchenItem[toolId as number]}
+                    {t(`kitchen_item_${KitchenItem[toolId].toLowerCase()}`)}
                   </button>
                 ))}
-              </div>
             </div>
-
-            <button 
-              className="ai-generate-button" 
-              onClick={handleGenerate} 
-              disabled={loading}
-            >
-              {loading ? t("ai_modal_generating") || "Generating..." : t("ai_modal_generate") || "Generate Recipe"}
-            </button>
           </div>
-        )}
+
+          <button 
+            className="ai-generate-button" 
+            onClick={handleGenerate} 
+            disabled={loading}
+          >
+            {loading ? t("ai_modal_generating") || "Generating..." : t("ai_modal_generate") || "Generate Recipe"}
+          </button>
+        </div>
       </div>
     </div>
   );
 }
-

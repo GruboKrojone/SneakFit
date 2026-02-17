@@ -15,6 +15,8 @@ import I18nProvider from "./translations/components/i18nProvider";
 import NotFoundRedirect from "./services/NotFoundRedirect";
 import LocaleValidator from "./translations/service/LocaleValidator";
 
+import AiDishDetails from "./components/AiDishDetails";
+
 function App() {
   return (
     <BrowserRouter>
@@ -75,6 +77,14 @@ function App() {
                     element={
                       <ProtectedLayout>
                         <AdminPanel />
+                      </ProtectedLayout>
+                    }
+                  />
+                  <Route
+                    path="ai-dish"
+                    element={
+                      <ProtectedLayout>
+                        <AiDishDetails />
                       </ProtectedLayout>
                     }
                   />

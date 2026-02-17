@@ -2,56 +2,39 @@ import AuthService from "./AuthService";
 import { Category } from "./DishesService";
 
 export enum DishTaste {
-  Sweet = 0,
-  Sour = 1,
+  Spicy = 0,
+  Sweet = 1,
   Salty = 2,
-  Bitter = 3,
-  Umami = 4,
-  Spicy = 5,
-  Savory = 6
+  Sour = 3,
+  Bitter = 4,
+  Savory = 5,
+  Smoky = 6,
+  Herbal = 7
 }
 
 export enum KitchenItem {
-  Stove = 0,
-  Oven = 1,
+  Oven = 0,
+  Stove = 1,
   Microwave = 2,
-  Kettle = 3,
-  SmallPot = 4,
-  MediumPot = 5,
-  LargePot = 6,
-  FryingPan = 7,
-  DeepPan = 8,
-  Wok = 9,
-  Lid = 10,
-  ChefKnife = 11,
-  ParingKnife = 12,
-  CuttingBoard = 13,
-  KnifeSharpener = 14,
-  WoodenSpoon = 15,
-  Spatula = 16,
-  Ladle = 17,
-  Tongs = 18,
-  Whisk = 19,
-  Peeler = 20,
-  Grater = 21,
-  Colander = 22,
-  MixingBowl = 23,
-  MeasuringCup = 24,
-  KitchenScale = 25,
-  FoodContainer = 26,
-  AluminumFoil = 27,
-  ClingFilm = 28,
-  BakingPaper = 29,
-  Blender = 30,
-  HandMixer = 31,
-  Toaster = 32
+  Blender = 3,
+  Mixer = 4,
+  FryingPan = 5,
+  Pot = 6,
+  Knife = 7,
+  CuttingBoard = 8,
+  Grater = 9,
+  Peeler = 10,
+  Kettle = 11,
+  Toaster = 12,
+  KitchenScale = 13,
+  AirFryer = 14
 }
 
 export enum Lang {
-  EN = 0,
-  PL = 1,
-  DE = 2,
-  ES = 3
+  EN = 1,
+  PL = 2,
+  DE = 3,
+  ES = 4
 }
 
 export interface AiGeneratedDishProperties {
