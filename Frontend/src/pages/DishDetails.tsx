@@ -426,31 +426,30 @@ export default function DishDetails() {
         <div className="grid-item grid-3">
           <div className="grid-3-left">
             <div className="ingredients-box">
+              {dish.ingredients && dish.ingredients.length > 0 && (
+                <div className="ingredients-actions">
+                  <button
+                    className="copy-ingredients-btn icon-only"
+                    onClick={copyIngredientsToClipboard}
+                    title={t("dish_details_page_copy_ingredients")}
+                    aria-label={t("dish_details_page_copy_ingredients")}
+                  >
+                    <ContentCopy className="copy-icon" />
+                  </button>
+                  <button
+                    className="copy-ingredients-btn icon-only"
+                    onClick={addToShoppingList}
+                    title={t("add_to_shopping_list")}
+                    aria-label={t("add_to_shopping_list")}
+                  >
+                    <AddShoppingCartIcon className="copy-icon" />
+                  </button>
+                </div>
+              )}
               <div className="ingredients-header">
                 <h3 className="section-title">
                   {t("dish_details_page_ingredients")}
                 </h3>
-                {dish.ingredients && dish.ingredients.length > 0 && (
-                  <button
-                    className="copy-ingredients-btn"
-                    onClick={copyIngredientsToClipboard}
-                    title={t("dish_details_page_copy_ingredients")}
-                  >
-                    <ContentCopy className="copy-icon" />
-                    {t("dish_details_page_copy_ingredients")}
-                  </button>
-                )}
-                {dish.ingredients && dish.ingredients.length > 0 && (
-                  <button
-                    className="copy-ingredients-btn"
-                    onClick={addToShoppingList}
-                    title={t("add_to_shopping_list")}
-                    style={{ marginLeft: '0.5rem' }}
-                  >
-                    <AddShoppingCartIcon className="copy-icon" />
-                    {t("add_to_shopping_list")}
-                  </button>
-                )}
               </div>
               <div className="ingredients-list">
                 {dish.ingredients && dish.ingredients.length > 0 ? (
@@ -598,7 +597,7 @@ export default function DishDetails() {
               <Undo className="undo-icon" />
               {t("dish_details_page_back_button")}
             </button>
-            <button className="btn btn-accept">
+            <button className="btn btn-accept" onClick={() => navigate(`preparation?step=1`)}>
               <PlayCircle className="play-circle-icon" />
               {t("dish_details_page_start_button")}
             </button>

@@ -11,6 +11,7 @@ import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
+import DishPreparation from "./pages/DishPreparation";
 import I18nProvider from "./translations/components/i18nProvider";
 import NotFoundRedirect from "./services/NotFoundRedirect";
 import LocaleValidator from "./translations/service/LocaleValidator";
@@ -61,6 +62,14 @@ function App() {
                     element={
                       <ProtectedLayout>
                         <DishDetails />
+                      </ProtectedLayout>
+                    }
+                  />
+                  <Route
+                    path="dish/:id/preparation"
+                    element={
+                      <ProtectedLayout>
+                        <DishPreparation />
                       </ProtectedLayout>
                     }
                   />

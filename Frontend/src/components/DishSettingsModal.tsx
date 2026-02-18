@@ -9,16 +9,21 @@ import Description from "@mui/icons-material/Description";
 import FitnessCenter from "@mui/icons-material/FitnessCenter";
 import ChevronRight from "@mui/icons-material/ChevronRight";
 import Delete from "@mui/icons-material/Delete";
-import Add from "@mui/icons-material/Add";
+
 import AddPhotoAlternate from "@mui/icons-material/AddPhotoAlternate";
 import CategoryIcon from "@mui/icons-material/Category";
 import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
 import PublicIcon from "@mui/icons-material/Public";
 import LockIcon from "@mui/icons-material/Lock";
 import Visibility from "@mui/icons-material/Visibility";
+import FormatListNumbered from "@mui/icons-material/FormatListNumbered";
+
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import AddIcon from "@mui/icons-material/Add";
 import { toast } from "react-toastify";
 
-import DishesService, { Dish } from "../services/DishesService";
+import DishesService, { Dish, PreparationStep } from "../services/DishesService";
 import IngredientsService from "../services/IngredientsService";
 import ImagesService from "../services/ImagesService";
 import CategoriesService, { Category } from "../services/CategoriesService";
@@ -31,7 +36,7 @@ interface DishSettingsModalProps {
   readonly onUpdate?: () => void;
 }
 
-type ViewState = "menu" | "ingredients" | "macros" | "photos" | "description" | "categories" | "visibility";
+type ViewState = "menu" | "ingredients" | "macros" | "photos" | "description" | "categories" | "visibility" | "steps";
 
 interface ImageSlot {
   id: number;
@@ -58,6 +63,11 @@ export default function DishSettingsModal({
   const [newIngredientDesc, setNewIngredientDesc] = useState("");
   const [addingIngredient, setAddingIngredient] = useState(false);
 
+  const [steps, setSteps] = useState<PreparationStep[]>([]);
+  const [expandedStepId, setExpandedStepId] = useState<number | null>(null);
+  const [stepsToDelete, setStepsToDelete] = useState<number[]>([]);
+  const [savingSteps, setSavingSteps] = useState(false);
+
   const [images, setImages] = useState<ImageSlot[]>([]);
   const [uploading, setUploading] = useState(false);
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
@@ -81,9 +91,10 @@ export default function DishSettingsModal({
     if (!dishId) return;
     setLoading(true);
     try {
-      const [dishData, categoriesData] = await Promise.all([
+      const [dishData, categoriesData, stepsData] = await Promise.all([
         DishesService.getDishById(dishId),
-        CategoriesService.getAllCategories()
+        CategoriesService.getAllCategories(),
+        DishesService.getSteps(dishId)
       ]);
 
       if (dishData) {
@@ -98,6 +109,10 @@ export default function DishSettingsModal({
 
         if (categoriesData) {
           setCategories(categoriesData);
+        }
+
+        if (stepsData) {
+          setSteps([...stepsData].sort((a, b) => a.order - b.order));
         }
         
         // Assuming dishData has categories array
@@ -209,6 +224,64 @@ export default function DishSettingsModal({
       setAddingIngredient(false);
     }
   };
+
+  const handleStepChange = (id: number, field: 'name' | 'description', value: string) => {
+    setSteps(prev => prev.map(s => s.id === id ? { ...s, [field]: value } : s));
+  };
+
+  const handleAddEmptyStep = () => {
+    const newId = Date.now() * -1; // Temporary negative ID
+    setSteps(prev => [...prev, { 
+      id: newId, 
+      name: "", 
+      description: "", 
+      order: prev.length + 1 
+    }]);
+    setExpandedStepId(newId);
+  };
+
+  const handleRemoveStep = (id: number) => {
+    if (id > 0) {
+      setStepsToDelete(prev => [...prev, id]);
+    }
+    setSteps(prev => prev.filter(s => s.id !== id));
+  };
+
+  const handleSaveAllSteps = async () => {
+    if (!dish) return;
+    setSavingSteps(true);
+    try {
+      // 1. Delete
+      for (const id of stepsToDelete) {
+        await DishesService.deleteStep(id);
+      }
+      
+      // 2. Add/Update
+      for (const step of steps) {
+        if (!step.description.trim()) continue;
+
+        const stepName = step.name || `${t("create_dish_modal_step")} ${steps.indexOf(step) + 1}`;
+
+        if (step.id > 0) {
+           await DishesService.updateStep(step.id, stepName, step.description);
+        } else {
+           await DishesService.addStep(dish.id, stepName, step.description);
+        }
+      }
+      
+      toast.success(t("dish_settings_modal_steps_saved"));
+      const updatedSteps = await DishesService.getSteps(dish.id);
+      setSteps([...updatedSteps].sort((a, b) => a.order - b.order));
+      setStepsToDelete([]);
+    } catch (error) {
+      console.error(error);
+      toast.error(t("dish_settings_modal_steps_save_error"));
+    } finally {
+      setSavingSteps(false);
+    }
+  };
+
+
 
   const handleSavePhotos = async () => {
     if (!dish) return;
@@ -545,6 +618,13 @@ export default function DishSettingsModal({
         </div>
         <ChevronRight />
       </button>
+      <button className="menu-button" onClick={() => setView("steps")}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <FormatListNumbered />
+          {t("dish_settings_modal_edit_steps")}
+        </div>
+        <ChevronRight />
+      </button>
       <button className="menu-button" onClick={() => setView("categories")}>
          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
            <CategoryIcon />
@@ -673,9 +753,98 @@ export default function DishSettingsModal({
           onClick={handleAddIngredient}
           disabled={addingIngredient}
         >
-          <Add /> {addingIngredient ? t("submitting") : t("create_dish_modal_add_ingredient")}
+          <AddIcon /> {addingIngredient ? t("submitting") : t("create_dish_modal_add_ingredient")}
         </button>
       </div>
+    </div>
+  );
+
+  const renderSteps = () => (
+    <div className="form-container">
+      <div className="ingredient-list">
+        {steps.map((step, index) => {
+          const isExpanded = expandedStepId === step.id;
+          return (
+            <div key={step.id} className="step-item-container">
+               <button 
+                   type="button"
+                   className={`step-summary ${isExpanded ? 'expanded' : ''}`}
+                   onClick={() => setExpandedStepId(isExpanded ? null : step.id)}
+                   aria-expanded={isExpanded}
+               >
+                   <div style={{display: 'flex', alignItems: 'center'}}>
+                       {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
+                       <span style={{marginLeft: '8px'}}>{step.name || `${t("create_dish_modal_step")} ${index + 1}`}</span>
+                   </div>
+                   <Delete 
+                       onClick={(e: React.MouseEvent) => {
+                           e.stopPropagation(); 
+                           handleRemoveStep(step.id);
+                       }} 
+                       style={{cursor: 'pointer', color: '#ff5252'}}
+                   />
+               </button>
+               <div className="step-content" style={{
+                   display: 'grid',
+                   gridTemplateRows: isExpanded ? '1fr' : '0fr',
+                   transition: 'grid-template-rows 0.3s ease-out'
+               }}>
+                   <div style={{overflow: 'hidden'}}>
+                       <div className="step-form-group">
+                           <input 
+                             className="step-name-input"
+                             value={step.name}
+                             onChange={(e) => handleStepChange(step.id, 'name', e.target.value)}
+                             placeholder={t("create_dish_modal_step_name")}
+                           />
+                           <div style={{ position: 'relative' }}>
+                             <textarea 
+                                 className="step-description-textarea"
+                                 value={step.description}
+                                 maxLength={500}
+                                 onChange={(e) => {
+                                     handleStepChange(step.id, 'description', e.target.value);
+                                     e.target.style.height = "auto";
+                                     e.target.style.height = `${e.target.scrollHeight}px`;
+                                 }}
+                                 ref={(el) => {
+                                     if (el) {
+                                         el.style.height = "auto";
+                                         el.style.height = `${el.scrollHeight}px`;
+                                     }
+                                 }}
+                                 placeholder={t("create_dish_modal_step_description_placeholder")}
+                             />
+                             <div className={`step-char-count ${step.description.length >= 500 ? 'limit' : ''}`}>
+                                 {step.description.length}/500
+                             </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+            </div>
+          );
+        })}
+        {steps.length === 0 && (
+          <p style={{ textAlign: 'center', color: '#888' }}>{t("create_dish_modal_no_steps")}</p>
+        )}
+      </div>
+
+      <button 
+          type="button" 
+          className="add-btn" 
+          onClick={handleAddEmptyStep}
+      >
+           <AddIcon /> {t("create_dish_modal_add_step")}
+      </button>
+
+      <button 
+        className="save-button" 
+        onClick={handleSaveAllSteps} 
+        disabled={savingSteps}
+      >
+        {savingSteps ? t("submitting") : t("profile_settings_save")}
+      </button>
     </div>
   );
 
@@ -706,6 +875,7 @@ export default function DishSettingsModal({
             {view === "photos" && t("dish_settings_modal_edit_photos")}
             {view === "categories" && t("dish_settings_modal_edit_categories")}
             {view === "description" && t("dish_settings_modal_edit_description")}
+            {view === "steps" && t("dish_settings_modal_edit_steps")}
             {view === "visibility" && t("dish_settings_modal_privacy_title")}
           </h2>
         </div>
@@ -722,6 +892,7 @@ export default function DishSettingsModal({
             {view === "photos" && renderPhotos()}
             {view === "categories" && renderCategories()}
             {view === "description" && renderDescription()}
+            {view === "steps" && renderSteps()}
             {view === "visibility" && renderVisibility()}
           </>
         )}

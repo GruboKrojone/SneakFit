@@ -2,6 +2,8 @@
   position: fixed;
   inset: 0;
   background-color: transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -9,14 +11,16 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.5s ease, background-color 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.5s ease, background-color 0.5s ease, visibility 0.5s ease, backdrop-filter 0.5s ease;
 }
 
 .modal-overlay.open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .modal-content {
@@ -237,6 +241,24 @@
   color: #ff4d4d;
 }
 
+.edit-btn {
+  background: none;
+  color: var(--text-light);
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.edit-btn:hover {
+  background: rgba(255, 107, 53, 0.1);
+  color: #ff6b35;
+}
+
 .add-ingredient-form {
   background: var(--bg);
   padding: 1.5rem;
@@ -264,6 +286,130 @@
 
 .add-btn:hover {
   background: rgba(255, 107, 53, 0.05);
+}
+
+.edit-step-input,
+.edit-step-textarea {
+  padding: 0.5rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.edit-step-input:focus,
+.edit-step-textarea:focus {
+  outline: none;
+  border-color: #ff6b35;
+}
+
+.step-item-container {
+  background: var(--bg);
+  border-radius: 0.5rem;
+  border: 0.0625rem solid #ff9800;
+  box-shadow: 0 0.125rem 0.25rem var(--shadow);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  margin-bottom: 0.625rem;
+}
+
+.step-summary {
+  cursor: pointer;
+  font-weight: 700;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.625rem;
+  background: transparent;
+  color: var(--text);
+  transition: background 0.2s ease;
+}
+
+.step-summary:hover {
+  background: var(--border);
+}
+
+.step-summary.expanded {
+    background: var(--tag-bg);
+}
+
+.step-summary-content {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.step-content {
+    display: grid;
+    transition: grid-template-rows 0.3s ease-out;
+}
+
+.step-content-inner {
+    overflow: hidden;
+}
+
+.step-form-group {
+    padding: 10px;
+    margin-top: 0;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.step-description-textarea {
+  width: 100%;
+  padding: 0.5rem;
+  padding-bottom: 1.5rem;
+  border-radius: 0.25rem;
+  border: 0.0625rem solid var(--border);
+  resize: none;
+  background: var(--card);
+  color: var(--text);
+  overflow: hidden;
+  font-family: inherit;
+  font-size: inherit;
+  box-sizing: border-box;
+}
+
+.step-description-textarea:focus {
+  outline: none;
+  border-color: #ff6b35;
+}
+
+.step-char-count {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.25rem;
+  font-size: 0.75rem;
+  color: var(--text-light);
+  pointer-events: none;
+}
+
+.step-char-count.limit {
+    color: #ff5252;
+}
+
+.step-name-input {
+    width: 100%;
+    padding: 0.5rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 0.25rem;
+    color: var(--text);
+    font-family: inherit;
+    font-size: inherit;
+    box-sizing: border-box;
+    margin-bottom: 0.5rem;
+}
+
+.step-name-input:focus {
+    outline: none;
+    border-color: #ff6b35;
 }
 
 

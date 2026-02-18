@@ -316,6 +316,7 @@
   padding: 1.5rem;
   flex: 1;
   color: var(--text);
+  position: relative;
 }
 
 .section-title {
@@ -744,6 +745,16 @@
   margin-bottom: 0.75rem;
 }
 
+.ingredients-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 2;
+}
+
 .copy-ingredients-btn {
   background: var(--gradient);
   color: #ffffff;
@@ -758,6 +769,37 @@
   gap: 0.5rem;
   transition: all 0.3s ease;
   box-shadow: 0 0.125rem 0.5rem var(--shadow);
+}
+
+.copy-ingredients-btn.icon-only {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  justify-content: center;
+  position: relative;
+}
+
+.copy-ingredients-btn.icon-only::after {
+  content: attr(title);
+  position: absolute;
+  bottom: calc(100% + 0.4rem);
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.3rem 0.6rem;
+  border-radius: 0.4rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 10;
+}
+
+.copy-ingredients-btn.icon-only:hover::after {
+  opacity: 1;
 }
 
 .copy-ingredients-btn:hover {
@@ -867,7 +909,6 @@ body.dark .ingredient-checked-icon {
   transform: translateY(0);
 }
 
-/* AI Dish Details Specific Styles */
 .center-mode-item.ai-static-item {
   transform: translateX(0px) scale(0.9);
   opacity: 1;

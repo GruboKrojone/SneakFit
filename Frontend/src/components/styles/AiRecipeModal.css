@@ -2,6 +2,8 @@
   position: fixed;
   inset: 0;
   background-color: transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
@@ -9,14 +11,25 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.5s ease, background-color 0.5s ease, visibility 0.5s ease;
+  transition: opacity 0.5s ease, background-color 0.5s ease, visibility 0.5s ease, backdrop-filter 0.5s ease;
 }
 
 .ai-modal-overlay.open {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.ai-modal-overlay.closing {
+  opacity: 0;
+  visibility: visible;
+  pointer-events: none;
+  background-color: transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
 }
 
 .ai-modal-content {
@@ -41,6 +54,10 @@
 
 .ai-modal-overlay.open .ai-modal-content {
   transform: translateY(0);
+}
+
+.ai-modal-overlay.closing .ai-modal-content {
+  transform: translateY(100%);
 }
 
 .ai-close-button {

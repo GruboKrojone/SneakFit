@@ -17,6 +17,13 @@ export interface Ingredient {
   description: string;
 }
 
+export interface PreparationStep {
+  id: number;
+  name: string;
+  description: string;
+  order: number;
+}
+
 export interface Dish {
   id: number;
   name: string;
@@ -35,6 +42,7 @@ export interface Dish {
   carbs?: number;
   fat?: number;
   ingredients?: Ingredient[];
+  steps?: PreparationStep[];
 }
 
 export interface CreateDishDTO {
@@ -269,7 +277,7 @@ class DishesService {
     }
   }
 
-  static async addStep(dishId: number, description: string): Promise<void> {
+  static async addStep(dishId: number, stepName: string, stepDescription: string): Promise<void> {
     try {
       const response = await fetch(`${this.baseUrl}/dish/${dishId}/addStep`, {
         method: "POST",
@@ -278,7 +286,7 @@ class DishesService {
           "Content-Type": "application/json",
           ...AuthService.getAuthHeader(),
         },
-        body: JSON.stringify(description),
+        body: JSON.stringify({ stepName, stepDescription }),
       });
 
       if (!response.ok) {
@@ -290,7 +298,7 @@ class DishesService {
     }
   }
 
-  static async updateStep(stepId: number, description: string): Promise<void> {
+  static async updateStep(stepId: number, stepName: string, stepDescription: string): Promise<void> {
     try {
       const response = await fetch(`${this.baseUrl}/step/${stepId}/update`, {
         method: "PUT",
@@ -299,7 +307,7 @@ class DishesService {
           "Content-Type": "application/json",
           ...AuthService.getAuthHeader(),
         },
-        body: JSON.stringify(description),
+        body: JSON.stringify({ stepName, stepDescription }),
       });
 
       if (!response.ok) {
@@ -311,7 +319,7 @@ class DishesService {
     }
   }
 
-  static async getSteps(dishId: number): Promise<any[]> {
+  static async getSteps(dishId: number): Promise<PreparationStep[]> {
     try {
       const response = await fetch(`${this.baseUrl}/dish/${dishId}/steps`, {
         method: "GET",

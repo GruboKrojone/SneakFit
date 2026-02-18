@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import Close from "@mui/icons-material/Close";
 import AiService, { AiGeneratedDishProperties, DishTaste, KitchenItem, Lang } from "../services/AiService";
@@ -23,11 +23,26 @@ export default function AiRecipeModal({ isOpen, onClose }: AiRecipeModalProps) {
   
   const navigate = useNavigate();
   const { locale } = useParams<{ locale: string }>();
+  const [isVisible, setIsVisible] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (isOpen) {
+      setIsClosing(false);
+      // Small delay to trigger CSS transition
+      requestAnimationFrame(() => setIsVisible(true));
       loadCategories();
+    } else {
+      setIsClosing(true);
+      setIsVisible(false);
+      closeTimerRef.current = setTimeout(() => {
+        setIsClosing(false);
+      }, 500);
     }
+    return () => {
+      if (closeTimerRef.current) clearTimeout(closeTimerRef.current);
+    };
   }, [isOpen]);
 
   const loadCategories = async () => {
@@ -95,15 +110,24 @@ export default function AiRecipeModal({ isOpen, onClose }: AiRecipeModalProps) {
     );
   };
 
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
+
+  const handleClose = () => {
+    setIsClosing(true);
+    setIsVisible(false);
+    setTimeout(() => {
+      setIsClosing(false);
+      onClose();
+    }, 450);
+  };
 
   return (
     <div
-      className={`ai-modal-overlay ${isOpen ? "open" : ""}`}
-      onPointerDown={onClose}
+      className={`ai-modal-overlay ${isVisible ? "open" : ""} ${isClosing ? "closing" : ""}`}
+      onPointerDown={handleClose}
     >
       <div className="ai-modal-content" onPointerDown={(e) => e.stopPropagation()}>
-        <button className="ai-close-button" onClick={onClose}>
+        <button className="ai-close-button" onClick={handleClose}>
           <Close />
         </button>
         
