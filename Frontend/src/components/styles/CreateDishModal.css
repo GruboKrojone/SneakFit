@@ -877,3 +877,108 @@
   from { transform: scale(0.9); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
+
+/* ── Step 1 – form helpers ─────────────────────────── */
+.form-group--relative {
+  position: relative;
+}
+
+.description-textarea {
+  padding-bottom: 2.2rem;
+}
+
+.hidden-checkbox {
+  display: none;
+}
+
+/* ── Visibility toggle button ──────────────────────── */
+.visibility-toggle-btn--public {
+  background: #4caf50 !important;
+}
+
+.visibility-toggle-btn--private {
+  background: #ff9800 !important;
+}
+
+/* ── Step 2 / 3 – error text centred ──────────────── */
+.error-text--centered {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+/* ── Step 3 – hidden file input ────────────────────── */
+.hidden-file-input {
+  display: none;
+}
+
+/* ── Step 5 – step summary ─────────────────────────── */
+.step-summary-left {
+  display: flex;
+  align-items: center;
+}
+
+.step-summary-label {
+  margin-left: 0.5rem;
+}
+
+.step-delete-icon {
+  cursor: pointer;
+  color: #ff5252;
+  flex-shrink: 0;
+}
+
+.step-content {
+  display: grid;
+  transition: grid-template-rows 0.3s ease-out;
+}
+
+.step-content--expanded {
+  grid-template-rows: 1fr;
+}
+
+.step-content--collapsed {
+  grid-template-rows: 0fr;
+}
+
+.step-content-overflow {
+  overflow: hidden;
+}
+
+.step-form-group {
+  padding: 0.625rem;
+  margin-top: 0;
+  position: relative;
+}
+
+.step-name-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.05);
+  color: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  box-sizing: border-box;
+}
+
+.step-name-input:focus {
+  outline: none;
+  border-color: rgba(255, 107, 53, 0.6);
+}
+
+.step-textarea-wrapper {
+  position: relative;
+}
+
+/* ── Step 5 – add step & skip buttons ──────────────── */
+.add-step-button {
+  margin-bottom: 1.25rem;
+  width: 100%;
+}
+
+.skip-button {
+  margin-left: 0.625rem;
+  margin-right: 0.625rem;
+}

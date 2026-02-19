@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Close from "@mui/icons-material/Close";
@@ -28,17 +28,15 @@ interface CreateDishModalProps {
   readonly onDishAdded?: () => void;
 }
 
-const createDishSchemaType = z.object({
-  name: z.string(),
-  calories: z.coerce.number(),
-  protein: z.coerce.number(),
-  carbs: z.coerce.number(),
-  fat: z.coerce.number(),
-  description: z.string(),
-  isPublic: z.boolean(),
-});
-
-type CreateDishFormData = z.infer<typeof createDishSchemaType>;
+type CreateDishFormData = {
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  description: string;
+  isPublic: boolean;
+};
 
 interface LocalIngredient {
   id: string;
@@ -53,10 +51,14 @@ export default function CreateDishModal({
 }: CreateDishModalProps) {
   const { t, i18n } = useTranslation();
   const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
-  const [preparationSteps, setPreparationSteps] = useState<{id: string, name: string, description: string}[]>([]);
+  const [preparationSteps, setPreparationSteps] = useState<
+    { id: string; name: string; description: string }[]
+  >([]);
   const [expandedStepId, setExpandedStepId] = useState<string | null>(null);
   const [showSkipConfirm, setShowSkipConfirm] = useState(false);
-  const [dishFormData, setDishFormData] = useState<CreateDishFormData | null>(null);
+  const [dishFormData, setDishFormData] = useState<CreateDishFormData | null>(
+    null,
+  );
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
   const [isUploading, setIsUploading] = useState(false);
@@ -65,10 +67,14 @@ export default function CreateDishModal({
 
   const getCategoryName = (category: Category) => {
     switch (i18n.language) {
-      case "pl": return category.namePl;
-      case "de": return category.nameDe;
-      case "es": return category.nameEs;
-      default: return category.nameEn;
+      case "pl":
+        return category.namePl;
+      case "de":
+        return category.nameDe;
+      case "es":
+        return category.nameEs;
+      default:
+        return category.nameEn;
     }
   };
 
@@ -109,7 +115,7 @@ export default function CreateDishModal({
           id: z.string(),
           name: z.string(),
           description: z.string(),
-        })
+        }),
       )
       .min(1, t("create_dish_modal_min_ingredients_required")),
   });
@@ -124,7 +130,7 @@ export default function CreateDishModal({
     watch: watchStep1,
     setValue: setValueStep1,
   } = useForm<CreateDishFormData>({
-    resolver: zodResolver(createDishSchema) as any,
+    resolver: zodResolver(createDishSchema) as Resolver<CreateDishFormData>,
     defaultValues: {
       name: "",
       calories: 0,
@@ -159,9 +165,7 @@ export default function CreateDishModal({
   const ingredientDescription = watchStep2("ingredientDescription");
 
   const step3Schema = z.object({
-    imagesList: z
-      .array(z.any())
-      .min(1, t("create_dish_modal_images_required")),
+    imagesList: z.array(z.any()).min(1, t("create_dish_modal_images_required")),
   });
 
   type Step3FormData = z.infer<typeof step3Schema>;
@@ -181,33 +185,37 @@ export default function CreateDishModal({
 
   const images = watchStep3("imagesList");
 
-  const handleStepChange = (id: string, value: string) => {
-      setPreparationSteps(prev => prev.map(s => 
-          s.id === id ? { ...s, description: value } : s
-      ));
+  const handleStepChange = (
+    id: string,
+    field: "name" | "description",
+    value: string,
+  ) => {
+    setPreparationSteps((prev) =>
+      prev.map((s) => (s.id === id ? { ...s, [field]: value } : s)),
+    );
   };
 
   const handleAddEmptyStep = () => {
     const newId = crypto.randomUUID();
     const newStep = { id: newId, name: "", description: "" };
-    setPreparationSteps(prev => [...prev, newStep]);
+    setPreparationSteps((prev) => [...prev, newStep]);
     setExpandedStepId(newId);
   };
 
   useEffect(() => {
-      if (step === 5 && preparationSteps.length === 0) {
-          const newSteps = [
-              { id: crypto.randomUUID(), name: "", description: "" },
-              { id: crypto.randomUUID(), name: "", description: "" },
-              { id: crypto.randomUUID(), name: "", description: "" }
-          ];
-          setPreparationSteps(newSteps);
-          setExpandedStepId(newSteps[0].id);
-      }
-  }, [step]);
+    if (step === 5 && preparationSteps.length === 0) {
+      const newSteps = [
+        { id: crypto.randomUUID(), name: "", description: "" },
+        { id: crypto.randomUUID(), name: "", description: "" },
+        { id: crypto.randomUUID(), name: "", description: "" },
+      ];
+      setPreparationSteps(newSteps);
+      setExpandedStepId(newSteps[0].id);
+    }
+  }, [step, preparationSteps.length]);
 
   const handleRemoveStep = (id: string) => {
-      setPreparationSteps(preparationSteps.filter(s => s.id !== id));
+    setPreparationSteps(preparationSteps.filter((s) => s.id !== id));
   };
 
   useEffect(() => {
@@ -230,16 +238,17 @@ export default function CreateDishModal({
     });
   };
 
-
-
   const onStep1Submit = (data: CreateDishFormData) => {
     setDishFormData(data);
     setStep(2);
   };
 
   const handleAddIngredient = async () => {
-    const isValid = await triggerStep2(["ingredientName", "ingredientDescription"]);
-    
+    const isValid = await triggerStep2([
+      "ingredientName",
+      "ingredientDescription",
+    ]);
+
     if (isValid) {
       const newIngredient: LocalIngredient = {
         id: crypto.randomUUID(),
@@ -261,10 +270,10 @@ export default function CreateDishModal({
     setValueStep2(
       "ingredientsList",
       currentIngredients.filter((ing) => ing.id !== id),
-      { shouldValidate: true }
+      { shouldValidate: true },
     );
   };
-  
+
   const handleStep2Next = async () => {
     const isValid = await triggerStep2("ingredientsList");
     if (isValid) {
@@ -287,20 +296,22 @@ export default function CreateDishModal({
       file: file,
     }));
 
-    setValueStep3("imagesList", [...images, ...newImages], { shouldValidate: true });
+    setValueStep3("imagesList", [...images, ...newImages], {
+      shouldValidate: true,
+    });
 
     if (fileInputRef.current) fileInputRef.current.value = "";
   };
 
   const removeImage = (imageId: string) => {
-    const imageToRemove = images.find(img => img.id === imageId);
+    const imageToRemove = images.find((img) => img.id === imageId);
     if (imageToRemove) {
       URL.revokeObjectURL(imageToRemove.url);
     }
     setValueStep3(
       "imagesList",
       images.filter((img) => img.id !== imageId),
-      { shouldValidate: true }
+      { shouldValidate: true },
     );
   };
 
@@ -328,33 +339,36 @@ export default function CreateDishModal({
   const addIngredients = async () => {
     const currentIngredients = getValuesStep2("ingredientsList");
     const ingredientIds: number[] = [];
-    
+
     for (const ing of currentIngredients) {
       try {
-          const result = await IngredientsService.addIngredient({
-            name: ing.name,
-            description: ing.description,
-          });
-          ingredientIds.push(result.id);
-      } catch(e) {
-          console.error("Failed to add ingredient", ing.name, e);
-           toast.error(`${t("ingredients_service_add_failed")}: ${ing.name}`);
+        const result = await IngredientsService.addIngredient({
+          name: ing.name,
+          description: ing.description,
+        });
+        ingredientIds.push(result.id);
+      } catch (e) {
+        console.error("Failed to add ingredient", ing.name, e);
+        toast.error(`${t("ingredients_service_add_failed")}: ${ing.name}`);
       }
     }
     return ingredientIds;
-  }
+  };
 
   const assignCategories = async (dishId: number) => {
     for (const catId of selectedCategoryIds) {
       try {
         await CategoriesService.assignToDish(catId, dishId);
-      } catch(e) {
-          console.error("Failed to assign category", catId, e);
+      } catch (e) {
+        console.error("Failed to assign category", catId, e);
       }
     }
-  }
+  };
 
-  const buildDishData = (formData: CreateDishFormData, skipSteps: boolean): Omit<Dish, "id"> => {
+  const buildDishData = (
+    formData: CreateDishFormData,
+    skipSteps: boolean,
+  ): Omit<Dish, "id"> => {
     const currentUser = AuthService.getCurrentUser();
     const ownerId = currentUser ? currentUser.id : 0;
     const ownerName = currentUser ? currentUser.name || currentUser.email : "";
@@ -381,8 +395,9 @@ export default function CreateDishModal({
   const addPreparationSteps = async (dishId: number) => {
     for (const [index, step] of preparationSteps.entries()) {
       try {
-        const stepName = step.name || `${t("create_dish_modal_step")} ${index + 1}`;
-        if (!step.description.trim()) continue; 
+        const stepName =
+          step.name || `${t("create_dish_modal_step")} ${index + 1}`;
+        if (!step.description.trim()) continue;
         await DishesService.addStep(dishId, stepName, step.description);
       } catch (e) {
         console.error("Failed to add step", e);
@@ -412,7 +427,10 @@ export default function CreateDishModal({
 
       const ingredientIds = await addIngredients();
       if (ingredientIds.length > 0) {
-        await IngredientsService.assignMultipleIngredientsToDish(ingredientIds, dishId);
+        await IngredientsService.assignMultipleIngredientsToDish(
+          ingredientIds,
+          dishId,
+        );
       }
 
       await assignCategories(dishId);
@@ -420,14 +438,15 @@ export default function CreateDishModal({
       if (!skipSteps) {
         await addPreparationSteps(dishId);
       }
-      
+
       toast.success(t("create_dish_modal_success"));
       if (onDishAdded) onDishAdded();
-      
+
       handleClose();
     } catch (error) {
       console.error("Error finishing dish creation:", error);
-      const errorMessage = error instanceof Error ? error.message : t("create_dish_modal_error");
+      const errorMessage =
+        error instanceof Error ? error.message : t("create_dish_modal_error");
       toast.error(errorMessage);
     } finally {
       setIsUploading(false);
@@ -436,14 +455,16 @@ export default function CreateDishModal({
   };
 
   const handleClose = () => {
-    images.forEach(img => URL.revokeObjectURL(img.url));
-    
+    images.forEach((img) => URL.revokeObjectURL(img.url));
+
     resetStep1();
     resetStep2();
     resetStep3();
     setStep(1);
     setSelectedCategoryIds([]);
     setDishFormData(null);
+    setPreparationSteps([]);
+    setExpandedStepId(null);
     onClose();
   };
 
@@ -472,8 +493,8 @@ export default function CreateDishModal({
     e.preventDefault();
   };
 
-  const handleKeyboardReorder = (index: number, direction: 'up' | 'down') => {
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+  const handleKeyboardReorder = (index: number, direction: "up" | "down") => {
+    const targetIndex = direction === "up" ? index - 1 : index + 1;
     if (targetIndex < 0 || targetIndex >= images.length) return;
 
     const newImages = [...images];
@@ -483,12 +504,12 @@ export default function CreateDishModal({
   };
 
   const handleImageCardKeyDown = (e: React.KeyboardEvent, index: number) => {
-    if (e.key === 'ArrowUp' && index > 0) {
+    if (e.key === "ArrowUp" && index > 0) {
       e.preventDefault();
-      handleKeyboardReorder(index, 'up');
-    } else if (e.key === 'ArrowDown' && index < images.length - 1) {
+      handleKeyboardReorder(index, "up");
+    } else if (e.key === "ArrowDown" && index < images.length - 1) {
       e.preventDefault();
-      handleKeyboardReorder(index, 'down');
+      handleKeyboardReorder(index, "down");
     }
   };
 
@@ -510,9 +531,9 @@ export default function CreateDishModal({
   };
 
   const getStepClass = (stepNumber: 1 | 2 | 3 | 4 | 5) => {
-    if (step === stepNumber) return 'active';
-    if (step > stepNumber) return 'completed';
-    return '';
+    if (step === stepNumber) return "active";
+    if (step > stepNumber) return "completed";
+    return "";
   };
 
   return (
@@ -520,7 +541,10 @@ export default function CreateDishModal({
       className={`create-dish-modal-overlay ${isOpen ? "open" : ""}`}
       onPointerDown={handleClose}
     >
-      <div className="create-dish-modal-content" onPointerDown={(e) => e.stopPropagation()}>
+      <div
+        className="create-dish-modal-content"
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         <button
           className="create-dish-close-button"
           onClick={handleClose}
@@ -532,27 +556,61 @@ export default function CreateDishModal({
         <h2 className="create-dish-modal-title">{getStepTitle()}</h2>
 
         <ol className="step-markers">
-          <li className={`step-item ${getStepClass(1)}`} aria-current={step === 1 ? 'step' : undefined}>
-            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 1`}></div>
+          <li
+            className={`step-item ${getStepClass(1)}`}
+            aria-current={step === 1 ? "step" : undefined}
+          >
+            <div
+              className="step-marker"
+              aria-label={`${t("create_dish_modal_step")} 1`}
+            ></div>
           </li>
-          <li className={`step-item ${getStepClass(2)}`} aria-current={step === 2 ? 'step' : undefined}>
-            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 2`}></div>
+          <li
+            className={`step-item ${getStepClass(2)}`}
+            aria-current={step === 2 ? "step" : undefined}
+          >
+            <div
+              className="step-marker"
+              aria-label={`${t("create_dish_modal_step")} 2`}
+            ></div>
           </li>
-          <li className={`step-item ${getStepClass(3)}`} aria-current={step === 3 ? 'step' : undefined}>
-            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 3`}></div>
+          <li
+            className={`step-item ${getStepClass(3)}`}
+            aria-current={step === 3 ? "step" : undefined}
+          >
+            <div
+              className="step-marker"
+              aria-label={`${t("create_dish_modal_step")} 3`}
+            ></div>
           </li>
-          <li className={`step-item ${getStepClass(4)}`} aria-current={step === 4 ? 'step' : undefined}>
-            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 4`}></div>
+          <li
+            className={`step-item ${getStepClass(4)}`}
+            aria-current={step === 4 ? "step" : undefined}
+          >
+            <div
+              className="step-marker"
+              aria-label={`${t("create_dish_modal_step")} 4`}
+            ></div>
           </li>
-          <li className={`step-item ${getStepClass(5)}`} aria-current={step === 5 ? 'step' : undefined}>
-            <div className="step-marker" aria-label={`${t("create_dish_modal_step")} 5`}></div>
+          <li
+            className={`step-item ${getStepClass(5)}`}
+            aria-current={step === 5 ? "step" : undefined}
+          >
+            <div
+              className="step-marker"
+              aria-label={`${t("create_dish_modal_step")} 5`}
+            ></div>
           </li>
         </ol>
 
         {step === 1 && (
-          <form onSubmit={handleSubmitStep1(onStep1Submit)} className="form-container">
+          <form
+            onSubmit={handleSubmitStep1(onStep1Submit)}
+            className="form-container"
+          >
             <div className="form-group">
-              <label htmlFor="name">{t("create_dish_modal_name")}:
+              <label htmlFor="name">
+                {t("create_dish_modal_name")}:
                 <span className="required-indicator"> *</span>
               </label>
               <input
@@ -561,11 +619,13 @@ export default function CreateDishModal({
                 placeholder={t("create_dish_modal_name_placeholder")}
                 {...registerStep1("name")}
               />
-              {errorsStep1.name && <span className="error-text">{errorsStep1.name.message}</span>}
+              {errorsStep1.name && (
+                <span className="error-text">{errorsStep1.name.message}</span>
+              )}
             </div>
 
             <div className="form-group">
-              <label htmlFor="calories">  
+              <label htmlFor="calories">
                 {t("create_dish_modal_calories")}:
                 <span className="required-indicator"> *</span>
               </label>
@@ -576,7 +636,9 @@ export default function CreateDishModal({
                 {...registerStep1("calories")}
               />
               {errorsStep1.calories && (
-                <span className="error-text">{errorsStep1.calories.message}</span>
+                <span className="error-text">
+                  {errorsStep1.calories.message}
+                </span>
               )}
             </div>
 
@@ -589,7 +651,9 @@ export default function CreateDishModal({
                 {...registerStep1("protein")}
               />
               {errorsStep1.protein && (
-                <span className="error-text">{errorsStep1.protein.message}</span>
+                <span className="error-text">
+                  {errorsStep1.protein.message}
+                </span>
               )}
             </div>
 
@@ -614,13 +678,12 @@ export default function CreateDishModal({
                 placeholder={t("create_dish_modal_fat_placeholder")}
                 {...registerStep1("fat")}
               />
-              {errorsStep1.fat && <span className="error-text">{errorsStep1.fat.message}</span>}
+              {errorsStep1.fat && (
+                <span className="error-text">{errorsStep1.fat.message}</span>
+              )}
             </div>
 
-            <div
-              className="form-group"
-              style={{ position: "relative" }}
-            >
+            <div className="form-group form-group--relative">
               <label htmlFor="description">
                 {t("create_dish_modal_description")}:
                 <span className="required-indicator"> *</span>
@@ -629,82 +692,108 @@ export default function CreateDishModal({
                 id="description"
                 placeholder={t("create_dish_modal_description_placeholder")}
                 maxLength={500}
-                style={{ paddingBottom: "2.2rem" }}
+                className="description-textarea"
                 {...registerStep1("description")}
               />
-              <div className="char-count">
-                {description.length}/500
-              </div>
+              <div className="char-count">{description.length}/500</div>
               {errorsStep1.description && (
-                <span className="error-text">{errorsStep1.description.message}</span>
+                <span className="error-text">
+                  {errorsStep1.description.message}
+                </span>
               )}
             </div>
 
             <div className="form-group visibility-group">
-               <label htmlFor="isPublic" className="visibility-label">
-                  {watchStep1("isPublic") ? <PublicIcon id="public-icon" /> : <LockIcon id="lock-icon" />}
-                  {t("dish_settings_modal_privacy_title")}:
-               </label>
-               <button
-                 type="button"
-                 onClick={() => setValueStep1("isPublic", !watchStep1("isPublic"))}
-                 className="visibility-toggle-btn"
-                 style={{ 
-                    background: watchStep1("isPublic") ? '#4caf50' : '#ff9800',
-                 }}
-               >
-                  {watchStep1("isPublic") ? t("dish_settings_modal_public") : t("dish_settings_modal_private")}
-               </button>
-               <input type="checkbox" id="isPublic" {...registerStep1("isPublic")} style={{ display: 'none' }} />
+              <label htmlFor="isPublic" className="visibility-label">
+                {watchStep1("isPublic") ? (
+                  <PublicIcon id="public-icon" />
+                ) : (
+                  <LockIcon id="lock-icon" />
+                )}
+                {t("dish_settings_modal_privacy_title")}:
+              </label>
+              <button
+                type="button"
+                onClick={() =>
+                  setValueStep1("isPublic", !watchStep1("isPublic"))
+                }
+                className={`visibility-toggle-btn ${watchStep1("isPublic") ? "visibility-toggle-btn--public" : "visibility-toggle-btn--private"}`}
+              >
+                {watchStep1("isPublic")
+                  ? t("dish_settings_modal_public")
+                  : t("dish_settings_modal_private")}
+              </button>
+              <input
+                type="checkbox"
+                id="isPublic"
+                {...registerStep1("isPublic")}
+                className="hidden-checkbox"
+              />
             </div>
 
-            <button type="submit" className="submit-button" disabled={isSubmittingStep1}>
-              {isSubmittingStep1 ? t("submitting") : t("create_dish_modal_next_button")}
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={isSubmittingStep1}
+            >
+              {isSubmittingStep1
+                ? t("submitting")
+                : t("create_dish_modal_next_button")}
             </button>
-
           </form>
         )}
 
         {step === 2 && (
           <div className="ingredients-step-container">
-            <p className="step-hint">{t("create_dish_modal_ingredients_hint")}
+            <p className="step-hint">
+              {t("create_dish_modal_ingredients_hint")}
               <span className="required-indicator"> *</span>
             </p>
-            
+
             <div className="ingredient-input-group">
               <div className="form-group">
-                <label htmlFor="ingredient-name">{t("create_dish_modal_ingredient_name")}:
+                <label htmlFor="ingredient-name">
+                  {t("create_dish_modal_ingredient_name")}:
                   <span className="required-indicator"> *</span>
                 </label>
                 <input
                   type="text"
                   id="ingredient-name"
-                  placeholder={t("create_dish_modal_ingredient_name_placeholder")}
+                  placeholder={t(
+                    "create_dish_modal_ingredient_name_placeholder",
+                  )}
                   {...registerStep2("ingredientName")}
                 />
                 {errorsStep2.ingredientName && (
-                  <span className="error-text">{errorsStep2.ingredientName.message}</span>
+                  <span className="error-text">
+                    {errorsStep2.ingredientName.message}
+                  </span>
                 )}
               </div>
-              
+
               <div className="form-group">
-                <label htmlFor="ingredient-quantity">{t("create_dish_modal_ingredient_quantity")}:
+                <label htmlFor="ingredient-quantity">
+                  {t("create_dish_modal_ingredient_quantity")}:
                   <span className="required-indicator"> *</span>
                 </label>
                 <input
                   type="text"
                   id="ingredient-quantity"
-                  placeholder={t("create_dish_modal_ingredient_quantity_placeholder")}
+                  placeholder={t(
+                    "create_dish_modal_ingredient_quantity_placeholder",
+                  )}
                   {...registerStep2("ingredientDescription")}
                 />
                 {errorsStep2.ingredientDescription && (
-                  <span className="error-text">{errorsStep2.ingredientDescription.message}</span>
+                  <span className="error-text">
+                    {errorsStep2.ingredientDescription.message}
+                  </span>
                 )}
               </div>
-              
-              <button 
+
+              <button
                 type="button"
-                className="add-ingredient-button" 
+                className="add-ingredient-button"
                 onClick={handleAddIngredient}
               >
                 <AddIcon /> {t("create_dish_modal_add_ingredient")}
@@ -713,13 +802,17 @@ export default function CreateDishModal({
 
             <div className="ingredients-list">
               {ingredients.length === 0 ? (
-                <p className="no-ingredients-text">{t("create_dish_modal_no_ingredients")}</p>
+                <p className="no-ingredients-text">
+                  {t("create_dish_modal_no_ingredients")}
+                </p>
               ) : (
                 ingredients.map((ingredient) => (
                   <div key={ingredient.id} className="ingredient-item">
                     <div className="ingredient-info">
                       <span className="ingredient-name">{ingredient.name}</span>
-                      <span className="ingredient-quantity">{ingredient.description}</span>
+                      <span className="ingredient-quantity">
+                        {ingredient.description}
+                      </span>
                     </div>
                     <button
                       type="button"
@@ -734,25 +827,18 @@ export default function CreateDishModal({
               )}
             </div>
             {errorsStep2.ingredientsList && (
-              <div className="error-text" style={{ marginTop: "1rem", textAlign: "center" }}>
+              <div className="error-text error-text--centered">
                 {errorsStep2.ingredientsList.message}
               </div>
             )}
 
             <div className="step-actions">
-              <button 
-                className="back-button" 
-                onClick={() => setStep(1)}
-              >
+              <button className="back-button" onClick={() => setStep(1)}>
                 {t("create_dish_modal_back_button")}
               </button>
-              <button 
-                className="submit-button" 
-                onClick={handleStep2Next}
-              >
+              <button className="submit-button" onClick={handleStep2Next}>
                 {t("create_dish_modal_next_button")}
               </button>
-
             </div>
           </div>
         )}
@@ -764,16 +850,20 @@ export default function CreateDishModal({
               <span className="required-indicator"> *</span>
             </p>
             <p className="step-subhint">{t("create_dish_modal_drag_hint")}</p>
-            
-            <ul className={`images-grid ${images.length === 0 ? 'empty' : ''}`}>
+
+            <ul className={`images-grid ${images.length === 0 ? "empty" : ""}`}>
               {images.map((image, index) => {
-                const mainImageLabel = index === 0 ? ` - ${t("create_dish_modal_main_image")}` : '';
+                const mainImageLabel =
+                  index === 0 ? ` - ${t("create_dish_modal_main_image")}` : "";
                 const imageLabel = `${t("create_dish_modal_image")} ${index + 1}${mainImageLabel}. ${t("create_dish_modal_use_arrows_to_reorder")}`;
                 return (
-                  <li key={image.id} className={`image-card-wrapper ${index === 0 ? 'main' : ''}`}>
+                  <li
+                    key={image.id}
+                    className={`image-card-wrapper ${index === 0 ? "main" : ""}`}
+                  >
                     <button
                       type="button"
-                      className={`image-card ${draggedIndex === index ? 'dragging' : ''}`}
+                      className={`image-card ${draggedIndex === index ? "dragging" : ""}`}
                       draggable
                       onDragStart={(e) => handleDragStart(e, index)}
                       onDragEnd={handleDragEnd}
@@ -785,12 +875,22 @@ export default function CreateDishModal({
                       <div className="drag-handle" aria-hidden="true">
                         <DragIndicatorIcon />
                       </div>
-                      <img src={image.url} alt={`${t("create_dish_modal_dish_image")} ${index + 1}`} />
-                      {index === 0 && <span className="main-badge" aria-label={t("create_dish_modal_main_image")}>MAIN</span>}
+                      <img
+                        src={image.url}
+                        alt={`${t("create_dish_modal_dish_image")} ${index + 1}`}
+                      />
+                      {index === 0 && (
+                        <span
+                          className="main-badge"
+                          aria-label={t("create_dish_modal_main_image")}
+                        >
+                          MAIN
+                        </span>
+                      )}
                     </button>
-                    <button 
+                    <button
                       type="button"
-                      className="remove-image-btn" 
+                      className="remove-image-btn"
                       onClick={(e) => {
                         e.stopPropagation();
                         removeImage(image.id);
@@ -803,11 +903,11 @@ export default function CreateDishModal({
                   </li>
                 );
               })}
-              
+
               {images.length < 3 && (
                 <li className="add-image-wrapper">
-                  <button 
-                    className="add-image-card" 
+                  <button
+                    className="add-image-card"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={isUploading}
                   >
@@ -825,7 +925,7 @@ export default function CreateDishModal({
             </ul>
 
             {errorsStep3.imagesList && (
-              <div className="error-text" style={{ marginTop: "1rem", textAlign: "center" }}>
+              <div className="error-text error-text--centered">
                 {errorsStep3.imagesList.message}
               </div>
             )}
@@ -836,24 +936,20 @@ export default function CreateDishModal({
               onChange={handleImageUpload}
               accept="image/*"
               multiple
-              style={{ display: "none" }}
+              className="hidden-file-input"
             />
 
             <div className="step-actions">
-              <button 
-                className="back-button" 
-                onClick={() => setStep(2)}
-              >
+              <button className="back-button" onClick={() => setStep(2)}>
                 {t("create_dish_modal_back_button")}
               </button>
-              <button 
-                className="submit-button" 
+              <button
+                className="submit-button"
                 onClick={handleStep3Next}
                 disabled={isUploading}
               >
                 {t("create_dish_modal_next_button")}
               </button>
-
             </div>
           </div>
         )}
@@ -868,20 +964,24 @@ export default function CreateDishModal({
 
             <div className="categories-list">
               {categories.length === 0 ? (
-                <p className="no-categories-text">{t("create_dish_modal_no_categories")}</p>
+                <p className="no-categories-text">
+                  {t("create_dish_modal_no_categories")}
+                </p>
               ) : (
                 categories.map((category) => (
                   <button
                     key={category.id}
                     type="button"
-                    className={`category-tag ${selectedCategoryIds.includes(category.id) ? 'selected' : ''}`}
+                    className={`category-tag ${selectedCategoryIds.includes(category.id) ? "selected" : ""}`}
                     onClick={() => toggleCategory(category.id)}
-                    style={{ 
+                    style={{
                       borderColor: category.color,
-                      color: selectedCategoryIds.includes(category.id) ? '#ffffff' : category.color,
-                      background: selectedCategoryIds.includes(category.id) ? category.color : `${category.color}15`,
-                      padding: "0.5rem 1rem",
-                      fontSize: "0.8rem"
+                      color: selectedCategoryIds.includes(category.id)
+                        ? "#ffffff"
+                        : category.color,
+                      background: selectedCategoryIds.includes(category.id)
+                        ? category.color
+                        : `${category.color}15`,
                     }}
                   >
                     {getCategoryName(category)}
@@ -891,142 +991,155 @@ export default function CreateDishModal({
             </div>
 
             <div className="step-actions">
-              <button 
-                className="back-button" 
-                onClick={() => setStep(3)}
-              >
+              <button className="back-button" onClick={() => setStep(3)}>
                 {t("create_dish_modal_back_button")}
               </button>
-              <button 
-                className="submit-button" 
-                onClick={() => setStep(5)}
-              >
+              <button className="submit-button" onClick={() => setStep(5)}>
                 {t("create_dish_modal_next_button")}
               </button>
-
             </div>
           </div>
         )}
 
         {step === 5 && (
           <div className="steps-step-container">
-            <p className="step-hint">
-              {t("create_dish_modal_steps_hint")}
-            </p>
+            <p className="step-hint">{t("create_dish_modal_steps_hint")}</p>
 
             <div className="ingredients-list">
               {preparationSteps.map((s, i) => {
-                 const isExpanded = expandedStepId === s.id;
-                 return (
-                 <div key={s.id} className="step-item-container">
-                    <button 
-                        type="button"
-                        className={`step-summary ${isExpanded ? 'expanded' : ''}`}
-                        onClick={() => setExpandedStepId(isExpanded ? null : s.id)}
-                        aria-expanded={isExpanded}
+                const isExpanded = expandedStepId === s.id;
+                return (
+                  <div key={s.id} className="step-item-container">
+                    <button
+                      type="button"
+                      className={`step-summary ${isExpanded ? "expanded" : ""}`}
+                      onClick={() =>
+                        setExpandedStepId(isExpanded ? null : s.id)
+                      }
+                      aria-expanded={isExpanded}
                     >
-                        <div style={{display: 'flex', alignItems: 'center'}}>
-                            {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-                            <span style={{marginLeft: '8px'}}>{t("create_dish_modal_step")} {i + 1}</span>
-                        </div>
-                        <DeleteIcon 
-                            onClick={(e) => {
-                                e.stopPropagation(); 
-                                handleRemoveStep(s.id);
-                            }} 
-                            style={{cursor: 'pointer', color: '#ff5252'}}
-                        />
+                      <div className="step-summary-left">
+                        {isExpanded ? (
+                          <KeyboardArrowDownIcon />
+                        ) : (
+                          <KeyboardArrowUpIcon />
+                        )}
+                        <span className="step-summary-label">
+                          {s.name.trim() ||
+                            t("create_dish_modal_step_number", { n: i + 1 })}
+                        </span>
+                      </div>
+                      <DeleteIcon
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleRemoveStep(s.id);
+                        }}
+                        className="step-delete-icon"
+                      />
                     </button>
-                    <div className="step-content" style={{
-                        display: 'grid',
-                        gridTemplateRows: isExpanded ? '1fr' : '0fr',
-                        transition: 'grid-template-rows 0.3s ease-out'
-                    }}>
-                        <div style={{overflow: 'hidden'}}>
-                            <div className="form-group" style={{padding: '10px', marginTop: 0, position: 'relative'}}>
-                                <textarea 
-                                    className="step-description-textarea"
-                                    value={s.description}
-                                    maxLength={500}
-                                    onChange={(e) => {
-                                        handleStepChange(s.id, e.target.value);
-                                        e.target.style.height = "auto";
-                                        e.target.style.height = `${e.target.scrollHeight}px`;
-                                    }}
-                                    ref={(el) => {
-                                        if (el) {
-                                            el.style.height = "auto";
-                                            el.style.height = `${el.scrollHeight}px`;
-                                        }
-                                    }}
-                                    placeholder={t("create_dish_modal_step_description_placeholder")}
-                                />
-                                <div className={`step-char-count ${s.description.length >= 500 ? 'limit' : ''}`}>
-                                    {s.description.length}/500
-                                </div>
+                    <div
+                      className={`step-content ${isExpanded ? "step-content--expanded" : "step-content--collapsed"}`}
+                    >
+                      <div className="step-content-overflow">
+                        <div className="form-group step-form-group">
+                          <input
+                            className="step-name-input"
+                            value={s.name}
+                            onChange={(e) =>
+                              handleStepChange(s.id, "name", e.target.value)
+                            }
+                            placeholder={t("create_dish_modal_step_name")}
+                          />
+                          <div className="step-textarea-wrapper">
+                            <textarea
+                              className="step-description-textarea"
+                              value={s.description}
+                              maxLength={500}
+                              onChange={(e) => {
+                                handleStepChange(
+                                  s.id,
+                                  "description",
+                                  e.target.value,
+                                );
+                                e.target.style.height = "auto";
+                                e.target.style.height = `${e.target.scrollHeight}px`;
+                              }}
+                              ref={(el) => {
+                                if (el) {
+                                  el.style.height = "auto";
+                                  el.style.height = `${el.scrollHeight}px`;
+                                }
+                              }}
+                              placeholder={t(
+                                "create_dish_modal_step_description_placeholder",
+                              )}
+                            />
+                            <div
+                              className={`step-char-count ${s.description.length >= 500 ? "limit" : ""}`}
+                            >
+                              {s.description.length}/500
                             </div>
+                          </div>
                         </div>
+                      </div>
                     </div>
-                 </div>
-                 );
+                  </div>
+                );
               })}
             </div>
 
-            <button 
-                type="button" 
-                className="add-ingredient-button" 
-                onClick={handleAddEmptyStep}
-                style={{marginBottom: '20px', width: '100%'}}
+            <button
+              type="button"
+              className="add-ingredient-button add-step-button"
+              onClick={handleAddEmptyStep}
             >
-                 <AddIcon /> {t("create_dish_modal_add_step")}
+              <AddIcon /> {t("create_dish_modal_add_step")}
             </button>
 
             <div className="step-actions">
-              <button 
-                className="back-button" 
-                onClick={() => setStep(4)}
-              >
+              <button className="back-button" onClick={() => setStep(4)}>
                 {t("create_dish_modal_back_button")}
               </button>
-              
-              <button 
-                type="button" 
-                className="back-button" 
+
+              <button
+                type="button"
+                className="back-button skip-button"
                 onClick={() => setShowSkipConfirm(true)}
-                style={{marginLeft: '10px', marginRight: '10px'}}
               >
                 {t("create_dish_modal_skip_step")}
               </button>
 
-              <button 
-                className="submit-button" 
+              <button
+                className="submit-button"
                 onClick={() => handleFinish(false)}
                 disabled={isUploading}
               >
-                {isUploading ? t("submitting") : t("create_dish_modal_save_finish")}
+                {isUploading
+                  ? t("submitting")
+                  : t("create_dish_modal_save_finish")}
               </button>
             </div>
-            
+
             {showSkipConfirm && (
               <div className="skip-step-create-dish-overlay">
-                  <div className="skip-step-create-dish-modal">
-                      <h3>{t("create_dish_modal_skip_confirm_title")}</h3>
-                      <p>{t("create_dish_modal_skip_confirm_message")}</p>
-                      <div className="skip-step-create-dish-actions">
-                          <button 
-                            className="skip-step-create-dish-btn cancel" 
-                            onClick={() => setShowSkipConfirm(false)}
-                          >
-                              {t("create_dish_modal_skip_confirm_no")}
-                          </button>
-                          <button 
-                            className="skip-step-create-dish-btn confirm" 
-                            onClick={() => handleFinish(true)}
-                          >
-                              {t("create_dish_modal_skip_confirm_yes")}
-                          </button>
-                      </div>
+                <div className="skip-step-create-dish-modal">
+                  <h3>{t("create_dish_modal_skip_confirm_title")}</h3>
+                  <p>{t("create_dish_modal_skip_confirm_message")}</p>
+                  <div className="skip-step-create-dish-actions">
+                    <button
+                      className="skip-step-create-dish-btn cancel"
+                      onClick={() => setShowSkipConfirm(false)}
+                    >
+                      {t("create_dish_modal_skip_confirm_no")}
+                    </button>
+                    <button
+                      className="skip-step-create-dish-btn confirm"
+                      onClick={() => handleFinish(true)}
+                    >
+                      {t("create_dish_modal_skip_confirm_yes")}
+                    </button>
                   </div>
+                </div>
               </div>
             )}
           </div>

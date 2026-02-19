@@ -58,6 +58,7 @@ export default function DishSettingsModal({
   const [descText, setDescText] = useState("");
   const [macros, setMacros] = useState({ calories: 0, protein: 0, fat: 0, carbs: 0 });
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showPrivacyConfirm, setShowPrivacyConfirm] = useState(false);
   
   const [newIngredientName, setNewIngredientName] = useState("");
   const [newIngredientDesc, setNewIngredientDesc] = useState("");
@@ -66,6 +67,7 @@ export default function DishSettingsModal({
   const [steps, setSteps] = useState<PreparationStep[]>([]);
   const [expandedStepId, setExpandedStepId] = useState<number | null>(null);
   const [stepsToDelete, setStepsToDelete] = useState<number[]>([]);
+  const [stepErrors, setStepErrors] = useState<Set<number>>(new Set());
   const [savingSteps, setSavingSteps] = useState(false);
 
   const [images, setImages] = useState<ImageSlot[]>([]);
@@ -74,6 +76,7 @@ export default function DishSettingsModal({
   
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
+  const [initialCategoryIds, setInitialCategoryIds] = useState<number[]>([]);
   const [categoriesChanged, setCategoriesChanged] = useState(false);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -115,9 +118,10 @@ export default function DishSettingsModal({
           setSteps([...stepsData].sort((a, b) => a.order - b.order));
         }
         
-        // Assuming dishData has categories array
         if (dishData.categories) {
-           setSelectedCategoryIds(dishData.categories.map((c: any) => c.id));
+           const ids = dishData.categories.map((c: any) => c.id);
+           setSelectedCategoryIds(ids);
+           setInitialCategoryIds(ids);
         }
 
         try {
@@ -162,6 +166,13 @@ export default function DishSettingsModal({
     setView("menu");
   };
 
+  const handleGoToSteps = () => {
+    setStepsToDelete([]);
+    setExpandedStepId(null);
+    setStepErrors(new Set());
+    setView("steps");
+  };
+
   const handleUpdateDescription = async () => {
     if (!dish) return;
     try {
@@ -170,11 +181,11 @@ export default function DishSettingsModal({
         description: descText,
         ...macros,
       });
-      toast.success(t("update_dish_description_success"));
+      toast.success(t("dish_settings_modal_edit_description_success"));
       if (onUpdate) onUpdate();
       onClose();
     } catch {
-      toast.error(t("update_dish_description_error"));
+      toast.error(t("dish_settings_modal_edit_description_error"));
     }
   };
 
@@ -186,11 +197,11 @@ export default function DishSettingsModal({
         description: descText,
         ...macros,
       });
-      toast.success(t("update_dish_macros_success"));
+      toast.success(t("dish_settings_modal_edit_macros_success"));
       if (onUpdate) onUpdate();
       onClose();
     } catch {
-      toast.error(t("update_dish_macros_error"));
+      toast.error(t("dish_settings_modal_edit_macros_error"));
     }
   };
 
@@ -227,10 +238,13 @@ export default function DishSettingsModal({
 
   const handleStepChange = (id: number, field: 'name' | 'description', value: string) => {
     setSteps(prev => prev.map(s => s.id === id ? { ...s, [field]: value } : s));
+    if (field === 'description' && value.trim()) {
+      setStepErrors(prev => { const next = new Set(prev); next.delete(id); return next; });
+    }
   };
 
   const handleAddEmptyStep = () => {
-    const newId = Date.now() * -1; // Temporary negative ID
+    const newId = -(Date.now() + Math.floor(Math.random() * 1000));
     setSteps(prev => [...prev, { 
       id: newId, 
       name: "", 
@@ -249,17 +263,27 @@ export default function DishSettingsModal({
 
   const handleSaveAllSteps = async () => {
     if (!dish) return;
+
+    const emptyStep = steps.find(s => !s.description.trim());
+    if (emptyStep) {
+      const errorIds = new Set(steps.filter(s => !s.description.trim()).map(s => s.id));
+      setStepErrors(errorIds);
+      toast.error(t("dish_settings_modal_step_description_required"));
+      setExpandedStepId(emptyStep.id);
+      return;
+    }
+
     setSavingSteps(true);
     try {
-      // 1. Delete
       for (const id of stepsToDelete) {
-        await DishesService.deleteStep(id);
+        try {
+          await DishesService.deleteStep(id);
+        } catch (error_) {
+          console.warn("Could not delete step", id, error_);
+        }
       }
       
-      // 2. Add/Update
       for (const step of steps) {
-        if (!step.description.trim()) continue;
-
         const stepName = step.name || `${t("create_dish_modal_step")} ${steps.indexOf(step) + 1}`;
 
         if (step.id > 0) {
@@ -385,8 +409,74 @@ export default function DishSettingsModal({
       toast.error(t("dish_settings_modal_delete_error"));
     }
   };
+  
+  const handlePrivacyToggle = () => {
+    if (!dish) return;
+    
+    // Validation: cannot make public without steps
+    if (!dish.isPublic && steps.length === 0) {
+      toast.error(t("dish_settings_modal_privacy_public_no_steps_error"));
+      return;
+    }
+    
+    setShowPrivacyConfirm(true);
+  };
 
-  const handleToggleCategory = async (categoryId: number) => {
+  const confirmPrivacyChange = async () => {
+    if (!dish) return;
+    try {
+      if (dish.isPublic) {
+        await DishesService.setDishPrivate(dish.id);
+      } else {
+        await DishesService.setDishPublic(dish.id);
+      }
+      toast.success(t("dish_settings_modal_privacy_updated"));
+      setShowPrivacyConfirm(false);
+      loadDish();
+    } catch (error) {
+       toast.error(`${t("dish_settings_modal_privacy_update_error")}\n${error}`);
+    }
+  };
+
+  const handleSaveCategories = async () => {
+    if (!dish) return;
+
+    if (selectedCategoryIds.length === 0) {
+      toast.error(t("create_dish_modal_category_required"));
+      return;
+    }
+
+    // Determine what to add and what to remove
+    const toAdd = selectedCategoryIds.filter((id) => !initialCategoryIds.includes(id));
+    const toRemove = initialCategoryIds.filter((id) => !selectedCategoryIds.includes(id));
+
+    if (toAdd.length === 0 && toRemove.length === 0) {
+      setView("menu");
+      return;
+    }
+
+    try {
+      const promises = [
+        ...toAdd.map((id) => CategoriesService.assignToDish(id, dish.id)),
+        ...toRemove.map((id) => CategoriesService.unassignFromDish(id, dish.id)),
+      ];
+
+      await Promise.all(promises);
+
+      toast.success(t("dish_settings_modal_categories_updated_success"));
+      setInitialCategoryIds(selectedCategoryIds);
+
+      // Refresh dish data to keep sync (optional but safe)
+      loadDish();
+      if (onUpdate) onUpdate();
+      setView("menu");
+    } catch (error) {
+      console.error("Failed to update categories", error);
+      toast.error(t("dish_settings_modal_categories_updated_error"));
+    }
+  };
+
+  const handleToggleCategory = (categoryId: number) => {
     if (!dish) return;
     
     const isSelected = selectedCategoryIds.includes(categoryId);
@@ -401,23 +491,8 @@ export default function DishSettingsModal({
     } else {
       setSelectedCategoryIds(prev => [...prev, categoryId]);
     }
-
-    try {
-      if (isSelected) {
-        await CategoriesService.unassignFromDish(categoryId, dish.id);
-      } else {
-        await CategoriesService.assignToDish(categoryId, dish.id);
-      }
-      setCategoriesChanged(true);
-    } catch {
-      
-      if (isSelected) {
-        setSelectedCategoryIds(prev => [...prev, categoryId]);
-      } else {
-        setSelectedCategoryIds(prev => prev.filter(id => id !== categoryId));
-      }
-      toast.error(t("categories_service_update_failed"));
-    }
+    
+    setCategoriesChanged(true); 
   };
 
   const renderPhotos = () => (
@@ -508,48 +583,31 @@ export default function DishSettingsModal({
 
   const renderVisibility = () => (
     <div className="form-container">
-       <div className="visibility-status" style={{ textAlign: "center", marginBottom: "2rem" }}>
+       <div className="visibility-status">
           {dish?.isPublic ? (
              <>
-               <PublicIcon style={{ fontSize: "4rem", color: "#4caf50" }} />
+               <PublicIcon className="visibility-icon--public" />
                <h3>{t("dish_settings_modal_public")}</h3>
              </>
           ) : (
              <>
-               <LockIcon style={{ fontSize: "4rem", color: "#ff9800" }} />
+               <LockIcon className="visibility-icon--private" />
                <h3>{t("dish_settings_modal_private")}</h3>
              </>
           )}
        </div>
 
        <div className="form-group">
-          <p style={{ textAlign: "center", marginBottom: "1rem" }}>
+           <p className="visibility-text">
              {t("dish_settings_modal_current_privacy")} <strong>{dish?.isPublic 
                 ? t("dish_settings_modal_public")
                 : t("dish_settings_modal_private")
              }</strong>
           </p>
           
-          <button 
-            className="save-button" 
-            onClick={async () => {
-               if (!dish) return;
-               try {
-                  if (dish.isPublic) {
-                     await DishesService.setDishPrivate(dish.id);
-                  } else {
-                     await DishesService.setDishPublic(dish.id);
-                  }
-                  toast.success(t("dish_settings_modal_privacy_updated"));
-                  loadDish();
-               } catch (error) {
-                  toast.error(t("dish_settings_modal_privacy_update_error\n"+error));
-               }
-            }}
-            style={{ 
-              background: dish?.isPublic ? '#ff9800' : '#4caf50',
-              marginTop: '0'
-            }}
+           <button 
+            onClick={handlePrivacyToggle}
+            className={`save-button ${dish?.isPublic ? 'toggle-btn--public' : 'toggle-btn--private'}`}
           >
              {dish?.isPublic ? t("dish_settings_modal_private") : t("dish_settings_modal_public")}
           </button>
@@ -558,7 +616,7 @@ export default function DishSettingsModal({
   );
 
   const renderCategories = () => (
-    <div className="form-container" style={{ display: 'flex', flexDirection: 'column' }}>
+    <div className="form-container form-container--flex">
        <p className="step-hint">
           {t("create_dish_modal_categories_hint")}
        </p>
@@ -576,7 +634,7 @@ export default function DishSettingsModal({
                onClick={() => handleToggleCategory(category.id)}
                style={{ 
                  borderColor: category.color,
-                 color: selectedCategoryIds.includes(category.id) ? '#fff' : category.color,
+                 color: selectedCategoryIds.includes(category.id) ? '#ffffff' : category.color,
                  background: selectedCategoryIds.includes(category.id) ? category.color : `${category.color}15`
                }}
              >
@@ -585,62 +643,71 @@ export default function DishSettingsModal({
            ))
          )}
        </div>
+
+       <div className="categories-actions" style={{ display: 'flex', gap: '1rem', marginTop: '2rem', justifyContent: 'center' }}>
+            <button 
+                className="save-button" 
+                onClick={handleSaveCategories}
+            >
+                {t("dish_settings_modal_edit_description_save")}
+            </button>
+        </div>
     </div>
   );
 
   const renderMenu = () => (
     <div className="settings-menu">
       <button className="menu-button" onClick={() => setView("description")}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="menu-button-content">
           <Description />
           {t("dish_settings_modal_edit_description")}
         </div>
         <ChevronRight />
       </button>
       <button className="menu-button" onClick={() => setView("ingredients")}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="menu-button-content">
           <Restaurant />
           {t("dish_settings_modal_edit_ingredients")}
         </div>
         <ChevronRight />
       </button>
       <button className="menu-button" onClick={() => setView("macros")}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="menu-button-content">
           <FitnessCenter />
           {t("dish_settings_modal_edit_macronutrients")}
         </div>
         <ChevronRight />
       </button>
       <button className="menu-button" onClick={() => setView("photos")}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+        <div className="menu-button-content">
           <AddPhotoAlternate />
           {t("dish_settings_modal_edit_photos")}
         </div>
         <ChevronRight />
       </button>
-      <button className="menu-button" onClick={() => setView("steps")}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <button className="menu-button" onClick={handleGoToSteps}>
+        <div className="menu-button-content">
           <FormatListNumbered />
           {t("dish_settings_modal_edit_steps")}
         </div>
         <ChevronRight />
       </button>
       <button className="menu-button" onClick={() => setView("categories")}>
-         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+         <div className="menu-button-content">
            <CategoryIcon />
            {t("dish_settings_modal_edit_categories")}
          </div>
          <ChevronRight />
       </button>
       <button className="menu-button" onClick={() => setView("visibility")}>
-         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+         <div className="menu-button-content">
            <Visibility />
            {t("dish_settings_modal_privacy_title")}
          </div>
          <ChevronRight />
       </button>
-      <button className="menu-button delete-button" onClick={handleDeleteDish} style={{ borderColor: '#ff4b4b', color: '#ff4b4b' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+      <button className="menu-button delete-button menu-button--delete" onClick={handleDeleteDish}>
+        <div className="menu-button-content">
           <Delete />
           {t("dish_settings_modal_delete_button")}
         </div>
@@ -728,7 +795,7 @@ export default function DishSettingsModal({
           </div>
         ))}
         {(!dish?.ingredients || dish.ingredients.length === 0) && (
-          <p style={{ textAlign: 'center', color: '#888' }}>{t("create_dish_modal_no_ingredients")}</p>
+          <p className="empty-message">{t("create_dish_modal_no_ingredients")}</p>
         )}
       </div>
 
@@ -772,24 +839,20 @@ export default function DishSettingsModal({
                    onClick={() => setExpandedStepId(isExpanded ? null : step.id)}
                    aria-expanded={isExpanded}
                >
-                   <div style={{display: 'flex', alignItems: 'center'}}>
+                   <div className="step-summary-left">
                        {isExpanded ? <KeyboardArrowDownIcon /> : <KeyboardArrowUpIcon />}
-                       <span style={{marginLeft: '8px'}}>{step.name || `${t("create_dish_modal_step")} ${index + 1}`}</span>
+                       <span className="step-summary-label">{step.name || `${t("create_dish_modal_step")} ${index + 1}`}</span>
                    </div>
                    <Delete 
                        onClick={(e: React.MouseEvent) => {
                            e.stopPropagation(); 
                            handleRemoveStep(step.id);
                        }} 
-                       style={{cursor: 'pointer', color: '#ff5252'}}
+                       className="step-delete-icon"
                    />
                </button>
-               <div className="step-content" style={{
-                   display: 'grid',
-                   gridTemplateRows: isExpanded ? '1fr' : '0fr',
-                   transition: 'grid-template-rows 0.3s ease-out'
-               }}>
-                   <div style={{overflow: 'hidden'}}>
+               <div className={`step-content ${isExpanded ? 'step-content--expanded' : 'step-content--collapsed'}`}>
+                   <div className="step-content-overflow">
                        <div className="step-form-group">
                            <input 
                              className="step-name-input"
@@ -797,28 +860,33 @@ export default function DishSettingsModal({
                              onChange={(e) => handleStepChange(step.id, 'name', e.target.value)}
                              placeholder={t("create_dish_modal_step_name")}
                            />
-                           <div style={{ position: 'relative' }}>
-                             <textarea 
-                                 className="step-description-textarea"
-                                 value={step.description}
-                                 maxLength={500}
-                                 onChange={(e) => {
-                                     handleStepChange(step.id, 'description', e.target.value);
-                                     e.target.style.height = "auto";
-                                     e.target.style.height = `${e.target.scrollHeight}px`;
-                                 }}
-                                 ref={(el) => {
-                                     if (el) {
-                                         el.style.height = "auto";
-                                         el.style.height = `${el.scrollHeight}px`;
-                                     }
-                                 }}
-                                 placeholder={t("create_dish_modal_step_description_placeholder")}
-                             />
-                             <div className={`step-char-count ${step.description.length >= 500 ? 'limit' : ''}`}>
-                                 {step.description.length}/500
-                             </div>
-                           </div>
+                            <div className="step-textarea-wrapper">
+                              <textarea 
+                                  className={`step-description-textarea${stepErrors.has(step.id) ? ' input-error' : ''}`}
+                                  value={step.description}
+                                  maxLength={500}
+                                  onChange={(e) => {
+                                      handleStepChange(step.id, 'description', e.target.value);
+                                      e.target.style.height = "auto";
+                                      e.target.style.height = `${e.target.scrollHeight}px`;
+                                  }}
+                                  ref={(el) => {
+                                      if (el) {
+                                          el.style.height = "auto";
+                                          el.style.height = `${el.scrollHeight}px`;
+                                      }
+                                  }}
+                                  placeholder={t("create_dish_modal_step_description_placeholder")}
+                              />
+                              {stepErrors.has(step.id) && (
+                                <span className="error-text">
+                                  {t("dish_settings_modal_step_description_required")}
+                                </span>
+                              )}
+                              <div className={`step-char-count ${step.description.length >= 500 ? 'limit' : ''}`}>
+                                  {step.description.length}/500
+                              </div>
+                            </div>
                        </div>
                    </div>
                </div>
@@ -826,7 +894,7 @@ export default function DishSettingsModal({
           );
         })}
         {steps.length === 0 && (
-          <p style={{ textAlign: 'center', color: '#888' }}>{t("create_dish_modal_no_steps")}</p>
+          <p className="empty-message">{t("create_dish_modal_no_steps")}</p>
         )}
       </div>
 
@@ -881,7 +949,7 @@ export default function DishSettingsModal({
         </div>
 
         {loading ? (
-          <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+          <div className="modal-loading">
             <p>{t("loading")}</p>
           </div>
         ) : (
@@ -914,6 +982,29 @@ export default function DishSettingsModal({
                   onClick={confirmDelete}
                 >
                   {t("delete")}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {showPrivacyConfirm && (
+          <div className="delete-confirm-overlay" onPointerDown={(e) => e.stopPropagation()}>
+            <div className="delete-confirm-modal">
+              <h4>{t("dish_settings_modal_confirm_change_title")}</h4>
+              <p>{t("dish_settings_modal_confirm_change_message")}</p>
+              <div className="delete-confirm-actions">
+                <button
+                  className="delete-confirm-btn cancel"
+                  onClick={() => setShowPrivacyConfirm(false)}
+                >
+                  {t("dish_settings_modal_confirm_no")}
+                </button>
+                <button
+                  className="delete-confirm-btn confirm"
+                  onClick={confirmPrivacyChange}
+                >
+                  {t("dish_settings_modal_confirm_yes")}
                 </button>
               </div>
             </div>

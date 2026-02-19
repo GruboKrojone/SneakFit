@@ -348,6 +348,14 @@
     transition: grid-template-rows 0.3s ease-out;
 }
 
+.step-content--expanded {
+  grid-template-rows: 1fr;
+}
+
+.step-content--collapsed {
+  grid-template-rows: 0fr;
+}
+
 .step-content-inner {
     overflow: hidden;
 }
@@ -739,4 +747,94 @@
   font-style: italic;
   width: 100%;
   margin-top: 2rem;
+}
+
+.menu-button-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menu-button--delete {
+  border-color: #ff4b4b !important;
+  color: #ff4b4b !important;
+}
+
+.visibility-status {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.visibility-icon--public {
+  font-size: 4rem !important;
+  color: #4caf50;
+}
+
+.visibility-icon--private {
+  font-size: 4rem !important;
+  color: #ff9800;
+}
+
+.visibility-text {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.toggle-btn--public {
+  background: #ff9800;
+  margin-top: 0;
+}
+
+.toggle-btn--private {
+  background: #4caf50;
+  margin-top: 0;
+}
+
+.form-container--flex {
+  flex-direction: column;
+}
+.empty-message {
+  text-align: center;
+  color: #888;
+}
+
+.step-summary-left {
+  display: flex;
+  align-items: center;
+}
+
+.step-summary-label {
+  margin-left: 0.5rem;
+}
+
+.step-delete-icon {
+  cursor: pointer;
+  color: #ff5252;
+  flex-shrink: 0;
+}
+
+.step-content-overflow {
+  overflow: hidden;
+}
+
+.step-textarea-wrapper {
+  position: relative;
+}
+
+.modal-loading {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.error-text {
+  font-size: 0.75rem;
+  color: #ff6b6b;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.input-error {
+  border-color: #ff6b6b !important;
+  box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.15) !important;
 }

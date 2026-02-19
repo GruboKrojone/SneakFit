@@ -266,8 +266,8 @@ internal static class Program
 
         app.UseMiddleware<ExceptionMiddleware>();
         app.UseHttpsRedirection();
-        app.UseRateLimiter();
         app.UseCors();
+        app.UseRateLimiter();
         app.UseAuthentication();
         app.UseAuthorization();
 

@@ -255,16 +255,19 @@ class DishesService {
     }
   }
 
-  static async getRecommendedDishes(): Promise<Dish[]> {
+  static async getRecommendedDishes(maxResults = 10): Promise<Dish[]> {
     try {
-      const response = await fetch(`${this.baseUrl}/dish/recommended`, {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          "Content-Type": "application/json",
-          ...AuthService.getAuthHeader(),
-        },
-      });
+      const response = await fetch(
+        `${this.baseUrl}/dish/recommended?maxResults=${maxResults}`,
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+            ...AuthService.getAuthHeader(),
+          },
+        }
+      );
 
       if (!response.ok) {
         throw new Error(i18n.t("dishes_service_fetch_recommended_failed"));

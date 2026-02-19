@@ -13,7 +13,7 @@ import DishImage from "./DishImage";
 import AuthService from "../services/AuthService";
 import "./styles/DishSlider.css";
 import { useTranslation } from "react-i18next";
-import { useFetchDishes } from "../hooks/useFetchDishes";
+import { useRecommendedDishes } from "../hooks/useRecommendedDishes";
 import { useCleanTempLists } from "../hooks/useCleanTempLists";
 import {
   addLikedRecipe,
@@ -36,7 +36,7 @@ type ActionType = "pass" | "loved" | "smash" | null;
 export default function DishSlider() {
   const { t, i18n } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
-  const { dishes, isLoading, refetchDishes } = useFetchDishes();
+  const { dishes, isLoading, refetchDishes } = useRecommendedDishes(20);
   const [usedIndices, setUsedIndices] = useState<Set<number>>(new Set());
   const [passedCards, setPassedCards] = useState<number[]>([]);
   const [newlyPassedCard, setNewlyPassedCard] = useState<number | null>(null);

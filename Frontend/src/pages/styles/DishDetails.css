@@ -780,27 +780,6 @@
   position: relative;
 }
 
-.copy-ingredients-btn.icon-only::after {
-  content: attr(title);
-  position: absolute;
-  bottom: calc(100% + 0.4rem);
-  right: 0;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
-  font-size: 0.75rem;
-  font-weight: 500;
-  padding: 0.3rem 0.6rem;
-  border-radius: 0.4rem;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
-  z-index: 10;
-}
-
-.copy-ingredients-btn.icon-only:hover::after {
-  opacity: 1;
-}
 
 .copy-ingredients-btn:hover {
   transform: translateY(-0.125rem);

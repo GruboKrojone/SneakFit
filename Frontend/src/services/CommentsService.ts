@@ -3,6 +3,7 @@ import i18n from "../translations/service/i18n";
 
 export interface Comment {
   id?: number;
+  commentId?: number;
   content: string;
   authorId: number;
   dishId: number;

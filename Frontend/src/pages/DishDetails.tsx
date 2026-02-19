@@ -432,7 +432,6 @@ export default function DishDetails() {
                     className="copy-ingredients-btn icon-only"
                     onClick={copyIngredientsToClipboard}
                     title={t("dish_details_page_copy_ingredients")}
-                    aria-label={t("dish_details_page_copy_ingredients")}
                   >
                     <ContentCopy className="copy-icon" />
                   </button>
@@ -440,7 +439,6 @@ export default function DishDetails() {
                     className="copy-ingredients-btn icon-only"
                     onClick={addToShoppingList}
                     title={t("add_to_shopping_list")}
-                    aria-label={t("add_to_shopping_list")}
                   >
                     <AddShoppingCartIcon className="copy-icon" />
                   </button>
