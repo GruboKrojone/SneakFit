@@ -23,23 +23,23 @@ internal class GetAiResponseQueryHandler(IAIIntegration integration) : IQueryHan
         });
 
         var prequest = $"You are a professional chef. Return your response STRICTLY in {request.Props.Lang} language.\r\n" +
-                       $"Generate a dish recipe (1 portion) based on these parameters:\r\n" +
+                       $"Generate a high-quality, creative, and appetizing dish recipe (1 portion) based on these parameters:\r\n" +
                        $"- Categories: {string.Join(", ", categoryNames)}\r\n" +
-                       $"- Tastes: {string.Join(", ", request.Props.Tastes)}\r\n" +
-                       $"- Available tools: {string.Join(", ", request.Props.RequiredTools)} (optimize recipe for these tools)\r\n\r\n" +
-                       $"IMPORTANT: Translate EVERYTHING to {request.Props.Lang}, including:\r\n" +
-                       $"- The recipe name\r\n" +
-                       $"- The list of categories (use valid names in target language)\r\n" +
-                       $"- The list of required tools (use valid names in target language)\r\n" +
-                       $"- Ingredient names and units\r\n" +
-                       $"- Preparation steps\r\n" +
-                       $"- Section headers (e.g., 'Ingredients', 'Preparation Steps', 'Estimates')\r\n\r\n" +
-                       $"Please return the response as a valid JSON object with the following structure:\r\n" +
+                       $"- Tastes: {string.Join(", ", request.Props.Tastes.Select(FormatEnumValue))}\r\n" +
+                       $"- Available tools: {string.Join(", ", request.Props.RequiredTools.Select(FormatEnumValue))}\r\n\r\n" +
+                       $"IMPORTANT: Translate EVERYTHING to {request.Props.Lang}.\r\n" +
+                       $"STRICT LENGTH LIMITS (IMPORTANT!):\r\n" +
+                       $"- \"name\": MAX 100 characters\r\n" +
+                       $"- \"description\": MAX 280 characters\r\n" +
+                       $"- each element in \"ingredients\": MAX 100 characters per object\r\n" +
+                       $"- each element in \"steps\": MAX 500 characters\r\n\r\n" +
+                       $"Please return the response as a valid JSON object. Ensure all strings are properly escaped. Use \\n for multi-line description if needed but keep it under 280 chars total:\r\n" +
                        $"{{\r\n" +
-                       $"  \"name\": \"[Recipe Name]\",\r\n" +
+                       $"  \"name\": \"[Name, max 100 chars]\",\r\n" +
+                       $"  \"description\": \"[Appetizing desc, max 280 chars]\",\r\n" +
                        $"  \"categories\": [\"[Category 1]\", \"[Category 2]\"],\r\n" +
-                       $"  \"ingredients\": [\"[Quantity unit ingredient]\", \"...\"],\r\n" +
-                       $"  \"steps\": [\"[Step 1]\", \"[Step 2]\"],\r\n" +
+                       $"  \"ingredients\": [{{ \"name\": \"[Ingredient name]\", \"quantity\": \"[Amount and optional notes]\" }}, ...],\r\n" +
+                       $"  \"steps\": [\"[Instruction, max 500 chars]\", \"...\"], \r\n" +
                        $"  \"macros\": {{\r\n" +
                        $"    \"calories\": [number],\r\n" +
                        $"    \"carbs\": [number],\r\n" +
@@ -47,6 +47,9 @@ internal class GetAiResponseQueryHandler(IAIIntegration integration) : IQueryHan
                        $"    \"fat\": [number]\r\n" +
                        $"  }}\r\n" +
                        $"}}\r\n" +
+                       $"\r\n" +
+                       $"Note for ingredients: Separate the substance name from the amount and unit. For example: {{ \"name\": \"Chicken breast\", \"quantity\": \"200g, diced\" }}\r\n" +
+                       $"\r\n" +
                        $"Do not include any markdown formatting (like ```json). Return RAW JSON only.";
 
         var geminiRequest = new GeminiRequest(

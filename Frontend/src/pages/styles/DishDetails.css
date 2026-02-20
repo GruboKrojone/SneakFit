@@ -6,6 +6,7 @@
   position: relative;
   overflow-x: hidden;
   padding-bottom: 2rem;
+  transition: all 0.3s ease;
 }
 
 #delete-dish-button {
@@ -232,7 +233,7 @@
 
 .dish-name-box {
   font-family: 'Playfair Display', serif;
-  font-size: max(2dvw, 2dvh);
+  font-size: max(1dvw, 1dvh);
   margin: 0;
   font-weight: 700;
   color: var(--text);
@@ -486,6 +487,14 @@
 
 .grid-4 {
   display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
+  width: 100%;
+}
+
+.grid-4-row {
+  display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
@@ -497,6 +506,43 @@
   flex: 1;
   display: flex;
   justify-content: center;
+}
+
+.favourite-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.75rem;
+  border: 0.125rem solid var(--border);
+  background: var(--card);
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.favourite-btn:hover {
+  border-color: #e11d48;
+  color: #e11d48;
+  background: #e11d4810;
+}
+
+.favourite-btn--active {
+  border-color: #e11d48;
+  color: #e11d48;
+  background: #e11d4815;
+}
+
+.favourite-btn--active:hover {
+  background: #e11d4825;
+}
+
+.favourite-btn-icon {
+  font-size: 1.2rem !important;
 }
 
 .rating-container-inner {
@@ -696,6 +742,23 @@
   background-color: transparent;
   transform: scale(1.05);
   color: #66bb6a;
+}
+
+.btn-save {
+  background-color: transparent;
+  color: #2196f3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  gap: 1rem;
+}
+
+.btn-save:hover {
+  background-color: transparent;
+  transform: scale(1.05);
+  color: #64b5f6;
 }
 
 .loading-container {

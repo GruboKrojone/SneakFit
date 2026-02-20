@@ -7,6 +7,7 @@ import { Category } from "../services/DishesService";
 import { toast } from "react-toastify";
 import "./styles/AiRecipeModal.css";
 import { useNavigate, useParams } from "react-router-dom";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
 
 interface AiRecipeModalProps {
   readonly isOpen: boolean;
@@ -30,7 +31,6 @@ export default function AiRecipeModal({ isOpen, onClose }: AiRecipeModalProps) {
   useEffect(() => {
     if (isOpen) {
       setIsClosing(false);
-      // Small delay to trigger CSS transition
       requestAnimationFrame(() => setIsVisible(true));
       loadCategories();
     } else {
@@ -192,6 +192,17 @@ export default function AiRecipeModal({ isOpen, onClose }: AiRecipeModalProps) {
             {loading ? t("ai_modal_generating") || "Generating..." : t("ai_modal_generate") || "Generate Recipe"}
           </button>
         </div>
+
+        {loading && (
+          <div className="ai-loading-overlay">
+            <div className="ai-loading-content">
+              <div className="ai-loading-spinner">
+                <AutoAwesomeIcon className="ai-loading-icon" />
+              </div>
+              <p className="ai-loading-text">{t("ai_modal_generating") || "Generating your unique recipe..."}</p>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

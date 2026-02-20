@@ -184,6 +184,24 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
   gap: 2rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--accent) transparent;
+}
+
+.profile-dishes-grid::-webkit-scrollbar {
+  width: 0.5rem;
+}
+
+.profile-dishes-grid::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.profile-dishes-grid::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 1rem;
 }
 
 .dishes-box {

@@ -1,6 +1,11 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import DishesService, { Dish } from "../services/DishesService";
+import DishesService, { Dish, Category } from "../services/DishesService";
+import {
+  addFavouriteRecipe,
+  removeFavouriteRecipe,
+  getFavouriteRecipeIds,
+} from "../utils/recipeStorage";
 import CommentsService, { Comment } from "../services/CommentsService";
 import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -14,6 +19,8 @@ import ContentCopy from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import StarIcon from "@mui/icons-material/Star";
 import StarBorderIcon from "@mui/icons-material/StarBorder";
 import StarHalfIcon from "@mui/icons-material/StarHalf";
@@ -24,8 +31,15 @@ import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
 
-const getSortedImages = (allImages: { id: number; url: string }[], dish: Dish) => {
-  const priorityIds = [dish.mainImageId, dish.secondaryImageId, dish.thirdImageId];
+const getSortedImages = (
+  allImages: { id: number; url: string }[],
+  dish: Dish,
+) => {
+  const priorityIds = [
+    dish.mainImageId,
+    dish.secondaryImageId,
+    dish.thirdImageId,
+  ];
   const sorted: { id: number; url: string }[] = [];
 
   for (const id of priorityIds) {
@@ -40,11 +54,53 @@ const getSortedImages = (allImages: { id: number; url: string }[], dish: Dish) =
   return sorted;
 };
 
-const getCategoryName = (category: any, language: string) => {
+const getCategoryName = (category: Category, language: string) => {
   if (language === "pl") return category.namePl;
   if (language === "de") return category.nameDe;
   if (language === "es") return category.nameEs;
   return category.nameEn;
+};
+
+const getImageStyle = (
+  index: number,
+  currentImageIndex: number,
+  totalImages: number,
+) => {
+  let offset = index - currentImageIndex;
+
+  if (offset > totalImages / 2) {
+    offset -= totalImages;
+  } else if (offset < -totalImages / 2) {
+    offset += totalImages;
+  }
+
+  const absOffset = Math.abs(offset);
+  const direction = offset > 0 ? 1 : -1;
+
+  let scale = 0.6;
+  let opacity = 0;
+  let zIndex = 1;
+  let translateX = direction * absOffset * 100;
+
+  switch (absOffset) {
+    case 0:
+      scale = 0.9;
+      opacity = 1;
+      zIndex = 10;
+      translateX = 0;
+      break;
+    case 1:
+      scale = 0.7;
+      opacity = 0.5;
+      zIndex = 5;
+      break;
+    case 2:
+      scale = 0.5;
+      zIndex = 3;
+      break;
+  }
+
+  return { scale, opacity, zIndex, translateX };
 };
 
 export default function DishDetails() {
@@ -57,17 +113,19 @@ export default function DishDetails() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
-  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(new Set());
+  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(
+    new Set(),
+  );
   const hasFetched = useRef<number | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-  
+
   let displayImages = imageUrls.length > 0 ? [...imageUrls] : [];
   if (imageUrls.length > 0) {
-      while (displayImages.length < 5) {
-          displayImages = [...displayImages, ...imageUrls];
-      }
+    while (displayImages.length < 5) {
+      displayImages = [...displayImages, ...imageUrls];
+    }
   }
-  
+
   const totalImages = displayImages.length > 0 ? displayImages.length : 1;
   const uniqueCount = imageUrls.length > 0 ? imageUrls.length : 1;
 
@@ -76,6 +134,7 @@ export default function DishDetails() {
   const [isRatingEditing, setIsRatingEditing] = useState(false);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
+  const [isFavourite, setIsFavourite] = useState(false);
 
   useEffect(() => {
     if (dish && !isRatingEditing) {
@@ -95,7 +154,7 @@ export default function DishDetails() {
   };
 
   const handleStarClickInternal = (ratingValue: number) => {
-     setRating(ratingValue);
+    setRating(ratingValue);
   };
 
   const incrementRating = () => setRating((prev) => Math.min(5, prev + 0.5));
@@ -103,7 +162,7 @@ export default function DishDetails() {
 
   const renderStars = (value: number, interactive: boolean) => {
     return [1, 2, 3, 4, 5].map((starValue) => {
-      const ratingToUse = (interactive && hoverRating > 0) ? hoverRating : value;
+      const ratingToUse = interactive && hoverRating > 0 ? hoverRating : value;
       const filled = ratingToUse >= starValue;
       const half = ratingToUse > starValue - 1 && ratingToUse < starValue;
 
@@ -115,7 +174,7 @@ export default function DishDetails() {
         <button
           key={starValue}
           className={`star-icon ${filled ? "filled" : ""} ${half ? "half" : ""} ${interactive ? "interactive" : ""}`}
-            style={{
+          style={{
             fontSize: "2rem",
             display: "inline-flex",
             background: "none",
@@ -134,44 +193,6 @@ export default function DishDetails() {
     });
   };
 
-  const getImageStyle = (index: number) => {
-    let offset = index - currentImageIndex;
-
-    if (offset > totalImages / 2) {
-      offset -= totalImages;
-    } else if (offset < -totalImages / 2) {
-      offset += totalImages;
-    }
-
-    const absOffset = Math.abs(offset);
-    const direction = offset > 0 ? 1 : -1;
-
-    let scale = 0.6;
-    let opacity = 0;
-    let zIndex = 1;
-    let translateX = direction * absOffset * 100;
-
-    switch (absOffset) {
-      case 0:
-        scale = 0.9;
-        opacity = 1;
-        zIndex = 10;
-        translateX = 0;
-        break;
-      case 1:
-        scale = 0.7;
-        opacity = 0.5;
-        zIndex = 5;
-        break;
-      case 2:
-        scale = 0.5;
-        zIndex = 3;
-        break;
-    }
-
-    return { scale, opacity, zIndex, translateX };
-  };
-
   useEffect(() => {
     if (!id) return;
     const dishId = Number(id);
@@ -183,25 +204,29 @@ export default function DishDetails() {
       try {
         const data = await DishesService.getDishById(dishId);
         if (data) {
-           setDish(data);
-           setServings(1);
-           
-           const commentsData = await CommentsService.getCommentsByDishId(dishId);
-           setComments(commentsData);
+          setDish(data);
+          setServings(1);
 
-           try {
-             const allImages = await ImagesService.getAllImages(dishId);
-             
-             const sorted = getSortedImages(allImages, data);
+          const commentsData =
+            await CommentsService.getCommentsByDishId(dishId);
+          setComments(commentsData);
 
-             setImageUrls(sorted.map(s => s.url));
-             setCurrentImageIndex(0);
-           } catch(imgError) {
-             toast.error(t("error_loading_dish\n"+imgError));
-           }
+          try {
+            const allImages = await ImagesService.getAllImages(dishId);
+
+            const sorted = getSortedImages(allImages, data);
+
+            setImageUrls(sorted.map((s) => s.url));
+            setCurrentImageIndex(0);
+          } catch (imgError) {
+            toast.error(t("error_loading_dish\n" + imgError));
+          }
+
+          const favouriteIds = getFavouriteRecipeIds();
+          setIsFavourite(favouriteIds.includes(dishId));
         }
       } catch (error) {
-        toast.error(t("error_loading_dish\n"+error));
+        toast.error(t("error_loading_dish\n" + error));
       }
       setIsLoading(false);
     };
@@ -224,24 +249,27 @@ export default function DishDetails() {
     });
   };
 
-  const scaleIngredientQuantity = (description: string | null | undefined): string => {
+  const scaleIngredientQuantity = (
+    description: string | null | undefined,
+  ): string => {
     if (!description) return "";
-    
+
     const regex = /^(\d+(?:[.,]\d+)?)\s*(.*)$/;
     const match = regex.exec(description);
-    
+
     if (match) {
-      const quantity = Number.parseFloat(match[1].replace(',', '.'));
+      const quantity = Number.parseFloat(match[1].replace(",", "."));
       const unit = match[2];
       const scaledQuantity = quantity * servings;
-      
-      const formattedQuantity = scaledQuantity % 1 === 0 
-        ? scaledQuantity.toString() 
-        : scaledQuantity.toFixed(1).replace('.', ',');
-      
-      return `${formattedQuantity}${unit ? ' ' + unit : ''}`;
+
+      const formattedQuantity =
+        scaledQuantity % 1 === 0
+          ? scaledQuantity.toString()
+          : scaledQuantity.toFixed(1).replace(".", ",");
+
+      return `${formattedQuantity}${unit ? " " + unit : ""}`;
     }
-    
+
     return description;
   };
 
@@ -258,7 +286,8 @@ export default function DishDetails() {
       })
       .join("\n");
 
-    navigator.clipboard.writeText(ingredientsText)
+    navigator.clipboard
+      .writeText(ingredientsText)
       .then(() => {
         toast.success(t("dish_details_page_ingredients_copied"));
       })
@@ -273,14 +302,19 @@ export default function DishDetails() {
       return;
     }
 
-    const currentList = JSON.parse(localStorage.getItem("sneakfit_shopping_list_v3") || "[]");
+    const currentList = JSON.parse(
+      localStorage.getItem("sneakfit_shopping_list_v3") || "[]",
+    );
     const newItems = dish.ingredients.map((ing, index) => ({
       id: `${Date.now()}-${index}`,
       name: `${ing.name} ${scaleIngredientQuantity(ing.description)}`.trim(),
-      completed: false
+      completed: false,
     }));
-    
-    localStorage.setItem("sneakfit_shopping_list_v3", JSON.stringify([...newItems, ...currentList]));
+
+    localStorage.setItem(
+      "sneakfit_shopping_list_v3",
+      JSON.stringify([...newItems, ...currentList]),
+    );
     toast.success(t("shopping_list_added_success"));
   };
 
@@ -291,7 +325,20 @@ export default function DishDetails() {
       setDish((prev) => (prev ? { ...prev, rates: rating } : null));
       toast.success(t("rating_saved_success") || "Rating saved!");
     } catch (error) {
-      toast.error(t("service_unknown_error\n"+error));
+      toast.error(t("service_unknown_error\n" + error));
+    }
+  };
+
+  const handleToggleFavourite = () => {
+    if (!dish) return;
+    if (isFavourite) {
+      removeFavouriteRecipe(dish.id);
+      setIsFavourite(false);
+      toast.success(t("remove_from_favourites"));
+    } else {
+      addFavouriteRecipe(dish.id);
+      setIsFavourite(true);
+      toast.success(t("add_to_favourites"));
     }
   };
 
@@ -320,86 +367,118 @@ export default function DishDetails() {
       <div className="dish-grid">
         <div className="grid-item grid-1">
           <div className="dish-image-box">
-            <div className="carousel-container">
-              <button
-                className="carousel-arrow carousel-arrow-left"
-                onClick={() =>
-                  setCurrentImageIndex((prev) =>
-                    prev === 0 ? totalImages - 1 : prev - 1,
-                  )
-                }
-                aria-label={t("carousel_previous_image")}
-              >
-                <ChevronLeft className="carousel-arrow-icon" />
-              </button>
+            {uniqueCount > 1 ? (
+              <>
+                <div className="carousel-container">
+                  <button
+                    className="carousel-arrow carousel-arrow-left"
+                    onClick={() =>
+                      setCurrentImageIndex((prev) =>
+                        prev === 0 ? totalImages - 1 : prev - 1,
+                      )
+                    }
+                    aria-label={t("carousel_previous_image")}
+                  >
+                    <ChevronLeft className="carousel-arrow-icon" />
+                  </button>
 
+                  <div className="center-mode-slider">
+                    <div className="center-mode-container">
+                      {Array.from({ length: totalImages }).map((_, index) => {
+                        const { scale, opacity, zIndex, translateX } =
+                          getImageStyle(index, currentImageIndex, totalImages);
+
+                        const imgUrl = displayImages[index];
+
+                        return (
+                          <div
+                            key={`carousel-image-${dish.id}-${index}`}
+                            className="center-mode-item"
+                            style={{
+                              transform: `translateX(${translateX}px) scale(${scale})`,
+                              opacity: opacity,
+                              zIndex: zIndex,
+                            }}
+                          >
+                            {imgUrl ? (
+                              <img
+                                src={imgUrl}
+                                alt={`${dish.name} ${t("dish_alt_text")} ${index + 1}`}
+                              />
+                            ) : (
+                              <RestaurantMenu className="carousel-placeholder-icon" />
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  <button
+                    className="carousel-arrow carousel-arrow-right"
+                    onClick={() =>
+                      setCurrentImageIndex((prev) =>
+                        prev === totalImages - 1 ? 0 : prev + 1,
+                      )
+                    }
+                    aria-label={t("carousel_next_image")}
+                  >
+                    <ChevronRight className="carousel-arrow-icon" />
+                  </button>
+                </div>
+
+                <div className="carousel-indicators">
+                  {Array.from({ length: uniqueCount }).map((_, index) => (
+                    <button
+                      key={`carousel-indicator-${dish.id}-${index}`}
+                      className={`indicator ${
+                        index === currentImageIndex % uniqueCount
+                          ? "active"
+                          : ""
+                      }`}
+                      onClick={() => setCurrentImageIndex(index)}
+                      aria-label={`${t("carousel_go_to_image")} ${index + 1}`}
+                      type="button"
+                    />
+                  ))}
+                </div>
+              </>
+            ) : (
               <div className="center-mode-slider">
                 <div className="center-mode-container">
-                  {Array.from({ length: totalImages }).map((_, index) => {
-                    const { scale, opacity, zIndex, translateX } =
-                      getImageStyle(index);
-
-                    const imgUrl = displayImages[index];
-
-                    return (
-                      <div
-                        key={`carousel-image-${dish.id}-${index}`}
-                        className="center-mode-item"
-                        style={{
-                          transform: `translateX(${translateX}px) scale(${scale})`,
-                          opacity: opacity,
-                          zIndex: zIndex,
-                        }}
-                      >
-                        {imgUrl ? (
-                           <img src={imgUrl} alt={`${dish.name} ${t("dish_alt_text")} ${index + 1}`} />
-                        ) : (
-                           <RestaurantMenu className="carousel-placeholder-icon" />
-                        )}
-                      </div>
-                    );
-                  })}
+                  <div
+                    className="center-mode-item"
+                    style={{
+                      transform: "none",
+                      opacity: 1,
+                      zIndex: 10,
+                      cursor: "default",
+                    }}
+                  >
+                    {displayImages[0] ? (
+                      <img
+                        src={displayImages[0]}
+                        alt={`${dish.name} ${t("dish_alt_text")} 1`}
+                      />
+                    ) : (
+                      <RestaurantMenu className="carousel-placeholder-icon" />
+                    )}
+                  </div>
                 </div>
               </div>
-
-              <button
-                className="carousel-arrow carousel-arrow-right"
-                onClick={() =>
-                  setCurrentImageIndex((prev) =>
-                    prev === totalImages - 1 ? 0 : prev + 1,
-                  )
-                }
-                aria-label={t("carousel_next_image")}
-              >
-                <ChevronRight className="carousel-arrow-icon" />
-              </button>
-            </div>
-
-            <div className="carousel-indicators">
-              {Array.from({ length: uniqueCount }).map((_, index) => (
-                <button
-                  key={`carousel-indicator-${dish.id}-${index}`}
-                  className={`indicator ${
-                    index === currentImageIndex % uniqueCount ? "active" : ""
-                  }`}
-                  onClick={() => setCurrentImageIndex(index)}
-                  aria-label={`${t("carousel_go_to_image")} ${index + 1}`}
-                  type="button"
-                />
-              ))}
-            </div>
+            )}
           </div>
           <div className="categories-box">
             <div className="categories-content">
               {dish.categories && dish.categories.length > 0 ? (
                 dish.categories.map((c) => (
-                  <span 
-                    key={c.id} 
+                  <span
+                    key={c.id}
                     className="category-detail-tag"
-                    style={{ 
+                    style={{
                       background: `${c.color}15`,
                       color: c.color,
-                      borderColor: `${c.color}40`
+                      borderColor: `${c.color}40`,
                     }}
                   >
                     {getCategoryName(c, i18n.language)}
@@ -453,26 +532,41 @@ export default function DishDetails() {
                 {dish.ingredients && dish.ingredients.length > 0 ? (
                   <ul className="ingredients-ul">
                     {dish.ingredients.map((ing) => {
-                      const scaledQuantity = scaleIngredientQuantity(ing.description);
+                      const scaledQuantity = scaleIngredientQuantity(
+                        ing.description,
+                      );
                       return (
-                        <li 
-                          key={ing.id} 
-                          className="ingredient-item"
-                        >
-                          <button 
+                        <li key={ing.id} className="ingredient-item">
+                          <button
                             className="ingredient-label"
                             onClick={() => toggleIngredientCheck(ing.id)}
-                            aria-label={checkedIngredients.has(ing.id) ? `Mark ${ing.name} as incomplete` : `Mark ${ing.name} as complete`}
+                            aria-label={
+                              checkedIngredients.has(ing.id)
+                                ? `Mark ${ing.name} as incomplete`
+                                : `Mark ${ing.name} as complete`
+                            }
                           >
                             {checkedIngredients.has(ing.id) ? (
                               <CheckCircleIcon className="ingredient-checked-icon" />
                             ) : (
                               <RadioButtonUncheckedIcon className="ingredient-unchecked-icon" />
                             )}
-                            <span className={checkedIngredients.has(ing.id) ? "ingredient-name checked" : "ingredient-name"}>
+                            <span
+                              className={
+                                checkedIngredients.has(ing.id)
+                                  ? "ingredient-name checked"
+                                  : "ingredient-name"
+                              }
+                            >
                               {ing.name}
                             </span>
-                            <span className={checkedIngredients.has(ing.id) ? "ingredient-quantity checked" : "ingredient-quantity"}>
+                            <span
+                              className={
+                                checkedIngredients.has(ing.id)
+                                  ? "ingredient-quantity checked"
+                                  : "ingredient-quantity"
+                              }
+                            >
                               {scaledQuantity}
                             </span>
                           </button>
@@ -550,55 +644,93 @@ export default function DishDetails() {
         </div>
 
         <div className="grid-item grid-4">
-          <div className="grid-4-left">
-            <div className="rating-container-inner">
-              {isRatingEditing ? (
-                <div className="rating-edit-mode">
-                  <div className="rating-controls">
-                    <button className="rating-adjust-btn" onClick={decrementRating}>
-                      -
-                    </button>
-                    <fieldset 
-                      className="stars-wrapper" 
-                      style={{ border: "none", padding: 0, margin: 0 }}
-                      onMouseLeave={() => isRatingEditing && setHoverRating(0)}
+          <button
+            className={`favourite-btn ${isFavourite ? "favourite-btn--active" : ""}`}
+            onClick={handleToggleFavourite}
+            type="button"
+          >
+            {isFavourite ? (
+              <FavoriteIcon className="favourite-btn-icon" />
+            ) : (
+              <FavoriteBorderIcon className="favourite-btn-icon" />
+            )}
+            {isFavourite ? t("remove_from_favourites") : t("add_to_favourites")}
+          </button>
+          <div className="grid-4-row">
+            <div className="grid-4-left">
+              <div className="rating-container-inner">
+                {isRatingEditing ? (
+                  <div className="rating-edit-mode">
+                    <div className="rating-controls">
+                      <button
+                        className="rating-adjust-btn"
+                        onClick={decrementRating}
+                      >
+                        -
+                      </button>
+                      <fieldset
+                        className="stars-wrapper"
+                        style={{ border: "none", padding: 0, margin: 0 }}
+                        onMouseLeave={() =>
+                          isRatingEditing && setHoverRating(0)
+                        }
+                      >
+                        {renderStars(rating, true)}
+                      </fieldset>
+                      <button
+                        className="rating-adjust-btn"
+                        onClick={incrementRating}
+                      >
+                        +
+                      </button>
+                    </div>
+                    <div className="rating-value">{rating.toFixed(1)}</div>
+                    <div className="rating-actions">
+                      <button
+                        className="rating-save-btn"
+                        onClick={handleSaveRating}
+                      >
+                        {t("save_rating")}
+                      </button>
+                      <button
+                        className="rating-cancel-btn"
+                        onClick={() => setIsRatingEditing(false)}
+                      >
+                        {t("common_close")}
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="rating-view-mode">
+                    <div className="stars-wrapper">
+                      {renderStars(dish.rates || 0, false)}
+                    </div>
+                    <div className="rating-value">
+                      {(dish.rates || 0).toFixed(1)}
+                    </div>
+                    <button
+                      className="rating-edit-btn"
+                      onClick={handleRatingEditClick}
                     >
-                      {renderStars(rating, true)}
-                    </fieldset>
-                    <button className="rating-adjust-btn" onClick={incrementRating}>
-                      +
+                      {t("rate_dish")}
                     </button>
                   </div>
-                  <div className="rating-value">{rating.toFixed(1)}</div>
-                  <div className="rating-actions">
-                    <button className="rating-save-btn" onClick={handleSaveRating}>
-                      {t("save_rating")}
-                    </button>
-                    <button className="rating-cancel-btn" onClick={() => setIsRatingEditing(false)}>
-                      {t("common_close")}
-                    </button>
-                  </div>
-                </div>
-              ) : (
-                <div className="rating-view-mode">
-                  <div className="stars-wrapper">{renderStars(dish.rates || 0, false)}</div>
-                  <div className="rating-value">{(dish.rates || 0).toFixed(1)}</div>
-                  <button className="rating-edit-btn" onClick={handleRatingEditClick}>
-                    {t("rate_dish")}
-                  </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
-          <div className="grid-4-right action-buttons">
-            <button className="btn btn-decline" onClick={() => navigate(-1)}>
-              <Undo className="undo-icon" />
-              {t("dish_details_page_back_button")}
-            </button>
-            <button className="btn btn-accept" onClick={() => navigate(`preparation?step=1`)}>
-              <PlayCircle className="play-circle-icon" />
-              {t("dish_details_page_start_button")}
-            </button>
+            <div className="grid-4-right action-buttons">
+              <button className="btn btn-decline" onClick={() => navigate(-1)}>
+                <Undo className="undo-icon" />
+                {t("dish_details_page_back_button")}
+              </button>
+              <button
+                className="btn btn-accept"
+                onClick={() => navigate(`preparation?step=1`)}
+              >
+                <PlayCircle className="play-circle-icon" />
+                {t("dish_details_page_start_button")}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -623,15 +755,15 @@ export default function DishDetails() {
             setIsLoading(true);
             const data = await DishesService.getDishById(dish.id);
             if (data) {
-                setDish(data);
-                try {
-                  const allImages = await ImagesService.getAllImages(dish.id);
-                  const sorted = getSortedImages(allImages, data);
-                  setImageUrls(sorted.map(s => s.url));
-                  setCurrentImageIndex(0);
-                } catch (e) {
-                   console.error("Failed to reload images", e);
-                }
+              setDish(data);
+              try {
+                const allImages = await ImagesService.getAllImages(dish.id);
+                const sorted = getSortedImages(allImages, data);
+                setImageUrls(sorted.map((s) => s.url));
+                setCurrentImageIndex(0);
+              } catch (e) {
+                console.error("Failed to reload images", e);
+              }
             }
             setIsLoading(false);
           };

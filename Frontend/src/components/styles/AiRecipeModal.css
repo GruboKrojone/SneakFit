@@ -202,3 +202,124 @@
   border-color: var(--text-secondary);
   color: var(--text);
 }
+
+/* AI Steps List */
+.ai-steps-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.ai-step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.ai-step-number {
+  flex-shrink: 0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent, #ff6b35), black 15%);
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 0.1rem;
+}
+
+.ai-step-text {
+  flex: 1;
+  line-height: 1.55;
+  color: var(--text);
+}
+
+/* Loading Overlay */
+.ai-loading-overlay {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--card), transparent 10%);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  border-radius: 1.25rem 1.25rem 0 0;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.ai-loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  text-align: center;
+}
+
+.ai-loading-spinner {
+  position: relative;
+  width: 5rem;
+  height: 5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-loading-icon {
+  font-size: 3.5rem !important;
+  color: #ff8c42;
+  animation: aiPulse 2s infinite ease-in-out;
+  filter: drop-shadow(0 0 1rem rgba(255, 140, 66, 0.4));
+}
+
+.ai-loading-spinner::after {
+  content: '';
+  position: absolute;
+  inset: -0.5rem;
+  border: 4px solid rgba(255, 140, 66, 0.1);
+  border-top-color: #ff8c42;
+  border-radius: 50%;
+  animation: aiRotate 1.5s linear infinite;
+}
+
+.ai-loading-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text);
+  max-width: 80%;
+  animation: aiPulseText 2s infinite ease-in-out;
+}
+
+@keyframes aiPulseText {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(0.98); }
+}
+
+@keyframes aiPulse {
+  0%, 100% {
+    transform: scale(1) rotate(0deg);
+    filter: drop-shadow(0 0 1rem rgba(255, 140, 66, 0.4));
+  }
+  50% {
+    transform: scale(1.2) rotate(15deg);
+    filter: drop-shadow(0 0 2rem rgba(255, 140, 66, 0.6));
+  }
+}
+
+@keyframes aiRotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

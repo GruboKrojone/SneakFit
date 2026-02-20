@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import Close from "@mui/icons-material/Close";
 import ArrowBack from "@mui/icons-material/ArrowBack";
@@ -51,6 +51,7 @@ export default function DishSettingsModal({
 }: DishSettingsModalProps) {
   const { t, i18n } = useTranslation();
   const navigate = useNavigate();
+  const { locale } = useParams<{ locale: string }>();
   const [view, setView] = useState<ViewState>("menu");
   const [dish, setDish] = useState<Dish | null>(null);
   const [loading, setLoading] = useState(false);
@@ -403,8 +404,8 @@ export default function DishSettingsModal({
       toast.success(t("dish_settings_modal_delete_success"));
       setShowDeleteConfirm(false);
       onClose();
-      navigate("/dishes");
-      if (onUpdate) onUpdate();
+      navigate(`/${locale || "en"}/dishes`);
+      // No onUpdate() here after delete, because we are navigating away and the dish is gone.
     } catch {
       toast.error(t("dish_settings_modal_delete_error"));
     }
@@ -413,9 +414,13 @@ export default function DishSettingsModal({
   const handlePrivacyToggle = () => {
     if (!dish) return;
     
-    // Validation: cannot make public without steps
     if (!dish.isPublic && steps.length === 0) {
       toast.error(t("dish_settings_modal_privacy_public_no_steps_error"));
+      return;
+    }
+
+    if (!dish.isPublic && images.length === 0) {
+      toast.error(t("dish_settings_modal_privacy_public_no_photos_error"));
       return;
     }
     
@@ -446,7 +451,6 @@ export default function DishSettingsModal({
       return;
     }
 
-    // Determine what to add and what to remove
     const toAdd = selectedCategoryIds.filter((id) => !initialCategoryIds.includes(id));
     const toRemove = initialCategoryIds.filter((id) => !selectedCategoryIds.includes(id));
 
@@ -466,7 +470,6 @@ export default function DishSettingsModal({
       toast.success(t("dish_settings_modal_categories_updated_success"));
       setInitialCategoryIds(selectedCategoryIds);
 
-      // Refresh dish data to keep sync (optional but safe)
       loadDish();
       if (onUpdate) onUpdate();
       setView("menu");

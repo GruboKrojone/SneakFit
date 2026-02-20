@@ -97,7 +97,7 @@ class DishesService {
 
       return await response.json();
     } catch (error) {
-      toast.error(i18n.t("dishes_service_fetch_one_failed\n" + error));
+      toast.error(`${i18n.t("dishes_service_fetch_one_failed")}\n${error}`);
       return null;
     }
   }
@@ -252,6 +252,50 @@ class DishesService {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       throw new Error(`Failed to add dish ${dishId} to favorites: ${errorMessage}`);
+    }
+  }
+
+  static async removeDishFromFavorites(dishId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/favorite`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_remove_favourite_failed"));
+      }
+    } catch (error) {
+      console.error("Error removing dish from favorites:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(`${i18n.t("dishes_service_remove_favourite_failed")} ${dishId}: ${errorMessage}`);
+    }
+  }
+
+  static async getFavoriteDishes(): Promise<Dish[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dishes/favorites`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_fetch_favourites_failed"));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching favorite dishes:", error);
+      return [];
     }
   }
 
