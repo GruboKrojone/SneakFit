@@ -44,17 +44,17 @@ export default function ProfileSettingsModal({
   const currentUser = AuthService.getCurrentUser();
 
   const nameSchema = z.object({
-    name: z.string().min(1, { message: t("profile_settings_name_required") }),
+    name: z.string().min(1, t("profile_settings_name_required")),
   });
 
   const emailSchema = z.object({
-    email: z.string().regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: t("login_page_email_invalid") }),
+    email: z.string().regex(/^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, t("login_page_email_invalid")),
   });
 
   const passwordSchema = z.object({
-    oldPassword: z.string().min(1, { message: t("profile_settings_password_required") }),
-    password: z.string().min(6, { message: t("register_page_password_min_length") }),
-    confirmPassword: z.string().min(1, { message: t("register_page_confirm_password_required") }),
+    oldPassword: z.string().min(1, t("profile_settings_password_required")),
+    password: z.string().min(6, t("register_page_password_min_length")),
+    confirmPassword: z.string().min(1, t("register_page_confirm_password_required")),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t("register_page_passwords_do_not_match"),
     path: ["confirmPassword"],

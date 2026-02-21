@@ -29,8 +29,8 @@ export default function RegisterPage() {
     .object({
       email: z
         .string()
-        .min(1, { message: t("login_page_email_required") })
-        .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: t("login_page_email_invalid") }),
+        .min(1, t("login_page_email_required"))
+        .regex(/^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, t("login_page_email_invalid")),
       name: z.string().min(1, { message: t("register_page_name_required") }),
       password: z
         .string()
