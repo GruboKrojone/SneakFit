@@ -48,7 +48,7 @@ internal sealed class AddInitUsersCommandHandler(
         var usersExists = await userRepository
             .AnyAsync(u => u.Email == user.Email
                            || u.Email == user2.Email
-                           || user.Email == user3.Email, cancellationToken);
+                           || u.Email == user3.Email, cancellationToken);
         if (usersExists)
             throw new DomainException("Any of users exists", (int)UserErrorCode.EntityExists);
 

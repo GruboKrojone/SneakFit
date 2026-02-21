@@ -1,4 +1,4 @@
-﻿using Core.CQRS;
+using Core.CQRS;
 using Core.Middlewares;
 using Domain.Comments.Dtos;
 using Domain.Comments.Repositories;
@@ -13,7 +13,7 @@ internal sealed class GetDishCommentsQueryHandler(
     public async Task<List<CommentDto>> Handle(GetDishCommentsQuery request, CancellationToken cancellationToken)
     {
         var comments = await commentRepository.FindAsync(c => c.DishId == request.DishId, cancellationToken)
-            ?? throw new DomainException("No dishes found", (int)CommonErrorCode.EntityNotFound);
+            ?? throw new DomainException("No comments found for this dish", (int)CommonErrorCode.EntityNotFound);
 
         return [.. comments.Select(x => x.ToDto())];
     }

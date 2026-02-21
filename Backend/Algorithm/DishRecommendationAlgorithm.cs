@@ -1,4 +1,4 @@
-﻿using System.Security.Cryptography;
+using System.Security.Cryptography;
 
 namespace Algorithm;
 
@@ -53,7 +53,7 @@ public class DishRecommendationAlgorithm
         var normalizedRates = maxRates > 0 ? dish.Rates / maxRates : 0;
         var normalizedPopularity = maxFavoriteCount > 0 ? (decimal)dish.FavoriteCount / maxFavoriteCount : 0;
 
-        var hasFavoriteMatch = userFavoriteDishIds.Contains(dish.DishId) ? 0m : 1m;
+        var hasFavoriteMatch = userFavoriteDishIds.Contains(dish.DishId) ? 1m : 0m;
 
         var categoryMatchCount = dish.CategoryIds
             .Count(catId => userFavoriteCategoryIds.Contains(catId));

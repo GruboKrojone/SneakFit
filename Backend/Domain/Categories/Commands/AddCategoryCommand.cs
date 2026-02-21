@@ -1,4 +1,4 @@
-﻿using Core.Authentication;
+using Core.Authentication;
 using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
@@ -21,7 +21,7 @@ internal class AddCategoryCommandHandler(
         var userId = userContext.UserId
             ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
 
-        if (categoryRepository.AnyAsync(c => c.NameEn == request.CategoryRequest.NameEn, cancellationToken).Result)
+        if (await categoryRepository.AnyAsync(c => c.NameEn == request.CategoryRequest.NameEn, cancellationToken))
             throw new DomainException("Category with the same name already exists.", (int)CommonErrorCode.InvalidOperation);
 
         Category category = new(
