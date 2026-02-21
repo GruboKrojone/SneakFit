@@ -7,13 +7,10 @@ import {
   getFavouriteRecipeIds,
 } from "../utils/recipeStorage";
 import CommentsService, { Comment } from "../services/CommentsService";
-import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import SettingsIcon from "@mui/icons-material/Settings";
 import DishSettingsModal from "../components/DishSettingsModal";
 import Undo from "@mui/icons-material/Undo";
 import PlayCircle from "@mui/icons-material/PlayCircle";
-import ChevronLeft from "@mui/icons-material/ChevronLeft";
-import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -21,10 +18,9 @@ import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import StarIcon from "@mui/icons-material/Star";
-import StarBorderIcon from "@mui/icons-material/StarBorder";
-import StarHalfIcon from "@mui/icons-material/StarHalf";
 import MacroCircle from "../components/MacroCircle";
+import DishRatingSection from "../components/DishRatingSection";
+import DishImageCarousel from "../components/DishImageCarousel";
 import CommentsModal from "../components/CommentsModal";
 import ImagesService from "../services/ImagesService";
 import "./styles/DishDetails.css";
@@ -61,48 +57,6 @@ const getCategoryName = (category: Category, language: string) => {
   return category.nameEn;
 };
 
-const getImageStyle = (
-  index: number,
-  currentImageIndex: number,
-  totalImages: number,
-) => {
-  let offset = index - currentImageIndex;
-
-  if (offset > totalImages / 2) {
-    offset -= totalImages;
-  } else if (offset < -totalImages / 2) {
-    offset += totalImages;
-  }
-
-  const absOffset = Math.abs(offset);
-  const direction = offset > 0 ? 1 : -1;
-
-  let scale = 0.6;
-  let opacity = 0;
-  let zIndex = 1;
-  let translateX = direction * absOffset * 100;
-
-  switch (absOffset) {
-    case 0:
-      scale = 0.9;
-      opacity = 1;
-      zIndex = 10;
-      translateX = 0;
-      break;
-    case 1:
-      scale = 0.7;
-      opacity = 0.5;
-      zIndex = 5;
-      break;
-    case 2:
-      scale = 0.5;
-      zIndex = 3;
-      break;
-  }
-
-  return { scale, opacity, zIndex, translateX };
-};
-
 export default function DishDetails() {
   const { t, i18n } = useTranslation();
   const { id } = useParams();
@@ -110,7 +64,6 @@ export default function DishDetails() {
   const [dish, setDish] = useState<Dish | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [servings, setServings] = useState(1);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
   const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(
@@ -119,79 +72,9 @@ export default function DishDetails() {
   const hasFetched = useRef<number | null>(null);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
 
-  let displayImages = imageUrls.length > 0 ? [...imageUrls] : [];
-  if (imageUrls.length > 0) {
-    while (displayImages.length < 5) {
-      displayImages = [...displayImages, ...imageUrls];
-    }
-  }
-
-  const totalImages = displayImages.length > 0 ? displayImages.length : 1;
-  const uniqueCount = imageUrls.length > 0 ? imageUrls.length : 1;
-
   const emptyCategories = t("no_categories");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [isRatingEditing, setIsRatingEditing] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0);
   const [isFavourite, setIsFavourite] = useState(false);
-
-  useEffect(() => {
-    if (dish && !isRatingEditing) {
-      setRating(dish.rates || 0);
-    }
-  }, [dish, isRatingEditing]);
-
-  const handleSaveRating = () => {
-    handleRate(rating);
-    setIsRatingEditing(false);
-    setHoverRating(0);
-  };
-
-  const handleRatingEditClick = () => {
-    setRating(dish?.rates || 0);
-    setIsRatingEditing(true);
-  };
-
-  const handleStarClickInternal = (ratingValue: number) => {
-    setRating(ratingValue);
-  };
-
-  const incrementRating = () => setRating((prev) => Math.min(5, prev + 0.5));
-  const decrementRating = () => setRating((prev) => Math.max(0.5, prev - 0.5));
-
-  const renderStars = (value: number, interactive: boolean) => {
-    return [1, 2, 3, 4, 5].map((starValue) => {
-      const ratingToUse = interactive && hoverRating > 0 ? hoverRating : value;
-      const filled = ratingToUse >= starValue;
-      const half = ratingToUse > starValue - 1 && ratingToUse < starValue;
-
-      let icon = <StarBorderIcon fontSize="inherit" />;
-      if (filled) icon = <StarIcon fontSize="inherit" />;
-      else if (half) icon = <StarHalfIcon fontSize="inherit" />;
-
-      return (
-        <button
-          key={starValue}
-          className={`star-icon ${filled ? "filled" : ""} ${half ? "half" : ""} ${interactive ? "interactive" : ""}`}
-          style={{
-            fontSize: "2rem",
-            display: "inline-flex",
-            background: "none",
-            border: "none",
-            padding: 0,
-          }}
-          onClick={() => interactive && handleStarClickInternal(starValue)}
-          onMouseEnter={() => interactive && setHoverRating(starValue)}
-          type="button"
-          disabled={!interactive}
-          aria-label={`Rate ${starValue} out of 5`}
-        >
-          {icon}
-        </button>
-      );
-    });
-  };
 
   useEffect(() => {
     if (!id) return;
@@ -217,7 +100,6 @@ export default function DishDetails() {
             const sorted = getSortedImages(allImages, data);
 
             setImageUrls(sorted.map((s) => s.url));
-            setCurrentImageIndex(0);
           } catch (imgError) {
             toast.error(t("error_loading_dish\n" + imgError));
           }
@@ -254,12 +136,13 @@ export default function DishDetails() {
   ): string => {
     if (!description) return "";
 
-    const regex = /^(\d+(?:[.,]\d+)?)\s*(.*)$/;
-    const match = regex.exec(description);
-
+    const quantityRegex = /^(\d+(?:[.,]\d+)?)/;
+    const match = quantityRegex.exec(description);
+    
     if (match) {
-      const quantity = Number.parseFloat(match[1].replace(",", "."));
-      const unit = match[2];
+      const quantityStr = match[1];
+      const quantity = Number.parseFloat(quantityStr.replace(",", "."));
+      const rest = description.slice(quantityStr.length).trim();
       const scaledQuantity = quantity * servings;
 
       const formattedQuantity =
@@ -267,7 +150,7 @@ export default function DishDetails() {
           ? scaledQuantity.toString()
           : scaledQuantity.toFixed(1).replace(".", ",");
 
-      return `${formattedQuantity}${unit ? " " + unit : ""}`;
+      return `${formattedQuantity}${rest ? " " + rest : ""}`;
     }
 
     return description;
@@ -318,15 +201,8 @@ export default function DishDetails() {
     toast.success(t("shopping_list_added_success"));
   };
 
-  const handleRate = async (rating: number) => {
-    if (!dish) return;
-    try {
-      await DishesService.rateDish(dish.id, rating);
-      setDish((prev) => (prev ? { ...prev, rates: rating } : null));
-      toast.success(t("rating_saved_success") || "Rating saved!");
-    } catch (error) {
-      toast.error(t("service_unknown_error\n" + error));
-    }
+  const handleRatingUpdated = (newRating: number) => {
+    setDish((prev) => (prev ? { ...prev, rates: newRating } : null));
   };
 
   const handleToggleFavourite = () => {
@@ -367,106 +243,7 @@ export default function DishDetails() {
       <div className="dish-grid">
         <div className="grid-item grid-1">
           <div className="dish-image-box">
-            {uniqueCount > 1 ? (
-              <>
-                <div className="carousel-container">
-                  <button
-                    className="carousel-arrow carousel-arrow-left"
-                    onClick={() =>
-                      setCurrentImageIndex((prev) =>
-                        prev === 0 ? totalImages - 1 : prev - 1,
-                      )
-                    }
-                    aria-label={t("carousel_previous_image")}
-                  >
-                    <ChevronLeft className="carousel-arrow-icon" />
-                  </button>
-
-                  <div className="center-mode-slider">
-                    <div className="center-mode-container">
-                      {Array.from({ length: totalImages }).map((_, index) => {
-                        const { scale, opacity, zIndex, translateX } =
-                          getImageStyle(index, currentImageIndex, totalImages);
-
-                        const imgUrl = displayImages[index];
-
-                        return (
-                          <div
-                            key={`carousel-image-${dish.id}-${index}`}
-                            className="center-mode-item"
-                            style={{
-                              transform: `translateX(${translateX}px) scale(${scale})`,
-                              opacity: opacity,
-                              zIndex: zIndex,
-                            }}
-                          >
-                            {imgUrl ? (
-                              <img
-                                src={imgUrl}
-                                alt={`${dish.name} ${t("dish_alt_text")} ${index + 1}`}
-                              />
-                            ) : (
-                              <RestaurantMenu className="carousel-placeholder-icon" />
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  <button
-                    className="carousel-arrow carousel-arrow-right"
-                    onClick={() =>
-                      setCurrentImageIndex((prev) =>
-                        prev === totalImages - 1 ? 0 : prev + 1,
-                      )
-                    }
-                    aria-label={t("carousel_next_image")}
-                  >
-                    <ChevronRight className="carousel-arrow-icon" />
-                  </button>
-                </div>
-
-                <div className="carousel-indicators">
-                  {Array.from({ length: uniqueCount }).map((_, index) => (
-                    <button
-                      key={`carousel-indicator-${dish.id}-${index}`}
-                      className={`indicator ${
-                        index === currentImageIndex % uniqueCount
-                          ? "active"
-                          : ""
-                      }`}
-                      onClick={() => setCurrentImageIndex(index)}
-                      aria-label={`${t("carousel_go_to_image")} ${index + 1}`}
-                      type="button"
-                    />
-                  ))}
-                </div>
-              </>
-            ) : (
-              <div className="center-mode-slider">
-                <div className="center-mode-container">
-                  <div
-                    className="center-mode-item"
-                    style={{
-                      transform: "none",
-                      opacity: 1,
-                      zIndex: 10,
-                      cursor: "default",
-                    }}
-                  >
-                    {displayImages[0] ? (
-                      <img
-                        src={displayImages[0]}
-                        alt={`${dish.name} ${t("dish_alt_text")} 1`}
-                      />
-                    ) : (
-                      <RestaurantMenu className="carousel-placeholder-icon" />
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
+            <DishImageCarousel imageUrls={imageUrls} dishName={dish.name} />
           </div>
           <div className="categories-box">
             <div className="categories-content">
@@ -659,63 +436,11 @@ export default function DishDetails() {
           <div className="grid-4-row">
             <div className="grid-4-left">
               <div className="rating-container-inner">
-                {isRatingEditing ? (
-                  <div className="rating-edit-mode">
-                    <div className="rating-controls">
-                      <button
-                        className="rating-adjust-btn"
-                        onClick={decrementRating}
-                      >
-                        -
-                      </button>
-                      <fieldset
-                        className="stars-wrapper"
-                        style={{ border: "none", padding: 0, margin: 0 }}
-                        onMouseLeave={() =>
-                          isRatingEditing && setHoverRating(0)
-                        }
-                      >
-                        {renderStars(rating, true)}
-                      </fieldset>
-                      <button
-                        className="rating-adjust-btn"
-                        onClick={incrementRating}
-                      >
-                        +
-                      </button>
-                    </div>
-                    <div className="rating-value">{rating.toFixed(1)}</div>
-                    <div className="rating-actions">
-                      <button
-                        className="rating-save-btn"
-                        onClick={handleSaveRating}
-                      >
-                        {t("save_rating")}
-                      </button>
-                      <button
-                        className="rating-cancel-btn"
-                        onClick={() => setIsRatingEditing(false)}
-                      >
-                        {t("common_close")}
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="rating-view-mode">
-                    <div className="stars-wrapper">
-                      {renderStars(dish.rates || 0, false)}
-                    </div>
-                    <div className="rating-value">
-                      {(dish.rates || 0).toFixed(1)}
-                    </div>
-                    <button
-                      className="rating-edit-btn"
-                      onClick={handleRatingEditClick}
-                    >
-                      {t("rate_dish")}
-                    </button>
-                  </div>
-                )}
+                <DishRatingSection 
+                  dishId={dish.id} 
+                  initialRating={dish.rates || 0} 
+                  onRatingUpdated={handleRatingUpdated} 
+                />
               </div>
             </div>
             <div className="grid-4-right action-buttons">
@@ -760,7 +485,6 @@ export default function DishDetails() {
                 const allImages = await ImagesService.getAllImages(dish.id);
                 const sorted = getSortedImages(allImages, data);
                 setImageUrls(sorted.map((s) => s.url));
-                setCurrentImageIndex(0);
               } catch (e) {
                 console.error("Failed to reload images", e);
               }

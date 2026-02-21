@@ -85,15 +85,15 @@ export default function AiDishDetails({
     try {
       let cleanJson = jsonString;
 
-      const markdownRegex = /```(?:json)?\s*([\s\S]*?)\s*```/g;
+      const markdownRegex = /```(?:json)?([\s\S]*?)```/g;
       const markdownMatch = markdownRegex.exec(jsonString);
       if (markdownMatch) {
-        cleanJson = markdownMatch[1];
+        cleanJson = markdownMatch[1].trim();
       } else {
-        const braceRegex = /\{[\s\S]*\}/g;
-        const braceMatch = braceRegex.exec(jsonString);
-        if (braceMatch) {
-          cleanJson = braceMatch[0];
+        const firstBrace = jsonString.indexOf("{");
+        const lastBrace = jsonString.lastIndexOf("}");
+        if (firstBrace !== -1 && lastBrace !== -1 && firstBrace < lastBrace) {
+          cleanJson = jsonString.slice(firstBrace, lastBrace + 1);
         }
       }
 
@@ -104,13 +104,15 @@ export default function AiDishDetails({
         const valueRegex = /^\s*"([\s\S]*?)"(?=\s*[,\]}])/;
         const match = valueRegex.exec(part);
         if (match) {
-          const escaped = match[1].replace(/\n/g, "\\n").replace(/\r/g, "\\r");
+          const escaped = match[1]
+            .replaceAll("\n", String.raw`\n`)
+            .replaceAll("\r", String.raw`\r`);
           return ` "${escaped}"${part.slice(match[0].length)}`;
         }
         return part;
       }).join('":');
 
-      processedJson = processedJson.replace(/,\s*([\]}])/g, "$1");
+      processedJson = processedJson.replaceAll(/,\s*([\]}])/g, "$1");
 
       const data = JSON.parse(processedJson);
 
@@ -156,7 +158,7 @@ export default function AiDishDetails({
       
       return {
         name: nameMatch ? nameMatch[1] : (t("error_parsing_recipe") || "Error"),
-        description: descMatch ? descMatch[1].replace(/\\n/g, "\n") : "",
+        description: descMatch ? descMatch[1].replaceAll(String.raw`\n`, "\n") : "",
         categories: [],
         ingredients: [],
         steps: [],

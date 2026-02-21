@@ -24,9 +24,9 @@ export default function LoginPage() {
   const loginSchema = z.object({
     email: z
       .string()
-      .min(1, t("login_page_email_required"))
-      .regex(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, t("login_page_email_invalid")),
-    password: z.string().min(1, t("login_page_password_required")),
+      .min(1, { message: t("login_page_email_required") })
+      .regex(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, { message: t("login_page_email_invalid") }),
+    password: z.string().min(1, { message: t("login_page_password_required") }),
   });
 
   const {
