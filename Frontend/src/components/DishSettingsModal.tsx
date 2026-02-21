@@ -245,7 +245,7 @@ export default function DishSettingsModal({
   };
 
   const handleAddEmptyStep = () => {
-    const newId = -(Date.now() + Math.floor(Math.random() * 1000));
+    const newId = -Math.abs(globalThis.crypto.getRandomValues(new Int32Array(1))[0] || Date.now());
     setSteps(prev => [...prev, { 
       id: newId, 
       name: "", 
