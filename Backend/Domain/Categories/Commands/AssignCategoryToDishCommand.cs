@@ -1,4 +1,4 @@
-﻿using Core.Authentication;
+using Core.Authentication;
 using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;

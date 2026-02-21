@@ -1,4 +1,4 @@
-# SneakFit API Documentation v1.0.0
+# SneakFit API Documentation v1.0.2
 
 ## 📋 Contents
 
@@ -19,6 +19,8 @@ The **SneakFit API** is a RESTful service for recipe management, meal planning, 
 The API is organized into the following resources:
 
 ```text
+├── AI                       # AI integration and dish generation
+│   └── POST   /ai/ask
 ├── Auth                     # Authorization & Authentication
 │   ├── POST   /auth/login
 │   ├── POST   /auth/register
@@ -26,7 +28,9 @@ The API is organized into the following resources:
 │   └── POST   /auth/revoke
 ├── Category                 # Recipe Categories
 │   ├── POST   /category/add
-│   └── DELETE /category/delete/{id}
+│   ├── DELETE /category/delete/{id}
+│   ├── POST   /category/{id}/assignToDish/{dishId}
+│   └── PUT    /category/{id}/unassignFromDish/{dishId}
 ├── Comment                  # Recipe Comments
 │   ├── GET    /comment/{dishId}/all
 │   ├── POST   /comment/{dishId}/add
@@ -40,7 +44,21 @@ The API is organized into the following resources:
 │   ├── POST   /dish/{id}/favorite
 │   ├── PUT    /dish/{dishId}/public
 │   ├── PUT    /dish/{dishId}/update
-│   └── DELETE /dish/{id}/delete
+│   ├── DELETE /dish/{dishId}/addStep
+│   ├── PUT    /step/{stepId}/update
+│   ├── GET    /dish/{dishId}/steps
+│   ├── DELETE /step/{stepId}/delete
+│   ├── PUT    /dish/{dishId}/rate
+│   └── POST   /dish/{dishId}/unfavorite
+├── Image                     # Images
+│   ├── POST   /image
+│   ├── PUT    /image/{dishId}/assign
+│   ├── GET    /image/{dishId}/main
+│   └── GET    /image/{dishId}/all
+├── Ingredient                     # Images
+│   ├── POST   /ingredient/add
+│   ├── POST   /ingredient/{id}/assignToDish/{dishId}
+│   └── DELETE /ingredient/{id}/unassignFromDish/{dishId}
 └── User                     # User Profile & Settings
     ├── PUT    /user/{id}/lang
     └── PUT    /user/{id}/settings
@@ -292,6 +310,61 @@ curl -X 'DELETE' \
 
 ---
 
+#### Assign to dish
+Assign category to dish
+
+**Definition:**
+`POST /category/{id}/assignToDish/{dishId}`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | string | Yes | CategoryId |
+| `dishId` | string | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/category/<ID>/assignToDish/<DISH_ID>' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -d ''
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Unassign from dish
+Unassign category from dish
+
+**Definition:**
+`PUT /category/{id}/unassignFromDish/{dishId}`
+
+**Query Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | string | Yes | CategoryId |
+| `dishId` | string | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'PUT' \
+  'https://<HOST>/category/<ID>/unassignFromDish/<DISH_ID>' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
 ## 3. Comment
 
 #### Add
@@ -342,7 +415,7 @@ curl -X 'PUT' \
   -H 'accept: text/plain' \
   -H 'Authorization: Bearer <TOKEN>' \
   -H 'Content-Type: application/json' \
-  -d '"<EDITET_CONTENT>"'
+  -d '"<EDITED_CONTENT>"'
 ```
 
 **Example Response (200):**
@@ -541,7 +614,7 @@ Update dish details.
 | :--- | :--- | :--- | :--- |
 | `dishId` | integer | Yes | Recipe ID |
 | `name` | string | Yes | Updated recipe name |
-| `description` | string | No | Updated dish decription |
+| `description` | string | No | Updated dish description |
 | `calories` | integer | No | Updated recipe calories |
 | `protein` | integer | No | Updated recipe proteins |
 | `carbs` | integer | No | Updated recipe carbs |
@@ -717,6 +790,203 @@ curl -X 'GET' \
 
 ---
 
+#### Add step
+Add cooking step
+
+**Definition:**
+`POST /dish/{dishId}/addStep`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+| `stepName` | string | Yes | Step name |
+| `stepDescription` | string | Yes | Step description |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/dish/{dishId}/addStep' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "stepName": "<NAME>",
+  "stepDescription": "<DESC>"
+}'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Update step
+Update cooking step
+
+**Definition:**
+`PUT /step/{stepId}/update`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `stepId` | integer | Yes | DishId |
+| `stepName` | string | Yes | Step name |
+| `stepDescription` | string | Yes | Step description |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/step/{stepId}/update' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "stepName": "<UPDATED_NAME>",
+  "stepDescription": "<UPDATED_DESC>"
+}'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Get dish steps
+Get dish cooking steps
+
+**Definition:**
+`GET /dish/{dishId}/steps`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'GET' \
+  'https://<HOST>/dish/{dishId}/steps' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+[
+  {
+    "id": <ID>,
+    "name": "<STEP_NAME>",
+    "description": "<STEP_DESC>",
+    "order": <ORDER>
+  },
+  {
+    "id": <ID>,
+    "name": "<STEP_NAME>",
+    "description": "<STEP_DESC>",
+    "order": <ORDER>
+  },
+  {
+    "id": <ID>,
+    "name": "<STEP_NAME>",
+    "description": "<STEP_DESC>",
+    "order": <ORDER>
+  },
+  {
+    "id": <ID>,
+    "name": "<STEP_NAME>",
+    "description": "<STEP_DESC>",
+    "order": <ORDER>
+  }
+]
+```
+
+---
+
+#### Delete step
+Delete cooking step
+
+**Definition:**
+`DELETE /step/{stepId}/delete`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `stepId` | integer | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'DELETE' \
+  'https://<HOST>/step/{stepId}/delete' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Rate dish
+Rate a dish
+
+**Definition:**
+`PUT /dish/{dishId}/rate`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+| `rating` | double | Yes | Dish rate |
+
+**Example Request:**
+```bash
+curl -X 'PUT' \
+  'https://<HOST>/dish/{dishId}/rate?rating={rating}' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Unfavorite dish
+Unfavorite a dish
+
+**Definition:**
+`POST /dish/{dishId}/unfavorite`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/dish/{dishId}/unfavorite' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -d ''
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
 ## 5. User
 
 #### Language
@@ -777,7 +1047,323 @@ curl -X 'PUT' \
 {}
 ```
 
+## 6. AI
+
+#### Ask
+Ask AI for a dish recipe
+
+**Definition:**
+`POST /ai/ask`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `categories` | Category[] | Yes | Dish categories |
+| `testes` | string | yes | Taste of dish |
+| `requiredTools` | string | yes | Taste of dish |
+| `lang` | string | No | User preferred language |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/ai/ask' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "categories": [
+    {
+      "name": "<CATEGORY_NAME>"
+    }
+  ],
+  "tastes": [
+    "<DISH_TASTE>"
+  ],
+  "requiredTools": [
+    "<TOOL>"
+  ],
+  "lang": "<LANG>"
+}'
+```
+
+**Example Response (200):**
+```bash
+{
+  ## Glazed Sweet Potato Dessert Strings
+
+  **Categories:** String, Dessert, Vegetarian
+  **Required Tools:** Stove, Non-stick skillet, Peeler or Spiralizer
+
+  ### Ingredients (1 portion):
+  * 1 medium (approx. 150g) - Sweet potato, peeled and julienned into long strings
+  * 1.5 tbsp - Unsalted butter
+  * 2 tbsp - Maple syrup
+  * 1/2 tsp - Ground cinnamon
+  * 1/4 tsp - Vanilla extract
+  * 1 pinch - Sea salt
+  * 1 tbsp - Water
+  * 1 tbsp - Toasted crushed pecans (optional garnish)
+
+  ### Preparation Steps:
+  1. Prepare the sweet potato by using a spiralizer or a julienne peeler to create long, thin "string" noodles.
+  2. Place the skillet over medium heat on the stove and melt the butter until it begins to foam.
+  3. Add the sweet potato strings to the skillet. Sauté for 3–4 minutes, tossing gently with tongs to ensure they soften slightly without breaking.
+  4. Stir in the maple syrup, cinnamon, vanilla extract, and sea salt. 
+  5. Add the tablespoon of water. This creates a small amount of steam to help cook the "strings" through while the sugar emulsifies with the butter.
+  6. Reduce the heat to medium-low and continue to cook for another 4–5 minutes, tossing frequently, until the liquid has reduced into a thick, glossy glaze that coats the strings.
+  7. Once the strings are tender but still hold their shape (al dente), remove from heat.
+  8. Plate the strings in a twirled nest and garnish with toasted pecans if desired.
+
+  ### Estimates (per portion):
+  * **Time:** 15 Minutes
+  * **Calories:** 285 kcal
+  * **Carbs:** 38 g
+  * **Proteins:** 2 g
+  * **Fat:** 14 g
+}
+```
+
+---
+
+## 7. Images
+
+#### Add
+Add image to db
+
+**Definition:**
+`POST /image`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `file` | string | Yes | Dish image |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/image' \
+  -H 'accept: text/plain' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'file=@<PHOTO_NAME.jpg;type=image/jpeg'
+```
+
+**Example Response (200):**
+```bash
+{
+ {
+  "url": "<IMG_URL>"
+}
+}
+```
+
+---
+
+#### Assign
+Assign image to dish
+
+**Definition:**
+`POST /image`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+| `mainId` | integer | No | ImageId |
+| `secondId` | integer | No | ImageId |
+| `thirdId` | integer | No | ImageId |
+
+**Example Request:**
+```bash
+curl -X 'PUT' \
+  'https://<HOST>/image/<ID>/assign?mainId=<IMAGEID>&secondId=<IMAGEID>&thirdId=<IMAGEID>' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Get Main Image
+Get main image
+
+**Definition:**
+`GET /image/{dishId}/main`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'GET' \
+  'https://<HOST>/image/<DISHID>/main' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{
+  "imageId": <ID>,
+  "ownerId": <ID>,
+  "url": "<IMG_URL>",
+  "position": "<POSITION>"
+}
+```
+
+---
+
+#### Get All Dish Images
+Get all dish images
+
+**Definition:**
+`GET /image/{dishId}/all`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `dishId` | integer | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'GET' \
+  'https://<HOST>/image/<DISHID>/all' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+[
+  {
+    "imageId": <ID>,
+    "ownerId": <ID>,
+    "url": "<IMG_URL>",
+    "position": "<POSITION>"
+  },
+  {
+    "imageId": <ID>,
+    "ownerId": <ID>,
+    "url": "<IMG_URL>",
+    "position": "<POSITION>"
+  },
+  {
+    "imageId": <ID>,
+    "ownerId": <ID>,
+    "url": "<IMG_URL>",
+    "position": "<POSITION>"
+  }
+]
+```
+
+---
+
+## 8. Ingredients
+
+#### Add
+Add ingredient to db
+
+**Definition:**
+`POST /ingredient/add`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `name` | string | Yes | Ingredient name |
+| `description` | string | Yes | Ingredient description |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/ingredient/add' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -H 'Content-Type: application/json' \
+  -d '{
+  "name": "<INGREDIENT_NAME>",
+  "description": "<INGREDIENT_DESC>"
+}'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Assign to dish
+Assign ingredient to dish
+
+**Definition:**
+`POST /ingredient/{id}/assignToDish/{dishId}`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | string | Yes | IngredientId |
+| `dishId` | string | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'POST' \
+  'https://<HOST>/ingredient/{id}/assignToDish/{dishId}' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>' \
+  -d ''
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
+---
+
+#### Unassign from dish
+Unassign ingredient from dish
+
+**Definition:**
+`DELETE /ingredient/{id}/unassignFromDish/{dishId}`
+
+**Parameters:**
+| Parameter | Type | Required | Description |
+| :--- | :--- | :--- | :--- |
+| `id` | string | Yes | IngredientId |
+| `dishId` | string | Yes | DishId |
+
+**Example Request:**
+```bash
+curl -X 'DELETE' \
+  'https://<HOST>/ingredient/{id}/unassignFromDish/{dishId}' \
+  -H 'accept: text/plain' \
+  -H 'Authorization: Bearer <TOKEN>'
+```
+
+**Example Response (200):**
+```bash
+{}
+```
+
 # Data Models
+
+<details>
+<summary>AI</summary>
+
+```mermaid
+classDiagram
+    class AiGeneratedDishProperties {
+        Category[] categories
+        String[] tastes
+        String[] requiredTools
+        Language[] lang
+    }
+```
+</details>
 
 <details>
 <summary>Auth</summary>
@@ -814,6 +1400,15 @@ classDiagram
 
 ```mermaid
 classDiagram
+    class Category {
+        Integer id
+        DateTime createdAt
+        DateTime updatedAt
+        Bool isDeleted
+        DateTime deletedAt
+        String name
+        Dish[] dishes
+    }
     class CategoryDTO {
         Integer id
         String name
@@ -829,6 +1424,18 @@ classDiagram
 
 ```mermaid
 classDiagram
+    class Comment {
+        Integer id
+        DateTime createdAt
+        DateTime updatedAt
+        Bool isDeleted
+        DateTime deletedAt
+        String content
+        Integer authorId
+        User author
+        Integer dishId
+        Dish dish
+    }
     class CommentDTO {
         String content
         Integer authorId
@@ -838,10 +1445,57 @@ classDiagram
 </details>
 
 <details>
+<summary>Cooking Steps</summary>
+
+```mermaid
+classDiagram
+    class CookingStepDto {
+        Integer id
+        String name
+        String description
+        Integer order
+    }
+    class CookingStepParams {
+        String stepName
+        String stepDescription
+    }
+```
+</details>
+
+<details>
 <summary>Dish</summary>
 
 ```mermaid
 classDiagram
+    class Dish {
+      Integer id
+      DateTime createdAt
+      DateTime updatedAt
+      Bool isDeleted
+      DateTime deletedAt
+      String name
+      String description
+      Integer calories
+      Integer protein
+      Integer carbs
+      Integer fat
+      Bool isPublic
+      Double rates
+      Integer ownerId
+      User owner
+      Integer mainPictureId
+      Image mainPicture
+      Integer secondaryPictureId
+      Image secondaryPicture
+      Integer thirdPictureId
+      Image thirdPicture
+      Step[] steps
+      Integer calories
+      Ingredient[] ingredients
+      User favoritedByUser
+      Comment[] comments
+      DishRating[] ratings
+    }
     class DishCutDTO {
         Integer id
         String name
@@ -883,6 +1537,18 @@ classDiagram
         Integer carbs
         Integer fat
     }
+    class DishRating {
+        Integer id
+        DateTime createdAt
+        DateTime updatedAt
+        Bool isDeleted
+        DateTime deletedAt
+        Integer userId
+        User user
+        Integer dishId
+        Dish dish
+        Double rating
+    }
 ```
 </details>
 
@@ -894,6 +1560,54 @@ classDiagram
     class IngredientDTO {
         String name
         String description
+    }
+    class IngredientParams {
+        String name
+        String description
+    }
+```
+</details>
+
+<details>
+<summary>Image</summary>
+
+```mermaid
+classDiagram
+    class Image {
+        Integer id
+        DateTime createdAt
+        DateTime updatedAt
+        Bool isDeleted
+        DateTime deletedAt
+        String url
+        Integer ownerId
+        User owner
+    }
+    class ImageDto {
+        Integer imageId
+        Integer ownerId
+        String url
+        String position
+    }
+```
+</details>
+
+<details>
+<summary>Steps</summary>
+
+```mermaid
+classDiagram
+    class Step {
+        Integer id
+        DateTime createdAt
+        DateTime updatedAt
+        Bool isDeleted
+        DateTime deletedAt
+        String name
+        String description
+        Integer order
+        Integer dishId
+        Dish dish
     }
 ```
 </details>

@@ -1,13 +1,16 @@
 ﻿using Domain.Comments.Commands;
 using Domain.Comments.Dtos;
 using Domain.Comments.Queries;
+using Domain.Users.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("comment")]
+[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Employee)},{nameof(UserRole.User)}")]
 public class CommentController(IMediator mediator) : ControllerBase
 {
     [HttpPost]

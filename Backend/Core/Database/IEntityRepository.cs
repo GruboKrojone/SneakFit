@@ -8,6 +8,7 @@ public interface IEntityRepository<TEntity> where TEntity : EntityBase
     public Task<TEntity> FindAsync(int id, CancellationToken cancellationToken);
     public Task<IList<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     public Task<bool> AnyAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
+    public Task<TEntity?> FindIncludingDeletedAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     public Task<IList<TResult>> FindAsync<TResult>(
         Expression<Func<TEntity, bool>> predicate,
         Expression<Func<TEntity, TResult>> projection,

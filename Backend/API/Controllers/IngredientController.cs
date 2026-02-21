@@ -1,12 +1,15 @@
 ﻿using Domain.Dishes.Commands;
 using Domain.Dishes.Dto;
+using Domain.Users.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("ingredient")]
+[Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Employee)},{nameof(UserRole.User)}")]
 public class IngredientController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
