@@ -6,6 +6,7 @@ using Domain.Categories.Entities;
 using Domain.Categories.Repositories;
 using Domain.Dishes.Dto;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Categories.Commands;
 
@@ -18,8 +19,8 @@ internal class AddCategoryCommandHandler(
 {
     public async Task<Unit> Handle(AddCategoryCommand request, CancellationToken cancellationToken)
     {
-        var userId = userContext.UserId
-            ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
+        if (userContext.UserId is null)
+            throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
 
         if (await categoryRepository.AnyAsync(c => c.NameEn == request.CategoryRequest.NameEn, cancellationToken))
             throw new DomainException("Category with the same name already exists.", (int)CommonErrorCode.InvalidOperation);
@@ -32,7 +33,14 @@ internal class AddCategoryCommandHandler(
             request.CategoryRequest.Color);
 
         categoryRepository.Add(category);
-        await unitOfWork.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await unitOfWork.SaveChangesAsync(cancellationToken);
+        }
+        catch (InvalidOperationException ex) when (ex.InnerException is DbUpdateException)
+        {
+            throw new DomainException("Category with the same name already exists.", (int)CommonErrorCode.InvalidOperation);
+        }
 
         return Unit.Value;
     }

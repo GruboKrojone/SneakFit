@@ -98,6 +98,19 @@ class AuthService {
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
+  static isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp: number | undefined = payload.exp;
+      if (exp === undefined) return false;
+      return Date.now() >= exp * 1000;
+    } catch {
+      return true;
+    }
+  }
+
   static getCurrentUser(): { id: number; email: string; name: string; role: string } | null {
     const token = this.getToken();
     if (!token) return null;

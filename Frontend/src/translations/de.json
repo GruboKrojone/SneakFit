@@ -414,5 +414,7 @@
   "kitchen_item_toaster": "Toaster",
   "create_dish_modal_steps_hint": "Fügen Sie Zubereitungsschritte hinzu, damit Benutzer wissen, wie das Gericht zubereitet wird.",
   "create_dish_modal_step_description_placeholder": "Beschreiben Sie, was in diesem Schritt zu tun ist...",
-  "create_dish_modal_add_next_step": "Weiteren Schritt hinzufügen"
+  "create_dish_modal_add_next_step": "Weiteren Schritt hinzufügen",
+  "update_dish_ingredient_success": "Zutat erfolgreich aktualisiert",
+  "update_dish_ingredient_error": "Fehler beim Aktualisieren der Zutat"
 }

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTranslation } from "react-i18next";
 import AddIcon from "@mui/icons-material/Add";
 import AdminOnly from "../components/AdminOnly";
@@ -17,13 +17,14 @@ export default function AdminPanel() {
     en: "",
     pl: "",
     de: "",
-    es: ""
+    es: "",
   });
   const [selectedColor, setSelectedColor] = useState("#ff6b35");
   const [categories, setCategories] = useState<Category[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAdding, setIsAdding] = useState(false);
 
-  const fetchCategories = async () => {
+  const fetchCategories = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await CategoriesService.getAllCategories();
@@ -33,11 +34,11 @@ export default function AdminPanel() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [t]);
 
   useEffect(() => {
     fetchCategories();
-  }, []);
+  }, [fetchCategories]);
 
   const handleAddCategory = async () => {
     const { en, pl, de, es } = newCategoryNames;
@@ -46,40 +47,48 @@ export default function AdminPanel() {
       return;
     }
 
+    const existingCategory = categories.find(
+      (c) => c.nameEn.toLowerCase() === en.trim().toLowerCase(),
+    );
+
+    if (existingCategory) {
+      toast.info(t("create_dish_modal_category_already_exists_selected"));
+      return;
+    }
+
+    setIsAdding(true);
     try {
-      const existingCategory = categories.find(
-        (c) => c.nameEn.toLowerCase() === en.trim().toLowerCase()
+      await CategoriesService.addCategory(
+        en.trim(),
+        pl.trim(),
+        de.trim(),
+        es.trim(),
+        selectedColor,
       );
-
-      if (existingCategory) {
-        toast.info(t("create_dish_modal_category_already_exists_selected"));
-        return;
-      }
-
-      await CategoriesService.addCategory(en.trim(), pl.trim(), de.trim(), es.trim(), selectedColor);
-      
       setNewCategoryNames({ en: "", pl: "", de: "", es: "" });
       setSelectedColor("#ff6b35");
       toast.success(t("create_dish_modal_category_added"));
-      fetchCategories();
+      await fetchCategories();
     } catch (error) {
       toast.error(t("create_dish_modal_category_add_error") + "\n" + error);
+    } finally {
+      setIsAdding(false);
     }
   };
 
   return (
     <AdminOnly fallback={<div className="admin-error">Access Denied</div>}>
       <div className="admin-panel">
-        <button 
-          className="back-btn" 
+        <button
+          className="back-btn"
           onClick={() => navigate(`/${locale}/profile`)}
           title={t("back_to_profile")}
         >
           <ArrowBackIcon />
         </button>
-        
+
         <h1 className="page-title">{t("admin_panel")}</h1>
-        
+
         <div className="admin-content">
           <section className="admin-card">
             <h2 className="section-subtitle">{t("manage_categories")}:</h2>
@@ -91,7 +100,12 @@ export default function AdminPanel() {
                     <input
                       type="text"
                       value={newCategoryNames.en}
-                      onChange={(e) => setNewCategoryNames({ ...newCategoryNames, en: e.target.value })}
+                      onChange={(e) =>
+                        setNewCategoryNames({
+                          ...newCategoryNames,
+                          en: e.target.value,
+                        })
+                      }
                       placeholder="Category name in English"
                     />
                   </div>
@@ -100,7 +114,12 @@ export default function AdminPanel() {
                     <input
                       type="text"
                       value={newCategoryNames.pl}
-                      onChange={(e) => setNewCategoryNames({ ...newCategoryNames, pl: e.target.value })}
+                      onChange={(e) =>
+                        setNewCategoryNames({
+                          ...newCategoryNames,
+                          pl: e.target.value,
+                        })
+                      }
                       placeholder="Nazwa kategorii po polsku"
                     />
                   </div>
@@ -109,7 +128,12 @@ export default function AdminPanel() {
                     <input
                       type="text"
                       value={newCategoryNames.de}
-                      onChange={(e) => setNewCategoryNames({ ...newCategoryNames, de: e.target.value })}
+                      onChange={(e) =>
+                        setNewCategoryNames({
+                          ...newCategoryNames,
+                          de: e.target.value,
+                        })
+                      }
                       placeholder="Kategoriename auf Deutsch"
                     />
                   </div>
@@ -118,7 +142,12 @@ export default function AdminPanel() {
                     <input
                       type="text"
                       value={newCategoryNames.es}
-                      onChange={(e) => setNewCategoryNames({ ...newCategoryNames, es: e.target.value })}
+                      onChange={(e) =>
+                        setNewCategoryNames({
+                          ...newCategoryNames,
+                          es: e.target.value,
+                        })
+                      }
                       placeholder="Nombre de la categoría en español"
                     />
                   </div>
@@ -129,17 +158,19 @@ export default function AdminPanel() {
                 <div className="color-picker-controls">
                   <label className="color-label">{t("category_color")}:</label>
                   <div className="selected-color-info">
-                    <div 
-                      className="color-preview-large" 
-                      style={{ background: selectedColor }} 
+                    <div
+                      className="color-preview-large"
+                      style={{ background: selectedColor }}
                     />
                     <div className="color-code-wrapper">
-                      <span className="color-label-small">{t("selected_color")}:</span>
+                      <span className="color-label-small">
+                        {t("selected_color")}:
+                      </span>
                       <div className="hex-input-container">
                         <span className="hex-prefix">#</span>
-                        <HexColorInput 
-                          color={selectedColor} 
-                          onChange={setSelectedColor} 
+                        <HexColorInput
+                          color={selectedColor}
+                          onChange={setSelectedColor}
                           className="hex-input"
                           prefixed={false}
                         />
@@ -147,9 +178,12 @@ export default function AdminPanel() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="library-picker-container">
-                  <HexColorPicker color={selectedColor} onChange={setSelectedColor} />
+                  <HexColorPicker
+                    color={selectedColor}
+                    onChange={setSelectedColor}
+                  />
                 </div>
               </div>
 
@@ -158,7 +192,13 @@ export default function AdminPanel() {
                   type="button"
                   className="add-category-button-large"
                   onClick={handleAddCategory}
-                  disabled={!newCategoryNames.en.trim() || !newCategoryNames.pl.trim() || !newCategoryNames.de.trim() || !newCategoryNames.es.trim()}
+                  disabled={
+                    isAdding ||
+                    !newCategoryNames.en.trim() ||
+                    !newCategoryNames.pl.trim() ||
+                    !newCategoryNames.de.trim() ||
+                    !newCategoryNames.es.trim()
+                  }
                 >
                   <AddIcon />
                   <span>{t("create_dish_modal_add_category_placeholder")}</span>
@@ -175,25 +215,34 @@ export default function AdminPanel() {
               ) : (
                 <div className="categories-grid-admin">
                   {categories.length === 0 ? (
-                    <p className="no-data-text">{t("create_dish_modal_no_categories")}</p>
+                    <p className="no-data-text">
+                      {t("create_dish_modal_no_categories")}
+                    </p>
                   ) : (
                     categories.map((cat) => {
                       let localizedName;
                       switch (locale) {
-                        case "pl": localizedName = cat.namePl; break;
-                        case "de": localizedName = cat.nameDe; break;
-                        case "es": localizedName = cat.nameEs; break;
-                        default: localizedName = cat.nameEn;
+                        case "pl":
+                          localizedName = cat.namePl;
+                          break;
+                        case "de":
+                          localizedName = cat.nameDe;
+                          break;
+                        case "es":
+                          localizedName = cat.nameEs;
+                          break;
+                        default:
+                          localizedName = cat.nameEn;
                       }
-                        
+
                       return (
-                        <span 
-                          key={cat.id} 
+                        <span
+                          key={cat.id}
                           className="admin-category-tag"
-                          style={{ 
+                          style={{
                             borderColor: cat.color,
                             color: cat.color,
-                            background: `${cat.color}15`
+                            background: `${cat.color}15`,
                           }}
                         >
                           {localizedName}

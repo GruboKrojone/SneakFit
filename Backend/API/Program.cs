@@ -76,7 +76,8 @@ internal static class Program
         catch (Exception ex)
         {
             Log.Fatal(ex, "Application terminated unexpectedly");
-            throw;
+            Log.CloseAndFlush();
+            Environment.Exit(1);
         }
         finally
         {
@@ -151,7 +152,7 @@ internal static class Program
                     factory: partition => new FixedWindowRateLimiterOptions
                     {
                         AutoReplenishment = true,
-                        PermitLimit = 100,
+                        PermitLimit = 500,
                         QueueLimit = 0,
                         Window = TimeSpan.FromMinutes(1)
                     }));

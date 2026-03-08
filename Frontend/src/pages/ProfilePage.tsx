@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import SettingsIcon from "@mui/icons-material/Settings";
 import ProfileSettingsModal from "../components/ProfileSettingsModal";
 import FavouritesModal from "../components/FavouritesModal";
@@ -8,7 +8,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import AdminOnly from "../components/AdminOnly";
 import "./styles/ProfilePage.css";
 import AuthService from "../services/AuthService";
-import DishesService, { Dish } from "../services/DishesService";
+import DishesService, { Dish, Category } from "../services/DishesService";
 import DishImage from "../components/DishImage";
 import Star from "@mui/icons-material/Star";
 import StarBorder from "@mui/icons-material/StarBorder";
@@ -27,7 +27,7 @@ export default function ProfilePage() {
   const [userDishes, setUserDishes] = useState<Dish[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const currentUser = AuthService.getCurrentUser();
+  const currentUser = useMemo(() => AuthService.getCurrentUser(), []);
 
   useEffect(() => {
     const fetchUserDishes = async () => {
@@ -35,8 +35,9 @@ export default function ProfilePage() {
       try {
         const allDishes = await DishesService.getAllDishes();
 
-        const myDishes = allDishes.filter(dish => 
-          (dish.userId === currentUser.id) || (dish.ownerId === currentUser.id)
+        const myDishes = allDishes.filter(
+          (dish) =>
+            dish.userId === currentUser.id || dish.ownerId === currentUser.id,
         );
         setUserDishes(myDishes);
       } catch (error) {
@@ -46,7 +47,7 @@ export default function ProfilePage() {
       }
     };
     fetchUserDishes();
-  }, [currentUser?.id]);
+  }, [currentUser]);
 
   const renderRating = (rating: number = 0) => {
     return (
@@ -64,7 +65,7 @@ export default function ProfilePage() {
     );
   };
 
-  const getCategoryName = (category: any) => {
+  const getCategoryName = (category: Category) => {
     if (i18n.language === "pl") return category.namePl;
     if (i18n.language === "de") return category.nameDe;
     if (i18n.language === "es") return category.nameEs;
@@ -86,36 +87,42 @@ export default function ProfilePage() {
               onPointerUp={() => navigate(`/${locale}/dish/${dish.id}`)}
             >
               <div className="dishes-image-wrap">
-                <DishImage 
-                  dishId={dish.id} 
-                  alt={dish.name} 
-                  className="dishes-image" 
+                <DishImage
+                  dishId={dish.id}
+                  alt={dish.name}
+                  className="dishes-image"
                   placeholderClassName="dishes-restaurant-icon"
                 />
               </div>
-              <div 
-                  className="dish-visibility-badge"
-                  title={dish.isPublic ? t("public_dish") : t("private_dish")}
-                  style={{ backgroundColor: dish.isPublic ? '#4caf50' : '#ff9800' }}
+              <div
+                className="dish-visibility-badge"
+                title={dish.isPublic ? t("public_dish") : t("private_dish")}
+                style={{
+                  backgroundColor: dish.isPublic ? "#4caf50" : "#ff9800",
+                }}
               >
-                  {dish.isPublic ? <PublicIcon className="visibility-icon" /> : <LockIcon className="visibility-icon" />}
+                {dish.isPublic ? (
+                  <PublicIcon className="visibility-icon" />
+                ) : (
+                  <LockIcon className="visibility-icon" />
+                )}
               </div>
               <div className="dishes-body">
                 <div className="dishes-name">{dish.name}</div>
                 {renderRating(dish.rates)}
                 <div className="dishes-categories">
                   {dish.categories?.map((c) => (
-                          <span 
-                            key={c.id} 
-                            className="dishes-category-tag"
-                            style={{ 
-                              borderColor: c.color,
-                              color: c.color,
-                              background: `${c.color}15`
-                            }}
-                          >
-                            {getCategoryName(c)}
-                          </span>
+                    <span
+                      key={c.id}
+                      className="dishes-category-tag"
+                      style={{
+                        borderColor: c.color,
+                        color: c.color,
+                        background: `${c.color}15`,
+                      }}
+                    >
+                      {getCategoryName(c)}
+                    </span>
                   ))}
                 </div>
               </div>
@@ -125,14 +132,18 @@ export default function ProfilePage() {
       );
     }
 
-    return <div className="no-dishes-text">{t("profile_no_dishes") || "You haven't created any dishes yet."}</div>;
+    return (
+      <div className="no-dishes-text">
+        {t("profile_no_dishes") || "You haven't created any dishes yet."}
+      </div>
+    );
   };
 
   return (
     <div className="profile-page">
       <div className="profile-header">
         <div className="profile-avatar-container">
-           <PersonIcon className="profile-avatar-icon" />
+          <PersonIcon className="profile-avatar-icon" />
         </div>
         <div className="profile-info">
           <h1 className="profile-name">{currentUser?.name || "User"}</h1>
@@ -140,44 +151,48 @@ export default function ProfilePage() {
           <div className="profile-stats">
             <div className="stat-item">
               <span className="stat-value">{userDishes.length}</span>
-              <span className="stat-label">{t("profile_dishes_count") || "Dishes"}</span>
+              <span className="stat-label">
+                {t("profile_dishes_count") || "Dishes"}
+              </span>
             </div>
           </div>
         </div>
-        
+
         <div className="profile-actions-top">
-            <button
-                className="settings-gear-btn-profile"
-                onClick={() => setIsModalOpen(true)}
-                title={t("profile_settings_title")}
-            >
-                <SettingsIcon className="settings-gear-icon" />
-            </button>
+          <button
+            className="settings-gear-btn-profile"
+            onClick={() => setIsModalOpen(true)}
+            title={t("profile_settings_title")}
+          >
+            <SettingsIcon className="settings-gear-icon" />
+          </button>
         </div>
       </div>
 
       <div className="profile-toolbar">
-          <button
-            className="favourites-button"
-            onClick={() => setIsFavouriteModalOpen(true)}
-          >
-            <FavoriteIcon className="btn-icon" />
-            {t("favourites")}
-          </button>
+        <button
+          className="favourites-button"
+          onClick={() => setIsFavouriteModalOpen(true)}
+        >
+          <FavoriteIcon className="btn-icon" />
+          {t("favourites")}
+        </button>
 
-          <AdminOnly>
-            <button
-              className="admin-panel-nav-btn"
-              onClick={() => navigate(`/${locale}/admin`)}
-              title={t("admin_panel")}
-            >
-              <AdminPanelSettingsIcon /> {t("admin_panel")}
-            </button>
-          </AdminOnly>
+        <AdminOnly>
+          <button
+            className="admin-panel-nav-btn"
+            onClick={() => navigate(`/${locale}/admin`)}
+            title={t("admin_panel")}
+          >
+            <AdminPanelSettingsIcon /> {t("admin_panel")}
+          </button>
+        </AdminOnly>
       </div>
 
       <div className="profile-content">
-        <h2 className="section-title">{t("profile_my_dishes") || "My Dishes"}</h2>
+        <h2 className="section-title">
+          {t("profile_my_dishes") || "My Dishes"}
+        </h2>
         {renderDishesContent()}
       </div>
 

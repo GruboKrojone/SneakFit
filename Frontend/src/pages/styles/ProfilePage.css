@@ -5,9 +5,6 @@
   flex-direction: column;
   align-items: center;
   position: relative;
-  box-sizing: border-box;
-  padding-bottom: 3rem;
-  min-height: 100vh;
   transition: all 0.3s ease;
 }
 
@@ -146,7 +143,7 @@
 
 .favourites-button {
   background: var(--gradient);
-  color: #fff;
+  color: #ffffff;
 }
 
 .favourites-button:hover {
@@ -169,7 +166,6 @@
 .profile-content {
   width: 100%;
   max-width: 80rem;
-  padding: 0 2rem;
 }
 
 .section-title {

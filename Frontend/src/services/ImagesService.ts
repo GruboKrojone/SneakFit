@@ -15,6 +15,9 @@ export interface PreviewImage {
 class ImagesService {
   private static readonly baseUrl = "https://localhost:7059";
 
+  private static readonly imageCache = new Map<number, string | null>();
+  private static readonly imageInFlight = new Map<number, Promise<string | null>>();
+
   static async uploadImage(file: File): Promise<ImageResponse> {
     const formData = new FormData();
     formData.append("file", file);
@@ -84,25 +87,46 @@ class ImagesService {
   }
 
   static async getMainImage(dishId: number): Promise<string | null> {
-    try {
-      const response = await fetch(`${this.baseUrl}/image/${dishId}/main`, {
-        method: "GET",
-        headers: {
-          accept: "application/json",
-          ...AuthService.getAuthHeader(),
-        },
-      });
-
-      if (!response.ok) {
-        return null;
-      }
-
-      const data = await response.json();
-      return data.url;
-    } catch (error) {
-      console.error("Error fetching main image:", error);
-      return null;
+    // Return cached result immediately
+    if (this.imageCache.has(dishId)) {
+      return this.imageCache.get(dishId) ?? null;
     }
+
+    // Deduplicate concurrent requests for the same dishId
+    if (this.imageInFlight.has(dishId)) {
+      return this.imageInFlight.get(dishId)!;
+    }
+
+    const request = (async (): Promise<string | null> => {
+      try {
+        const response = await fetch(`${this.baseUrl}/image/${dishId}/main`, {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            ...AuthService.getAuthHeader(),
+          },
+        });
+
+        const url = response.ok ? (await response.json()).url ?? null : null;
+        this.imageCache.set(dishId, url);
+        return url;
+      } catch (error) {
+        console.error("Error fetching main image:", error);
+        this.imageCache.set(dishId, null);
+        return null;
+      } finally {
+        this.imageInFlight.delete(dishId);
+      }
+    })();
+
+    this.imageInFlight.set(dishId, request);
+    return request;
+  }
+
+  /** Call this when a dish's image is updated so the cache is invalidated. */
+  static invalidateImageCache(dishId: number): void {
+    this.imageCache.delete(dishId);
+    this.imageInFlight.delete(dishId);
   }
 
   static async getSecondaryImage(dishId: number): Promise<string | null> {
@@ -166,9 +190,9 @@ class ImagesService {
       const data = await response.json();
       
       if (Array.isArray(data)) {
-        return data.map((item: any) => ({
-          id: item.id || item.imageId || item.Id || 0,
-          url: item.url || item.Url || ""
+        return data.map((item: Record<string, unknown>) => ({
+          id: (item.id ?? item.imageId ?? item.Id ?? 0) as number,
+          url: (item.url ?? item.Url ?? "") as string,
         }));
       }
 

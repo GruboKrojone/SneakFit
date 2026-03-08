@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import "./styles/ProtectedLayout.css";
 import NavBar from "./NavBar";
+import AuthService from "../services/AuthService";
 
 interface ProtectedLayoutProps {
   readonly children: ReactNode;
@@ -14,7 +15,8 @@ export default function ProtectedLayout({ children }: ProtectedLayoutProps) {
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
-    if (!token) {
+    if (!token || AuthService.isTokenExpired()) {
+      AuthService.logout();
       navigate(`/${locale}/login`);
     }
   }, [navigate, locale]);

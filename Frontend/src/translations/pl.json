@@ -286,8 +286,8 @@
   "favourites": "Ulubione",
   "close": "Zamknij",
   "select_mode": "Zaznacz",
-  "add_to_favourites": "Dodano do ulubionych",
-  "remove_from_favourites": "Usunięto z ulubionych",
+  "add_to_favourites": "Dodaj do ulubionych",
+  "remove_from_favourites": "Usuń z ulubionych",
   "no_favourites": "Brak ulubionych dań. Dodaj dania używając akcji LOVED!",
   "shopping_list_add_placeholder": "Dodaj produkt...",
   "shopping_list_add_button": "Dodaj",
@@ -415,5 +415,7 @@
   "create_dish_modal_step_description_placeholder": "Opisz co trzeba zrobić w tym kroku...",
   "create_dish_modal_add_next_step": "Dodaj kolejny krok",
   "dish_settings_modal_categories_updated_success": "Kategorie zostały zaktualizowane",
-  "dish_settings_modal_categories_updated_error": "Błąd aktualizacji kategorii"
+  "dish_settings_modal_categories_updated_error": "Błąd aktualizacji kategorii",
+  "update_dish_ingredient_success": "Składniki zaktualizowane pomyślnie",
+  "update_dish_ingredient_error": "Błąd aktualizacji składnika"
 }

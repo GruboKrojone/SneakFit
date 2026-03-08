@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, type ResolverOptions } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import Close from "@mui/icons-material/Close";
@@ -21,17 +21,20 @@ interface ProfileSettingsModalProps {
   readonly onClose: () => void;
 }
 
-const profileSchemaType = z.object({
-  name: z.string().optional(),
-  email: z.string().optional(),
-  password: z.string().optional(),
-  confirmPassword: z.string().optional(),
-  oldPassword: z.string().optional(),
-});
+type ProfileSettingsFormData = {
+  name?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  oldPassword?: string;
+};
 
-type ProfileSettingsFormData = z.infer<typeof profileSchemaType>;
-
-type ViewState = "main" | "basic-settings" | "edit-name" | "edit-email" | "edit-password";
+type ViewState =
+  | "main"
+  | "basic-settings"
+  | "edit-name"
+  | "edit-email"
+  | "edit-password";
 
 export default function ProfileSettingsModal({
   isOpen,
@@ -48,17 +51,26 @@ export default function ProfileSettingsModal({
   });
 
   const emailSchema = z.object({
-    email: z.string().regex(/^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, t("login_page_email_invalid")),
+    email: z
+      .string()
+      .regex(
+        /^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/,
+        t("login_page_email_invalid"),
+      ),
   });
 
-  const passwordSchema = z.object({
-    oldPassword: z.string().min(1, t("profile_settings_password_required")),
-    password: z.string().min(6, t("register_page_password_min_length")),
-    confirmPassword: z.string().min(1, t("register_page_confirm_password_required")),
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: t("register_page_passwords_do_not_match"),
-    path: ["confirmPassword"],
-  });
+  const passwordSchema = z
+    .object({
+      oldPassword: z.string().min(1, t("profile_settings_password_required")),
+      password: z.string().min(6, t("register_page_password_min_length")),
+      confirmPassword: z
+        .string()
+        .min(1, t("register_page_confirm_password_required")),
+    })
+    .refine((data) => data.password === data.confirmPassword, {
+      message: t("register_page_passwords_do_not_match"),
+      path: ["confirmPassword"],
+    });
 
   const {
     register,
@@ -68,10 +80,29 @@ export default function ProfileSettingsModal({
     clearErrors,
   } = useForm<ProfileSettingsFormData>({
     resolver: (values, context, options) => {
-      if (view === "edit-name") return zodResolver(nameSchema)(values as any, context, options as any);
-      if (view === "edit-email") return zodResolver(emailSchema)(values as any, context, options as any);
-      if (view === "edit-password") return zodResolver(passwordSchema)(values as any, context, options as any);
-      return zodResolver(z.object({}))(values as any, context, options as any);
+      if (view === "edit-name")
+        return zodResolver(nameSchema)(
+          values as unknown as z.infer<typeof nameSchema>,
+          context,
+          options as ResolverOptions<z.infer<typeof nameSchema>>,
+        );
+      if (view === "edit-email")
+        return zodResolver(emailSchema)(
+          values as unknown as z.infer<typeof emailSchema>,
+          context,
+          options as ResolverOptions<z.infer<typeof emailSchema>>,
+        );
+      if (view === "edit-password")
+        return zodResolver(passwordSchema)(
+          values as unknown as z.infer<typeof passwordSchema>,
+          context,
+          options as ResolverOptions<z.infer<typeof passwordSchema>>,
+        );
+      return zodResolver(z.object({}))(
+        values as unknown as Record<string, never>,
+        context,
+        options as unknown as ResolverOptions<Record<string, never>>,
+      );
     },
     defaultValues: {
       name: "",
@@ -93,7 +124,7 @@ export default function ProfileSettingsModal({
       });
       setView("main");
     }
-  }, [isOpen]);
+  }, [isOpen, currentUser, reset]);
 
   useEffect(() => {
     clearErrors();
@@ -140,7 +171,8 @@ export default function ProfileSettingsModal({
       onClose();
       globalThis.location.reload();
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
 
       if (errorMessage.includes("Email already taken")) {
         toast.error(t("profile_settings_email_taken"));
@@ -179,17 +211,22 @@ export default function ProfileSettingsModal({
 
   const renderMenu = () => (
     <div className="profile-menu-list">
-      <button 
+      <button
         type="button"
         className="profile-menu-item"
         onClick={() => setView("basic-settings")}
       >
         <div className="profile-menu-item-icon">
-            <ManageAccountsIcon />
+          <ManageAccountsIcon />
         </div>
         <div className="profile-menu-item-text">
-            <span className="profile-menu-item-title">{t("profile_settings_basic_account") || "Basic Account Settings"}</span>
-            <span className="profile-menu-item-desc">{t("profile_settings_basic_account_desc") || "Changes name, email and password"}</span>
+          <span className="profile-menu-item-title">
+            {t("profile_settings_basic_account") || "Basic Account Settings"}
+          </span>
+          <span className="profile-menu-item-desc">
+            {t("profile_settings_basic_account_desc") ||
+              "Changes name, email and password"}
+          </span>
         </div>
       </button>
 
@@ -198,55 +235,65 @@ export default function ProfileSettingsModal({
         className="profile-menu-item profile-clear-button-item"
         onClick={handleClearChoices}
       >
-          <div className="profile-menu-item-icon delete-icon-wrapper">
-            <DeleteSweep />
-          </div>
-          <div className="profile-menu-item-text">
-            <span className="profile-menu-item-title">{t("profile_settings_clear_choices_button")}</span>
-            <span className="profile-menu-item-desc">{t("profile_settings_clear_choices_hint")}</span>
-          </div>
+        <div className="profile-menu-item-icon delete-icon-wrapper">
+          <DeleteSweep />
+        </div>
+        <div className="profile-menu-item-text">
+          <span className="profile-menu-item-title">
+            {t("profile_settings_clear_choices_button")}
+          </span>
+          <span className="profile-menu-item-desc">
+            {t("profile_settings_clear_choices_hint")}
+          </span>
+        </div>
       </button>
     </div>
   );
 
   const renderBasicMenu = () => (
     <div className="profile-menu-list">
-      <button 
+      <button
         type="button"
         className="profile-menu-item"
         onClick={() => setView("edit-name")}
       >
         <div className="profile-menu-item-icon">
-            <PermIdentityIcon />
+          <PermIdentityIcon />
         </div>
         <div className="profile-menu-item-text">
-            <span className="profile-menu-item-title">{t("profile_settings_name") || "Name"}</span>
+          <span className="profile-menu-item-title">
+            {t("profile_settings_name") || "Name"}
+          </span>
         </div>
       </button>
 
-      <button 
+      <button
         type="button"
         className="profile-menu-item"
         onClick={() => setView("edit-email")}
       >
         <div className="profile-menu-item-icon">
-            <MailOutlineIcon />
+          <MailOutlineIcon />
         </div>
         <div className="profile-menu-item-text">
-            <span className="profile-menu-item-title">{t("register_page_email_holder") || "Email"}</span>
+          <span className="profile-menu-item-title">
+            {t("register_page_email_holder") || "Email"}
+          </span>
         </div>
       </button>
 
-      <button 
+      <button
         type="button"
         className="profile-menu-item"
         onClick={() => setView("edit-password")}
       >
         <div className="profile-menu-item-icon">
-            <VpnKeyIcon />
+          <VpnKeyIcon />
         </div>
         <div className="profile-menu-item-text">
-            <span className="profile-menu-item-title">{t("register_page_password_holder") || "Password"}</span>
+          <span className="profile-menu-item-title">
+            {t("register_page_password_holder") || "Password"}
+          </span>
         </div>
       </button>
     </div>
@@ -266,7 +313,11 @@ export default function ProfileSettingsModal({
           <span className="profile-error-text">{errors.name.message}</span>
         )}
       </div>
-      <button type="submit" className="profile-submit-button" disabled={isSubmitting}>
+      <button
+        type="submit"
+        className="profile-submit-button"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? t("saving") : t("profile_settings_save")}
       </button>
     </form>
@@ -286,7 +337,11 @@ export default function ProfileSettingsModal({
           <span className="profile-error-text">{errors.email.message}</span>
         )}
       </div>
-      <button type="submit" className="profile-submit-button" disabled={isSubmitting}>
+      <button
+        type="submit"
+        className="profile-submit-button"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? t("saving") : t("profile_settings_save")}
       </button>
     </form>
@@ -294,16 +349,23 @@ export default function ProfileSettingsModal({
 
   const renderEditPassword = () => (
     <form onSubmit={handleSubmit(onSubmit)} className="profile-form-container">
-       <div className="profile-form-group">
-        <label htmlFor="oldPassword">{t("profile_settings_current_password") || "Current Password"}</label>
+      <div className="profile-form-group">
+        <label htmlFor="oldPassword">
+          {t("profile_settings_current_password") || "Current Password"}
+        </label>
         <input
           type="password"
           id="oldPassword"
-          placeholder={t("profile_settings_current_password_placeholder") || "Enter current password"}
+          placeholder={
+            t("profile_settings_current_password_placeholder") ||
+            "Enter current password"
+          }
           {...register("oldPassword")}
         />
         {errors.oldPassword && (
-          <span className="profile-error-text">{errors.oldPassword.message}</span>
+          <span className="profile-error-text">
+            {errors.oldPassword.message}
+          </span>
         )}
       </div>
 
@@ -320,7 +382,9 @@ export default function ProfileSettingsModal({
         )}
       </div>
       <div className="profile-form-group">
-        <label htmlFor="confirmPassword">{t("register_page_confirm_password_holder")}</label>
+        <label htmlFor="confirmPassword">
+          {t("register_page_confirm_password_holder")}
+        </label>
         <input
           type="password"
           id="confirmPassword"
@@ -328,10 +392,16 @@ export default function ProfileSettingsModal({
           {...register("confirmPassword")}
         />
         {errors.confirmPassword && (
-          <span className="profile-error-text">{errors.confirmPassword.message}</span>
+          <span className="profile-error-text">
+            {errors.confirmPassword.message}
+          </span>
         )}
       </div>
-      <button type="submit" className="profile-submit-button" disabled={isSubmitting}>
+      <button
+        type="submit"
+        className="profile-submit-button"
+        disabled={isSubmitting}
+      >
         {isSubmitting ? t("saving") : t("profile_settings_save")}
       </button>
     </form>
@@ -339,7 +409,8 @@ export default function ProfileSettingsModal({
 
   const getTitle = () => {
     if (view === "main") return t("profile_settings_title");
-    if (view === "basic-settings") return t("profile_settings_basic_account") || "Basic Account Settings";
+    if (view === "basic-settings")
+      return t("profile_settings_basic_account") || "Basic Account Settings";
     if (view === "edit-name") return t("profile_settings_name");
     if (view === "edit-email") return t("register_page_email_holder");
     if (view === "edit-password") return t("register_page_password_holder");
@@ -352,7 +423,10 @@ export default function ProfileSettingsModal({
       onPointerDown={handleClose}
       aria-hidden={!isOpen}
     >
-      <div className="profile-modal-content" onPointerDown={(e) => e.stopPropagation()}>
+      <div
+        className="profile-modal-content"
+        onPointerDown={(e) => e.stopPropagation()}
+      >
         <button
           className="profile-close-button"
           onClick={handleClose}
@@ -361,17 +435,23 @@ export default function ProfileSettingsModal({
           <Close className="profile-close-icon" />
         </button>
 
-        <div className={`profile-modal-header-with-back ${view === "main" ? "main-view" : ""}`} style={view === "main" ? { justifyContent: "center" } : {}}>
+        <div
+          className={`profile-modal-header-with-back ${view === "main" ? "main-view" : ""}`}
+          style={view === "main" ? { justifyContent: "center" } : {}}
+        >
           {view !== "main" && (
-            <button 
-              className="profile-back-button" 
+            <button
+              className="profile-back-button"
               onClick={handleBack}
               aria-label={t("back")}
             >
               <ArrowBackIcon />
             </button>
           )}
-          <h2 className="profile-modal-title" style={view === "main" ? {} : { margin: 0 }}>
+          <h2
+            className="profile-modal-title"
+            style={view === "main" ? {} : { margin: 0 }}
+          >
             {getTitle()}
           </h2>
         </div>
@@ -383,7 +463,10 @@ export default function ProfileSettingsModal({
         {view === "edit-password" && renderEditPassword()}
 
         {showClearConfirm && (
-          <div className="profile-delete-confirm-overlay" onPointerDown={(e) => e.stopPropagation()}>
+          <div
+            className="profile-delete-confirm-overlay"
+            onPointerDown={(e) => e.stopPropagation()}
+          >
             <div className="profile-delete-confirm-modal">
               <h4>{t("profile_settings_clear_confirm_title")}</h4>
               <p>{t("profile_settings_clear_confirm_message")}</p>

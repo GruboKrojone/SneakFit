@@ -414,5 +414,7 @@
   "kitchen_item_toaster": "Tostadora",
   "create_dish_modal_steps_hint": "Añada los pasos de preparación para que los usuarios sepan cómo cocinar este plato.",
   "create_dish_modal_step_description_placeholder": "Describa qué hacer en este paso...",
-  "create_dish_modal_add_next_step": "Añadir otro paso"
+  "create_dish_modal_add_next_step": "Añadir otro paso",
+  "update_dish_ingredient_success": "Ingrediente actualizado exitosamente",
+  "update_dish_ingredient_error": "Error al actualizar el ingrediente"
 }
