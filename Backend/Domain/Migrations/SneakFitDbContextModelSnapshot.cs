@@ -115,6 +115,10 @@ namespace Domain.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2");
@@ -125,7 +129,22 @@ namespace Domain.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("NameDe")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEn")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NameEs")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NamePl")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
@@ -135,7 +154,7 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Name")
+                    b.HasIndex("NameEn")
                         .IsUnique();
 
                     b.ToTable("Categories", (string)null);
@@ -585,79 +604,79 @@ namespace Domain.Migrations
                     b.Navigation("ThirdPicture");
                 });
 
-            modelBuilder.Entity("Domain.Dishes.Entities.Step", b =>
-            {
-                b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
-                    .WithMany("Steps")
-                    .HasForeignKey("DishId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-
-                b.Navigation("Dish");
-            });
-
             modelBuilder.Entity("Domain.Dishes.Entities.DishRating", b =>
-            {
-                b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
-                    .WithMany("Ratings")
-                    .HasForeignKey("DishId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
+                        .WithMany("Ratings")
+                        .HasForeignKey("DishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("Domain.Users.Entities.User", "User")
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasOne("Domain.Users.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("Dish");
+                    b.Navigation("Dish");
 
-                b.Navigation("User");
-            });
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Dishes.Entities.Step", b =>
+                {
+                    b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
+                        .WithMany("Steps")
+                        .HasForeignKey("DishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Dish");
+                });
 
             modelBuilder.Entity("Domain.Images.Entities.Image", b =>
-            {
-                b.HasOne("Domain.Users.Entities.User", "Owner")
-                    .WithMany()
-                    .HasForeignKey("OwnerId")
-                    .OnDelete(DeleteBehavior.NoAction)
-                    .IsRequired();
+                {
+                    b.HasOne("Domain.Users.Entities.User", "Owner")
+                        .WithMany()
+                        .HasForeignKey("OwnerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
 
-                b.Navigation("Owner");
-            });
+                    b.Navigation("Owner");
+                });
 
             modelBuilder.Entity("Domain.Users.Entities.Favorited", b =>
-            {
-                b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
-                    .WithMany()
-                    .HasForeignKey("DishId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("Domain.Dishes.Entities.Dish", "Dish")
+                        .WithMany()
+                        .HasForeignKey("DishId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("Domain.Users.Entities.User", "User")
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasOne("Domain.Users.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("Dish");
+                    b.Navigation("Dish");
 
-                b.Navigation("User");
-            });
+                    b.Navigation("User");
+                });
 
             modelBuilder.Entity("Domain.Dishes.Entities.Dish", b =>
-            {
-                b.Navigation("Comments");
+                {
+                    b.Navigation("Comments");
 
-                b.Navigation("Ratings");
+                    b.Navigation("Ratings");
 
-                b.Navigation("Steps");
-            });
+                    b.Navigation("Steps");
+                });
 
             modelBuilder.Entity("Domain.Users.Entities.User", b =>
-            {
-                b.Navigation("Comments");
-            });
+                {
+                    b.Navigation("Comments");
+                });
 #pragma warning restore 612, 618
         }
     }

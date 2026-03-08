@@ -32,6 +32,6 @@ public sealed class Comment : EntityBase
     }
 
     public CommentDto ToDto()
-        => new(Content, AuthorId, DishId);
+        => new(Id, Content, AuthorId, DishId);
 
 }

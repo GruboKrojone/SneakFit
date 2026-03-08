@@ -1,23 +1,18 @@
-.swal2-confirm-btn-custom.swal2-confirm-delete {
-  background: #d32f2f !important;
-  color: #fff !important;
-}
 
-.swal2-confirm-btn-custom.swal2-confirm-delete:hover {
-  background: #b71c1c !important;
-}
 
 .comments-modal-overlay {
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0);
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   z-index: 1000;
   opacity: 0;
   pointer-events: none;
-  transition: opacity 0.3s ease, background-color 0.3s ease;
+  transition: opacity 0.3s ease, background-color 0.3s ease, backdrop-filter 0.3s ease;
 }
 
 .comments-modal-overlay *,
@@ -29,16 +24,18 @@
 .comments-modal-overlay.open {
   opacity: 1;
   pointer-events: auto;
-  background-color: rgba(0, 0, 0, 0.6);
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .comments-modal-content {
   background: var(--card);
   border: 0.0625rem solid var(--border);
   border-radius: 1.25rem 1.25rem 0 0;
-  padding: 2.5rem 2rem 2rem 2rem;
-  width: 90vw;
-  max-width: 75rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 45rem;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -73,21 +70,15 @@
 .comments-close-button:hover {
   color: var(--accent);
   background: rgba(255, 107, 53, 0.1);
-  transform: none;
-}
-
-.comments-close-icon {
-  font-size: 2rem !important;
 }
 
 .comments-modal-title {
   margin: 0 0 1.5rem 0;
   font-family: 'Playfair Display', serif;
-  font-size: 2rem;
+  font-size: 1.75rem;
   font-weight: 700;
   color: var(--text);
   text-align: center;
-  padding-right: 3rem;
 }
 
 .comments-modal-form {
@@ -262,8 +253,8 @@
   max-width: 100%;
   background: var(--card);
   border: 0.0625rem solid var(--border);
-  border-radius: 0.875rem;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem;
+  border-radius: 0.5rem;
   color: var(--text);
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
@@ -326,281 +317,135 @@
   transform: none;
 }
 
-
-
-.swal2-popup-custom {
-  font-family: inherit !important;
-  background: var(--card) !important;
-  color: var(--text) !important;
-  border-radius: 1rem !important;
-  border: 0.0625rem solid var(--border) !important;
-  box-shadow: 0 0.5rem 2rem var(--shadow) !important;
-}
-
-.swal2-confirm-btn-custom {
-  background: #2196f3 !important;
-  color: #ffffff !important;
-  border-radius: 0.5rem !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  padding: 0.5rem 1.5rem !important;
-  border: none !important;
-  box-shadow: 0 0.125rem 0.5rem #2196f31f !important;
-  transition: background 0.2s;
-}
-
-.swal2-confirm-btn-custom:hover {
-  background: #1976d2 !important;
-}
-
-.swal2-cancel-btn-custom {
-  background: #e0e0e0 !important;
-  color: #222222 !important;
-  border-radius: 0.5rem !important;
-  font-weight: 600 !important;
-  font-size: 1rem !important;
-  padding: 0.5rem 1.5rem !important;
-  border: none !important;
-  margin-left: 0.5rem !important;
-  box-shadow: 0 0.125rem 0.5rem #5a5a5a19 !important;
-  transition: background 0.2s;
-}
-
-.swal2-cancel-btn-custom:hover {
-  background: #bdbdbd !important;
-}
-
-.swal2-textarea-custom {  
-  background-color: var(--card) !important;
-  border: 0.125rem solid var(--border) !important;
-  border-radius: 0.5rem !important;
-  color: var(--text) !important;
-  font-size: 1rem !important;
-  font-family: inherit !important;
-  padding: 0.75rem !important;
-  transition: all 0.2s ease !important;
-}
-
-.swal2-textarea-custom:focus {
-  outline: none !important;
-  border-color: #ff8c00 !important;
-  box-shadow: 0 0 0 0.1875rem #ff8c0033 !important;
-}
-
-.swal2-character-counter {
-  position: absolute;
-  bottom: 0.5rem;
-  right: 0.5rem;
-  color: #ffffff;
-  padding: 0.25rem 0.5rem;
-  border-radius: 0.5rem;
-  background: #000000b3;
-  font-size: 0.875rem;
-  pointer-events: none;
-}
-
-.comments-delete-modal-overlay {
+/* Popup Styles (replacing Swal) */
+.comments-popup-overlay {
   position: fixed;
   inset: 0;
-  background-color: #000000b3;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
   z-index: 2000;
-}
-
-.comments-delete-modal-content {
-  background: linear-gradient(180deg, #949494 0%, #383838 100%);
-  border-radius: 1.25rem 1.25rem 0 0;
-  padding: 2.5rem 2rem;
-  width: 90vw;
-  max-width: 31.25rem;
   display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  animation: slideUp 0.3s ease;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(100%);
-  }
-  to {
-    transform: translateY(0);
-  }
-}
-
-.comments-delete-modal-content h3 {
-  margin: 0;
-  font-size: 1.5rem;
-  color: #1a1a1a;
-  text-align: center;
-  font-weight: bold;
-}
-
-.comments-delete-modal-buttons {
-  display: flex;
-  gap: 1rem;
+  align-items: center;
   justify-content: center;
+  animation: fadeIn 0.2s ease;
 }
 
-.comments-delete-modal-button {
-  padding: 0.75rem 2.5rem;
-  border: 0.125rem solid #ffffff33;
-  border-radius: 0.75rem;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.comments-delete-modal-button.confirm {
-  background-color: #d32f2f;
-  color: #ffffff;
-}
-
-.comments-delete-modal-button.confirm:hover {
-  background-color: #f44336;
-  border-color: #ffffff66;
-  transform: translateY(-0.125rem);
-  box-shadow: 0 0.25rem 0.75rem #d32f2f66;
-}
-
-.comments-delete-modal-button.cancel {
-  background-color: #2a2a2a;
-  color: #e0e0e0;
-}
-
-.comments-delete-modal-button.cancel:hover {
-  background-color: #3a3a3a;
-  border-color: #ffffff66;
-  color: #ffffff;
-  transform: translateY(-0.125rem);
-  box-shadow: 0 0.25rem 0.75rem #00000066;
-}
-
-.comments-edit-modal-overlay {
-  position: fixed;
-  inset: 0;
-  background-color: #000000b3;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  z-index: 2000;
-}
-
-.comments-edit-modal-content {
-  background: linear-gradient(180deg, #949494 0%, #383838 100%);
-  border-radius: 1.25rem 1.25rem 0 0;
-  padding: 2.5rem 2rem 2rem 2rem;
-  width: 90vw;
-  max-width: 37.5rem;
+.comments-popup-modal {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 1rem;
+  width: 90%;
+  max-width: 28rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 1rem 3rem rgba(0,0,0,0.5);
+  animation: scaleIn 0.2s ease;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   position: relative;
-  animation: slideUp 0.3s ease;
 }
 
-.comments-edit-close-button {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #1a1a1a;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.3125rem;
-  transition: all 0.2s ease;
-}
-
-.comments-edit-close-button:hover {
-  color: #1a1a1a;
-  transform: scale(1.1);
-}
-
-.comments-edit-modal-content h3 {
+.comments-popup-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text);
   margin: 0;
-  font-size: 1.5rem;
-  color: #1a1a1a;
   text-align: center;
-  font-weight: bold;
 }
 
-.comments-edit-input-wrapper {
-  position: relative;
-  width: 100%;
+.comments-popup-text {
+  color: var(--text-light);
+  line-height: 1.5;
+  margin: 0;
+  text-align: center;
 }
 
-.comments-edit-input {
+.comments-popup-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.comments-popup-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  font-size: 0.95rem;
+}
+
+.comments-popup-btn.cancel {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.comments-popup-btn.cancel:hover {
+  background: var(--bg);
+  border-color: var(--text-light);
+}
+
+.comments-popup-btn.confirm {
+  background: #ff4b4b;
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 75, 75, 0.2);
+}
+
+.comments-popup-btn.confirm:hover {
+  background: #ff3333;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 75, 75, 0.3);
+}
+
+.comments-popup-btn.save {
+  background: var(--accent);
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 107, 53, 0.2);
+}
+
+.comments-popup-btn.save:hover {
+  background: #ff5722;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
+}
+
+.comments-edit-textarea {
   width: 100%;
-  max-width: 100%;
-  background-color: #00000066;
-  border: 0.125rem solid #ffffff33;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 1rem;
   border-radius: 0.75rem;
-  padding: 1rem 1.25rem;
-  color: #f0f0f0;
-  font-size: 1rem;
-  font-family: inherit;
+  color: var(--text);
   resize: vertical;
-  min-height: 6.25rem;
-  transition: all 0.2s ease;
+  min-height: 120px;
+  max-height: 300px;
+  font-family: inherit;
+  font-size: 1rem;
   line-height: 1.5;
 }
 
-.comments-edit-input:focus {
+.comments-edit-textarea:focus {
   outline: none;
-  border-color: #ffffff66;
-  background-color: #00000080;
-  box-shadow: 0 0 0 0.1875rem #ffffff19;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.1);
 }
 
-.comments-edit-counter {
-  position: absolute;
-  bottom: 0.75rem;
-  right: 1rem;
-  font-size: 0.85rem;
-  color: #ffffff80;
-  pointer-events: none;
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
-.comments-edit-submit {
-  align-self: center;
-  background-color: #2a2a2a;
-  color: #e0e0e0;
-  border: 0.125rem solid #ffffff33;
-  border-radius: 0.75rem;
-  padding: 0.75rem 2.5rem;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
-.comments-edit-submit:hover:not(:disabled) {
-  background-color: #3a3a3a;
-  border-color: #ffffff66;
-  color: #ffffff;
-  transform: translateY(-0.125rem);
-  box-shadow: 0 0.25rem 0.75rem #00000066;
+.error-text {
+  color: #ff6b6b;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
 }
 
-.comments-edit-submit:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 0 0.125rem 0.375rem #0000004d;
-}
-
-.comments-edit-submit:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background-color: #1a1a1a;
-  color: #999999;
-  border-color: #ffffff19;
-}

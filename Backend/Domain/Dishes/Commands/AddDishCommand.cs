@@ -9,14 +9,14 @@ using MediatR;
 
 namespace Domain.Dishes.Commands;
 
-public record AddDishCommand(DishParams Params) : ICommand<Unit>;
+public record AddDishCommand(DishParams Params) : ICommand<int>;
 
 internal sealed class AddDishCommandHandler(
     IDishRepository dishRepository,
     IUserContext userContext,
-    IUnitOfWork unitOfWork) : ICommandHandler<AddDishCommand, Unit>
+    IUnitOfWork unitOfWork) : ICommandHandler<AddDishCommand, int>
 {
-    public async Task<Unit> Handle(AddDishCommand command, CancellationToken cancellationToken)
+    public async Task<int> Handle(AddDishCommand command, CancellationToken cancellationToken)
     {
         var input = command.Params;
 
@@ -29,13 +29,14 @@ internal sealed class AddDishCommandHandler(
             input.Calories ?? null,
             input.Protein ?? null,
             input.Carbs ?? null,
-            input.Fat ?? null
+            input.Fat ?? null,
+            input.IsPublic
         );
         dish.AssignToUser(userId);
 
         dishRepository.Add(dish);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return dish.Id;
     }
 }

@@ -6,18 +6,19 @@ using Domain.Comments.Entities;
 using Domain.Comments.Repositories;
 using Domain.Dishes.Repositories;
 using MediatR;
+using Domain.Comments.Dtos;
 
 namespace Domain.Comments.Commands;
 
-public record AddCommentCommand(int DishId, string Content) : ICommand<Unit>;
+public record AddCommentCommand(int DishId, string Content) : ICommand<CommentDto>;
 
 internal sealed class AddCommentCommandHandler(
     ICommentRepository commentRepository,
     IDishRepository dishRepository,
     IUserContext userContext,
-    IUnitOfWork unitOfWork) : ICommandHandler<AddCommentCommand, Unit>
+    IUnitOfWork unitOfWork) : ICommandHandler<AddCommentCommand, CommentDto>
 {
-    public async Task<Unit> Handle(AddCommentCommand request, CancellationToken cancellationToken)
+    public async Task<CommentDto> Handle(AddCommentCommand request, CancellationToken cancellationToken)
     {
         var userId = userContext.UserId
                      ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
@@ -45,7 +46,7 @@ internal sealed class AddCommentCommandHandler(
         commentRepository.Add(comment);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
-        return Unit.Value;
+        return comment.ToDto();
 
     }
 }

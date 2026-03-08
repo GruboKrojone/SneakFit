@@ -4,13 +4,24 @@ import { toast } from "react-toastify";
 
 export interface Category {
   id: number;
-  name: string;
+  nameEn: string;
+  namePl: string;
+  nameDe: string;
+  nameEs: string;
+  color: string;
 }
 
 export interface Ingredient {
   id: number;
   name: string;
-  quantity: string;
+  description: string;
+}
+
+export interface PreparationStep {
+  id: number;
+  name: string;
+  description: string;
+  order: number;
 }
 
 export interface Dish {
@@ -19,6 +30,7 @@ export interface Dish {
   description?: string;
   rates: number;
   ownerId: number;
+  userId?: number;
   ownerName: string;
   isPublic: boolean;
   categories: Category[];
@@ -30,6 +42,16 @@ export interface Dish {
   carbs?: number;
   fat?: number;
   ingredients?: Ingredient[];
+  steps?: PreparationStep[];
+}
+
+export interface CreateDishDTO {
+  name: string;
+  calories: number;
+  protein: number;
+  carbs: number;
+  fat: number;
+  description: string;
 }
 
 class DishesService {
@@ -75,7 +97,7 @@ class DishesService {
 
       return await response.json();
     } catch (error) {
-      toast.error(i18n.t("dishes_service_fetch_one_failed\n" + error));
+      toast.error(`${i18n.t("dishes_service_fetch_one_failed")}\n${error}`);
       return null;
     }
   }
@@ -93,10 +115,17 @@ class DishesService {
       });
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Create dish failed:", response.status, errorText);
         throw new Error(i18n.t("dishes_service_create_failed"));
       }
 
-      return await response.json();
+      const dishId = await response.json();
+      
+      return {
+        ...dish,
+        id: dishId,
+      };
     } catch (error) {
       console.error("Error creating dish:", error);
       const errorMessage =
@@ -142,14 +171,42 @@ class DishesService {
       });
 
       if (!response.ok) {
-        throw new Error(i18n.t("dishes_service_visibility_failed"));
+        const errorText = await response.text();
+        console.error("Set public failed:", response.status, errorText);
+        throw new Error(errorText || i18n.t("dishes_service_visibility_failed"));
       }
     } catch (error) {
       console.error("Error updating dish visibility:", error);
       const errorMessage =
         error instanceof Error ? error.message : i18n.t("service_unknown_error");
       throw new Error(
-        `${i18n.t("dishes_service_visibility_failed")} ${dishId}: ${errorMessage}`
+        `${i18n.t("dishes_service_visibility_failed")}: ${errorMessage}`
+      );
+    }
+  }
+
+  static async setDishPrivate(dishId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/private`, {
+        method: "PUT",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Set private failed:", response.status, errorText);
+        throw new Error(errorText || i18n.t("dishes_service_visibility_failed"));
+      }
+    } catch (error) {
+      console.error("Error updating dish visibility:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(
+        `${i18n.t("dishes_service_visibility_failed")}: ${errorMessage}`
       );
     }
   }
@@ -195,6 +252,180 @@ class DishesService {
       const errorMessage =
         error instanceof Error ? error.message : "Unknown error occurred";
       throw new Error(`Failed to add dish ${dishId} to favorites: ${errorMessage}`);
+    }
+  }
+
+  static async removeDishFromFavorites(dishId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/favorite`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_remove_favourite_failed"));
+      }
+    } catch (error) {
+      console.error("Error removing dish from favorites:", error);
+      const errorMessage =
+        error instanceof Error ? error.message : i18n.t("service_unknown_error");
+      throw new Error(`${i18n.t("dishes_service_remove_favourite_failed")} ${dishId}: ${errorMessage}`);
+    }
+  }
+
+  static async getFavoriteDishes(): Promise<Dish[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dishes/favorites`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_fetch_favourites_failed"));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching favorite dishes:", error);
+      return [];
+    }
+  }
+
+  static async getRecommendedDishes(maxResults = 10): Promise<Dish[]> {
+    try {
+      const response = await fetch(
+        `${this.baseUrl}/dish/recommended?maxResults=${maxResults}`,
+        {
+          method: "GET",
+          headers: {
+            accept: "application/json",
+            "Content-Type": "application/json",
+            ...AuthService.getAuthHeader(),
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_fetch_recommended_failed"));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching recommended dishes:", error);
+      return [];
+    }
+  }
+
+  static async addStep(dishId: number, stepName: string, stepDescription: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/addStep`, {
+        method: "POST",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+        body: JSON.stringify({ stepName, stepDescription }),
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_add_step_failed"));
+      }
+    } catch (error) {
+      console.error("Error adding step:", error);
+      throw error;
+    }
+  }
+
+  static async updateStep(stepId: number, stepName: string, stepDescription: string): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/step/${stepId}/update`, {
+        method: "PUT",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+        body: JSON.stringify({ stepName, stepDescription }),
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_update_step_failed"));
+      }
+    } catch (error) {
+      console.error("Error updating step:", error);
+      throw error;
+    }
+  }
+
+  static async getSteps(dishId: number): Promise<PreparationStep[]> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/steps`, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_fetch_steps_failed"));
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error("Error fetching steps:", error);
+      return [];
+    }
+  }
+
+  static async deleteStep(stepId: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/step/${stepId}/delete`, {
+        method: "DELETE",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_delete_step_failed"));
+      }
+    } catch (error) {
+      console.error("Error deleting step:", error);
+      throw error;
+    }
+  }
+
+  static async rateDish(dishId: number, rating: number): Promise<void> {
+    try {
+      const response = await fetch(`${this.baseUrl}/dish/${dishId}/rate?rating=${rating}`, {
+        method: "PUT",
+        headers: {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          ...AuthService.getAuthHeader(),
+        },
+        body: JSON.stringify(rating),
+      });
+
+      if (!response.ok) {
+        throw new Error(i18n.t("dishes_service_rate_failed"));
+      }
+    } catch (error) {
+      console.error("Error rating dish:", error);
+      throw error;
     }
   }
 }

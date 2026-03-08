@@ -1,6 +1,9 @@
+using System.Linq;
 using Core.Authentication;
 using Core.CQRS;
 using Core.Middlewares;
+using Domain.Categories.Dto;
+using Domain.Categories.Entities;
 using Domain.Dishes.Dto;
 using Domain.Dishes.Repositories;
 
@@ -32,7 +35,8 @@ internal sealed class DishDetailsQueryHandler(
             dish.IsPublic,
             dish.Rates,
             dish.OwnerId,
-            dish.Ingredients?.Select(i => new IngredientDto(i.Id, i.Name, null)).ToList() ?? []
+            dish.Ingredients?.Select(i => new IngredientDto(i.Id, i.Name, i.Description)).ToList() ?? [],
+            dish.Categories?.Select(c => new CategoryDto(c.Id, c.NameEn, c.NamePl, c.NameDe, c.NameEs, c.Color)).ToList() ?? []
         );
     }
 }

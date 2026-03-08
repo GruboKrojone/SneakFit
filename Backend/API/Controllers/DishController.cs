@@ -15,13 +15,18 @@ public class DishController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Route("add")]
-    public async Task<Unit> AddDish(DishParams @params, CancellationToken cancellationToken)
+    public async Task<int> AddDish(DishParams @params, CancellationToken cancellationToken)
         => await mediator.Send(new AddDishCommand(@params), cancellationToken);
 
     [HttpPut]
     [Route("{dishId}/public")]
     public async Task<Unit> MakeDishPublic(int dishId, CancellationToken cancellationToken)
         => await mediator.Send(new MakeDishPublicCommand(dishId), cancellationToken);
+
+    [HttpPut]
+    [Route("{dishId}/private")]
+    public async Task<Unit> MakeDishPrivate(int dishId, CancellationToken cancellationToken)
+        => await mediator.Send(new MakeDishPrivateCommand(dishId), cancellationToken);
 
     [HttpGet]
     [Route("{dishId}")]
@@ -42,6 +47,11 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("{id}/favorite")]
     public async Task<Unit> MarkDishAsFavorite(int id, CancellationToken cancellationToken)
         => await mediator.Send(new MarkDishFavoriteCommand(id), cancellationToken);
+
+    [HttpGet]
+    [Route("favorites")]
+    public async Task<IEnumerable<DishCutDto>> GetFavoritedDishes(CancellationToken cancellationToken)
+        => await mediator.Send(new GetFavoritedDishesQuery(), cancellationToken);
 
     [HttpDelete]
     [Route("{id}/delete")]
@@ -87,9 +97,4 @@ public class DishController(IMediator mediator) : ControllerBase
     [Route("userFavorited")]
     public async Task<IEnumerable<DishCutDto>> GetMyFavoritedDishes(CancellationToken cancellationToken)
         => await mediator.Send(new GetFavoritedDishesQuery(), cancellationToken);
-
-    [HttpPut]
-    [Route("{dishId}/private")]
-    public async Task<Unit> MakeDishPrivate(int dishId, CancellationToken cancellationToken)
-        => await mediator.Send(new MakeDishPrivateCommand(dishId), cancellationToken);
 }

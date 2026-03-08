@@ -16,7 +16,7 @@ internal sealed class AuthService(IConfiguration configuration) : IAuthService
     {
         var jwtKey = configuration["App:Authentication:JwtKey"];
         if (string.IsNullOrEmpty(jwtKey))
-            throw new ArgumentNullException(nameof(jwtKey), "JWT Key is not configured.");
+            throw new InvalidOperationException("JWT Key is not configured.");
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

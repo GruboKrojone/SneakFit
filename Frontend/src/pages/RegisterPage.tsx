@@ -30,14 +30,14 @@ export default function RegisterPage() {
       email: z
         .string()
         .min(1, t("login_page_email_required"))
-        .regex(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, t("login_page_email_invalid")),
-      name: z.string().min(1, t("register_page_name_required")),
+        .regex(/^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, t("login_page_email_invalid")),
+      name: z.string().min(1, { message: t("register_page_name_required") }),
       password: z
         .string()
-        .min(6, t("register_page_password_min_length")),
+        .min(6, { message: t("register_page_password_min_length") }),
       password2: z
         .string()
-        .min(1, t("register_page_confirm_password_required")),
+        .min(1, { message: t("register_page_confirm_password_required") }),
       age: z.number().optional(),
     })
     .refine((data) => data.password === data.password2, {

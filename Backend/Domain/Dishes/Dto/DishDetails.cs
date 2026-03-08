@@ -1,3 +1,5 @@
+using Domain.Categories.Dto;
+
 namespace Domain.Dishes.Dto;
 
 public record DishDetails(
@@ -11,4 +13,5 @@ public record DishDetails(
     bool IsPublic,
     decimal Rates,
     int OwnerId,
-    List<IngredientDto>? Ingredients);
+    List<IngredientDto>? Ingredients,
+    List<CategoryDto>? Categories);

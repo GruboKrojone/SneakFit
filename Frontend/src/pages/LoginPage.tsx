@@ -25,8 +25,8 @@ export default function LoginPage() {
     email: z
       .string()
       .min(1, t("login_page_email_required"))
-      .regex(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/, t("login_page_email_invalid")),
-    password: z.string().min(1, t("login_page_password_required")),
+      .regex(/^[a-zA-Z0-9._%+-]+@(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}$/, t("login_page_email_invalid")),
+    password: z.string().min(1, { message: t("login_page_password_required") }),
   });
 
   const {

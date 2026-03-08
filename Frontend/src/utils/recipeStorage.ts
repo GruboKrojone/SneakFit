@@ -3,6 +3,14 @@ export interface RecipeEntry {
   timestamp: number;
 }
 
+export interface HistoryEntry {
+  id: number;
+  action: "pass" | "loved" | "smash";
+  timestamp: number;
+  name: string;
+  image: string;
+}
+
 const LIKED_RECIPES_KEY = 'likedRecipes';
 const NOT_LIKED_RECIPES_KEY = 'notLikedRecipes';
 const FAVOURITE_RECIPES_KEY = 'favouriteRecipes';
@@ -159,5 +167,42 @@ export const clearAllRecipeData = (): void => {
   localStorage.removeItem(LIKED_RECIPES_KEY);
   localStorage.removeItem(NOT_LIKED_RECIPES_KEY);
   localStorage.removeItem(FAVOURITE_RECIPES_KEY);
+};
+
+const HISTORY_KEY = 'userHistory';
+
+export const getHistory = (): HistoryEntry[] => {
+  try {
+    const data = localStorage.getItem(HISTORY_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch {
+    return [];
+  }
+};
+
+export const addToHistory = (dish: any, action: "pass" | "loved" | "smash"): void => {
+  const history = getHistory();
+  const filtered = history.filter(h => h.id !== dish.id);
+  
+  const newEntry: HistoryEntry = {
+    id: dish.id,
+    action,
+    timestamp: Date.now(),
+    name: dish.name,
+    image: dish.images?.[0] || ""
+  };
+  
+  filtered.unshift(newEntry);
+  const limited = filtered.slice(0, 50);
+  
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(limited));
+  } catch (error) {
+    console.error("Error saving history:", error);
+  }
+};
+
+export const clearHistory = (): void => {
+  localStorage.removeItem(HISTORY_KEY);
 };
 

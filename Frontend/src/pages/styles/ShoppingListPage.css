@@ -1,64 +1,112 @@
 .shopping-list-page {
   width: 100%;
+  min-height: 100vh;
   background: var(--bg);
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: relative;
+  padding: 2rem 1rem;
   box-sizing: border-box;
+  transition: all 0.3s ease;
 }
 
 .shopping-list-container {
   width: 100%;
-  max-width: 500px;
+  max-width: 36rem;
+  background: var(--card);
+  border-radius: 1.5rem;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
-  padding: 0 1rem;
+  position: relative;
+  margin-top: 1rem;
+  border: 0.0625rem solid var(--border);
+  overflow: hidden;
 }
 
 .shopping-list-input-group {
   display: flex;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-bottom: 0.0625rem solid var(--border);
+  background: var(--bg);
   width: 100%;
+  box-sizing: border-box;
 }
 
 .shopping-list-input {
   flex: 1;
+  min-width: 0;
+  padding: 0.8rem 1rem;
+  border-radius: 2rem;
   background: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 1.25rem;
-  padding: 0.8rem 1.2rem;
+  border: 0.0625rem solid var(--border);
   font-size: 1rem;
+  font-family: inherit;
   color: var(--text);
-  outline: none;
-  transition: border-color 0.2s;
+  transition: all 0.2s ease;
+  box-shadow: inset 0 0.125rem 0.25rem rgba(0, 0, 0, 0.02);
 }
 
 .shopping-list-input:focus {
-  border-color: var(--accent);
+  outline: none;
+  border-color: #ff6b35;
+  box-shadow: 0 0 0 0.1875rem #ff6b351a;
 }
 
 .shopping-list-add-btn {
   background: var(--gradient);
-  color: white;
+  color: #ffffff;
   border: none;
-  border-radius: 1.25rem;
-  padding: 0 1.5rem;
+  border-radius: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: transform 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: 0 0.125rem 0.5rem var(--shadow);
+  white-space: nowrap;
+}
+
+.shopping-list-add-btn .MuiSvgIcon-root {
+  font-size: 1.25rem;
 }
 
 .shopping-list-add-btn:hover {
-  transform: translateY(-2px);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.25rem 1rem rgba(255, 107, 53, 0.4);
+}
+
+.shopping-list-add-btn:active {
+  transform: translateY(0);
 }
 
 .shopping-items-list {
   display: flex;
   flex-direction: column;
-  gap: 0.8rem;
   width: 100%;
+  min-height: 12.5rem;
+  max-height: 60vh;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.shopping-items-list::-webkit-scrollbar {
+  width: 0.375rem;
+}
+
+.shopping-items-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.shopping-items-list::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 1rem;
 }
 
 .shopping-item-wrapper {
@@ -67,47 +115,50 @@
   align-items: center;
   width: 100%;
   background: var(--card);
-  border-radius: 1rem;
-  box-shadow: 0 4px 12px var(--shadow);
-  transition: transform 0.2s;
-  overflow: hidden;
+  border-bottom: 0.0625rem solid var(--border);
+  transition: background 0.2s;
+  border-radius: 0;
+  box-shadow: none;
+  margin: 0;
+}
+
+.shopping-item-wrapper:last-child {
+  border-bottom: none;
 }
 
 .shopping-item-wrapper:hover {
-  transform: translateX(4px);
+  background: rgba(255, 107, 53, 0.02);
 }
 
 .shopping-item-row {
-  background: none;
-  border: 1px solid transparent;
-  padding: 1rem 1.2rem;
-  padding-right: 3.5rem;
+  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  flex: 1;
+  padding: 1rem 1.5rem;
+  padding-right: 3.5rem;
+  background: none;
+  border: none;
   text-align: left;
   cursor: pointer;
-  width: 100%;
   font-family: inherit;
-  transition: border-color 0.2s;
-}
-
-.shopping-item-row:hover {
-  border-color: var(--tag-bg);
+  color: inherit;
+  width: 100%;
+  transition: all 0.3s ease;
 }
 
 .shopping-item-content {
   display: flex;
   align-items: center;
   gap: 1rem;
-  flex: 1;
+  width: 100%;
+  transition: all 0.3s ease;
 }
 
 .shopping-item-text {
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   color: var(--text);
   font-weight: 500;
+  transition: color 0.2s;
 }
 
 .shopping-item-row.completed .shopping-item-text {
@@ -115,60 +166,200 @@
   color: var(--text-light);
 }
 
-.shopping-item-delete-btn {
-  position: absolute;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  color: var(--text-light);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.6rem;
-  border-radius: 0.5rem;
-  transition: all 0.2s;
-}
-
-.shopping-item-delete-btn:hover {
-  background: rgba(255, 77, 77, 0.1);
-  color: #ff4d4d;
-}
-
-.shopping-list-clear-btn {
-  margin-top: 2rem;
-  padding: 0.8rem 2rem;
-  background: none;
-  border: 1px solid var(--border);
-  color: var(--text-light);
-  border-radius: 2rem;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.2s;
-  align-self: center;
-}
-
-.shopping-list-clear-btn:hover {
-  background: rgba(255, 77, 77, 0.05);
-  border-color: #ff4d4d;
-  color: #ff4d4d;
-}
-
-.shopping-list-empty {
-  text-align: center;
-  color: var(--text-light);
-  margin-top: 3rem;
-  font-style: italic;
-}
-
 .shopping-item-checked-icon {
   color: #2e7d32;
+  font-size: 1.4rem;
 }
 
 .shopping-item-unchecked-icon {
   color: var(--text-light);
+  font-size: 1.4rem;
+}
+
+.shopping-item-delete-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: var(--text-light);
+  padding: 0.6rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.shopping-item-delete-btn:hover {
+  background: #ff4d4d1a;
+  color: #ff4d4d;
 }
 
 .shopping-item-delete-btn .MuiSvgIcon-root {
   font-size: 1.25rem;
+}
+
+.shopping-list-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-top: 0.0625rem solid var(--border);
+  background: var(--bg);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.export-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.export-btn {
+  background: var(--card);
+  border: 0.0625rem solid var(--border);
+  color: var(--text-light);
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  padding: 0;
+}
+
+.export-btn:hover {
+  transform: translateY(-0.125rem);
+}
+
+.export-btn.pdf:hover {
+  border-color: #d32f2f;
+  color: #d32f2f;
+  background: rgba(211, 47, 47, 0.05);
+}
+
+.export-btn.excel:hover {
+  border-color: #1b5e20;
+  color: #1b5e20;
+  background: rgba(27, 94, 32, 0.05);
+}
+
+.shopping-list-clear-btn {
+  margin: 0;
+  background: transparent;
+  color: var(--text-light);
+  border: 0.0625rem solid var(--border);
+  padding: 0.5rem 1.5rem;
+  border-radius: 2rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: none;
+}
+
+.shopping-list-clear-btn:hover {
+  border-color: #ff4d4d;
+  color: #ff4d4d;
+  background: rgba(255, 77, 77, 0.05);
+  transform: none;
+}
+
+.shopping-list-empty {
+  padding: 3rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-style: italic;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+}
+
+.delete-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.2s ease;
+}
+
+.delete-confirm-modal {
+  background: var(--card);
+  padding: 2rem;
+  border-radius: 1.25rem;
+  max-width: 90%;
+  width: 25rem;
+  text-align: center;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);
+  animation: scaleIn 0.3s ease;
+}
+
+.delete-confirm-modal h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-size: 1.5rem;
+}
+
+.delete-confirm-modal p {
+  color: var(--text-light);
+  margin-bottom: 2rem;
+  line-height: 1.5;
+}
+
+.delete-confirm-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.delete-confirm-btn {
+  padding: 0.8rem 2rem;
+  border-radius: 3rem;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 1rem;
+}
+
+.delete-confirm-btn.cancel {
+  background: var(--bg);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.delete-confirm-btn.cancel:hover {
+  background: var(--border);
+}
+
+.delete-confirm-btn.confirm {
+  background: #ff4d4d;
+  color: #ffffff;
+  box-shadow: 0 0.25rem 1rem rgba(255, 77, 77, 0.3);
+}
+
+.delete-confirm-btn.confirm:hover {
+  background: #ff3333;
+  transform: translateY(-2px);
+  box-shadow: 0 0.5rem 1.5rem rgba(255, 77, 77, 0.4);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }

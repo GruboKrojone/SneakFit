@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -7,7 +7,7 @@ import Person from "@mui/icons-material/Person";
 import MoreVert from "@mui/icons-material/MoreVert";
 import { toast } from "react-toastify";
 import { useTranslation } from "react-i18next";
-import Swal from "sweetalert2";
+
 import CommentsService, { Comment } from "../services/CommentsService";
 import AuthService from "../services/AuthService";
 import "./styles/CommentsModal.css";
@@ -23,11 +23,9 @@ interface CommentsModalProps {
 
 const MAX_COMMENT_LENGTH = 500;
 
-const commentSchemaType = z.object({
-  content: z.string(),
-});
-
-type CommentFormData = z.infer<typeof commentSchemaType>;
+type CommentFormData = {
+  content: string;
+};
 
 export default function CommentsModal({
   isOpen,
@@ -40,6 +38,12 @@ export default function CommentsModal({
   const { t } = useTranslation();
   const [openMenuIndex, setOpenMenuIndex] = useState<number | null>(null);
   const [localComments, setLocalComments] = useState<Comment[]>(comments);
+  const [deleteCommentId, setDeleteCommentId] = useState<number | null>(null);
+  const [editingComment, setEditingComment] = useState<{ id: number; content: string } | null>(null);
+
+  const commentSchema = useMemo(() => z.object({
+    content: z.string().trim().min(1, { message: t("comments_modal_validation_required") }),
+  }), [t]);
 
   const {
     register,
@@ -48,7 +52,7 @@ export default function CommentsModal({
     reset,
     watch,
   } = useForm<CommentFormData>({
-    resolver: zodResolver(commentSchemaType),
+    resolver: zodResolver(commentSchema),
     defaultValues: {
       content: "",
     },
@@ -70,10 +74,7 @@ export default function CommentsModal({
   const onSubmit = async (data: CommentFormData) => {
     const user = AuthService.getCurrentUser();
     if (!user) {
-      toast.error(t("comments_modal_login_required"), {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      toast.error(t("comments_modal_login_required"));
       return;
     }
 
@@ -85,148 +86,62 @@ export default function CommentsModal({
     );
 
     if (isDuplicate) {
-      toast.error(t("comments_modal_duplicate_error"), {
-        position: "top-center",
-        autoClose: 3000,
-      });
+      toast.error(t("comments_modal_duplicate_error"));
       return;
     }
 
     try {
-      await CommentsService.addComment(dishId, data.content.trim());
+      const addedComment = await CommentsService.addComment(dishId, data.content.trim());
 
-      const newCommentObj: Comment = {
-        content: data.content.trim(),
-        authorId: user.id,
-        dishId: dishId,
-      };
-
-      onCommentAdded(newCommentObj);
+      setLocalComments((prev) => [...prev, addedComment]);
+      onCommentAdded(addedComment);
       reset();
 
-      toast.success(t("comments_modal_success"), {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      toast.success(t("comments_modal_success"));
     } catch (error) {
-      const errorMessage =
-        error instanceof Error ? error.message : t("comments_modal_error");
-
-      toast.error("✗ " + errorMessage, {
-        position: "top-center",
-        autoClose: 2000,
-      });
+      console.error("Error adding comment:", error);
+      toast.error(t("comments_modal_error"));
     }
   };
 
-  const handleDeleteComment = async (index: number) => {
-    const result = await Swal.fire({
-      title: t("comments_modal_delete_title"),
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: t("comments_modal_delete_confirm"),
-      cancelButtonText: t("comments_modal_delete_cancel"),
-      customClass: {
-        popup: "swal2-popup-custom",
-        confirmButton: "swal2-confirm-btn-custom swal2-confirm-delete",
-        cancelButton: "swal2-cancel-btn-custom",
-      },
-    });
-
-    if (result.isConfirmed) {
-      try {
-        await CommentsService.deleteComment(index);
-
-        const updatedComments = localComments.filter((_, i) => i !== index);
-        setLocalComments(updatedComments);
-
-        toast.success(t("comments_modal_delete_success"), {
-          position: "top-center",
-          autoClose: 2000,
-        });
-      } catch (err) {
-        console.error("Error deleting comment:", err);
-        toast.error(t("comments_modal_delete_error"), {
-          position: "top-center",
-          autoClose: 2000,
-        });
-      }
+  const confirmDelete = async () => {
+    if (!deleteCommentId) return;
+    try {
+      await CommentsService.deleteComment(deleteCommentId);
+      setLocalComments((prev) => prev.filter((c) => c.commentId !== deleteCommentId));
+      toast.success(t("comments_modal_delete_success"));
+    } catch (err) {
+      console.error("Error deleting comment:", err);
+      toast.error(t("comments_modal_delete_error"));
+    } finally {
+      setDeleteCommentId(null);
     }
   };
 
-  const handleEditComment = async (index: number, currentContent: string) => {
-    const result = await Swal.fire({
-      title: t("comments_modal_edit_title"),
-      input: "textarea",
-      inputValue: currentContent,
-      inputAttributes: {
-        maxlength: MAX_COMMENT_LENGTH.toString(),
-        style: "min-height: 150px; resize: vertical;",
-      },
-      width: "600px",
-      showCancelButton: true,
-      confirmButtonText: t("comments_modal_edit_confirm"),
-      cancelButtonText: t("comments_modal_edit_cancel"),
-      customClass: {
-        input: "swal2-textarea-custom",
-        popup: "swal2-popup-custom",
-        confirmButton: "swal2-confirm-btn-custom",
-        cancelButton: "swal2-cancel-btn-custom",
-      },
-      didOpen: () => {
-        const textarea = Swal.getInput() as unknown as HTMLTextAreaElement;
-        if (textarea) {
-          if (textarea.parentElement) {
-            textarea.parentElement.style.position = "relative";
-          }
+  const confirmEdit = async () => {
+    if (!editingComment) return;
+    
+    const content = editingComment.content.trim();
+    if (!content) {
+         toast.error(t("comments_modal_edit_empty"));
+         return;
+    }
+    
+    if (content.length > MAX_COMMENT_LENGTH) {
+         toast.error(t("comments_modal_edit_too_long").replace("{0}", MAX_COMMENT_LENGTH.toString()));
+         return;
+    }
 
-          const counter = document.createElement("div");
-          counter.className = "swal2-character-counter";
-          counter.textContent = `${textarea.value.length}/${MAX_COMMENT_LENGTH}`;
-
-          textarea.parentElement?.appendChild(counter);
-
-          textarea.addEventListener("input", () => {
-            counter.textContent = `${textarea.value.length}/${MAX_COMMENT_LENGTH}`;
-          });
-        }
-      },
-      inputValidator: (value) => {
-        if (!value?.trim()) {
-          return t("comments_modal_edit_empty");
-        }
-        if (value.trim().length > MAX_COMMENT_LENGTH) {
-          return t("comments_modal_edit_too_long").replace(
-            "{0}",
-            MAX_COMMENT_LENGTH.toString(),
-          );
-        }
-        return null;
-      },
-    });
-
-    if (result.isConfirmed && result.value) {
-      try {
-        await CommentsService.editComment(index, result.value.trim());
-
-        const updatedComments = [...localComments];
-        updatedComments[index] = {
-          ...updatedComments[index],
-          content: result.value.trim(),
-        };
-        setLocalComments(updatedComments);
-
-        toast.success(t("comments_modal_edit_success"), {
-          position: "top-center",
-          autoClose: 2000,
-        });
-      } catch (err) {
-        console.error("Error editing comment:", err);
-        toast.error(t("comments_modal_edit_error"), {
-          position: "top-center",
-          autoClose: 2000,
-        });
-      }
+    try {
+      await CommentsService.editComment(editingComment.id, content);
+      setLocalComments(prev => prev.map(c => 
+          c.commentId === editingComment.id ? { ...c, content } : c
+      ));
+      toast.success(t("comments_modal_edit_success"));
+      setEditingComment(null);
+    } catch (err) {
+       console.error("Error editing comment:", err);
+       toast.error(t("comments_modal_edit_error"));
     }
   };
 
@@ -266,9 +181,7 @@ export default function CommentsModal({
               {commentContent.length}/{MAX_COMMENT_LENGTH}
             </div>
             {errors.content && (
-              <span className="error-text" style={{ color: '#ff6b6b' }}>
-                {errors.content.message}
-              </span>
+              <span className="error-text">{errors.content.message}</span>
             )}
           </div>
           <button
@@ -282,7 +195,8 @@ export default function CommentsModal({
           </button>
         </form>
 
-        <div className="comments-modal-list">{localComments.length > 0 ? (
+        <div className="comments-modal-list">
+          {localComments.length > 0 ? (
             localComments.map((comment, index) => (
               <div
                 key={`${comment.dishId}-${comment.authorId}-${index}`}
@@ -311,7 +225,7 @@ export default function CommentsModal({
                             <button
                               className="comments-modal-menu-item"
                               onClick={() => {
-                                handleEditComment(index, comment.content);
+                                if (comment.commentId) setEditingComment({ id: comment.commentId, content: comment.content });
                                 setOpenMenuIndex(null);
                               }}
                             >
@@ -320,7 +234,7 @@ export default function CommentsModal({
                             <button
                               className="comments-modal-menu-item"
                               onClick={() => {
-                                handleDeleteComment(index);
+                                if (comment.commentId) setDeleteCommentId(comment.commentId);
                                 setOpenMenuIndex(null);
                               }}
                             >
@@ -341,6 +255,55 @@ export default function CommentsModal({
           )}
         </div>
       </div>
+
+      {deleteCommentId && (
+        <div className="comments-popup-overlay" onPointerDown={(e) => e.stopPropagation()}>
+          <div className="comments-popup-modal">
+             <h4 className="comments-popup-title">{t("comments_modal_delete_title")}</h4>
+             <p className="comments-popup-text">{t("dish_settings_modal_delete_confirm_title")}</p>
+             <div className="comments-popup-actions">
+               <button className="comments-popup-btn cancel" onClick={() => setDeleteCommentId(null)}>
+                 {t("comments_modal_delete_cancel")}
+               </button>
+               <button className="comments-popup-btn confirm" onClick={confirmDelete}>
+                 {t("comments_modal_delete_confirm")}
+               </button>
+             </div>
+          </div>
+        </div>
+      )}
+
+      {editingComment && (
+        <div className="comments-popup-overlay" onPointerDown={(e) => e.stopPropagation()}>
+          <div className="comments-popup-modal">
+             <h4 className="comments-popup-title">{t("comments_modal_edit_title")}</h4>
+             
+             <div className="comments-edit-input-wrapper">
+                <textarea 
+                  className="comments-edit-textarea"
+                  value={editingComment.content}
+                  onChange={(e) => {
+                      const val = e.target.value;
+                      setEditingComment(prev => prev ? { ...prev, content: val } : null);
+                  }}
+                  maxLength={MAX_COMMENT_LENGTH}
+                />
+                <div className="comments-modal-counter" style={{ bottom: '1rem', right: '1rem' }}>
+                    {editingComment.content.length}/{MAX_COMMENT_LENGTH}
+                </div>
+             </div>
+
+             <div className="comments-popup-actions">
+               <button className="comments-popup-btn cancel" onClick={() => setEditingComment(null)}>
+                 {t("comments_modal_edit_cancel")}
+               </button>
+               <button className="comments-popup-btn save" onClick={confirmEdit}>
+                 {t("comments_modal_edit_confirm")}
+               </button>
+             </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

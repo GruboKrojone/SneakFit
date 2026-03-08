@@ -1,20 +1,26 @@
 .profile-modal-overlay {
   position: fixed;
   inset: 0;
-  background-color: #00000000;
+  background-color: transparent;
+  backdrop-filter: blur(0px);
+  -webkit-backdrop-filter: blur(0px);
   display: flex;
   align-items: flex-end;
   justify-content: center;
   z-index: 1000;
   opacity: 0;
+  visibility: hidden;
   pointer-events: none;
-  transition: opacity 0.3s ease, background-color 0.3s ease;
+  transition: opacity 0.5s ease, background-color 0.5s ease, visibility 0.5s ease, backdrop-filter 0.5s ease;
 }
 
 .profile-modal-overlay.open {
   opacity: 1;
+  visibility: visible;
   pointer-events: auto;
-  background-color: #00000099;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .profile-modal-content {
@@ -28,9 +34,12 @@
   flex-direction: column;
   justify-content: flex-start;
   transform: translateY(100%);
-  transition: transform 0.4s ease;
+  transition: transform 0.6s ease;
   box-shadow: 0 -0.5rem 2rem var(--shadow);
   border: none;
+  width: 100%;
+  max-width: 45rem;
+  margin: 0 auto;
 }
 
 .profile-modal-overlay.open .profile-modal-content {
@@ -50,12 +59,14 @@
   justify-content: center;
   padding: 0.5rem;
   transition: all 0.3s ease;
+  z-index: 10;
   border-radius: 50%;
 }
 
 .profile-close-button:hover {
   color: var(--accent);
-  background: #ff6b351a;
+  background: rgba(255, 107, 53, 0.1);
+  transform: none;
 }
 
 .profile-close-icon {
@@ -80,6 +91,8 @@
   border-radius: 0.8rem;
   padding: 1.5rem 1.2rem 1.8rem 1.2rem;
   box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
 }
 
 .profile-form-group {
@@ -95,20 +108,22 @@
 }
 
 .profile-form-group input {
+  padding: 0.75rem;
+  border-radius: 0.5rem;
   background: var(--card);
-  padding: 1.25rem;
   border: 0.0625rem solid var(--border);
-  border-radius: 0.875rem;
   font-size: 1rem;
   font-family: 'Inter', sans-serif;
   color: var(--text);
   transition: all 0.3s ease;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-form-group input:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 0.1875rem #ff6b351a;
+  box-shadow: 0 0 0 0.1875rem var(--shadow);
 }
 
 .profile-form-group input[type="number"]::-webkit-outer-spin-button,
@@ -135,7 +150,7 @@
 }
 
 .profile-submit-button {
-  padding: 1.05rem 3.5rem;
+  padding: 1.05rem 2rem;
   background: var(--gradient);
   color: #ffffff;
   border: none;
@@ -146,6 +161,11 @@
   margin-top: 1rem;
   transition: all 0.3s ease;
   box-shadow: 0 0.25rem 1rem var(--shadow);
+  width: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-submit-button:hover:not(:disabled) {
@@ -172,6 +192,176 @@
   box-shadow: 0 0.375rem 1.5rem #dc354566;
 }
 
-.profile-delete-icon {
-  margin-right: 0.5rem;
+/* ... existing styles ... */
+
+.profile-menu-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--card);
+  border: 0.0625rem solid var(--border);
+  border-radius: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: left;
+  color: var(--text);
+}
+
+.profile-menu-item:hover {
+  background: var(--bg);
+  border-color: var(--accent);
+  transform: translateY(-0.125rem);
+  box-shadow: 0 0.25rem 0.75rem rgba(0,0,0,0.05);
+}
+
+.profile-menu-item-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  background: rgba(255, 107, 53, 0.1);
+  padding: 0.75rem;
+  border-radius: 50%;
+}
+
+.delete-icon-wrapper {
+    color: #dc3545;
+    background: rgba(220, 53, 69, 0.1);
+}
+
+.profile-menu-item-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-menu-item-title {
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--text);
+}
+
+.profile-menu-item-desc {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.profile-modal-header-with-back {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  position: relative;
+  width: 100%;
+}
+
+.profile-back-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.profile-back-button:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+.profile-modal-header-with-back .profile-modal-title {
+    margin: 0;
+    text-align: left;
+    font-size: 1.5rem;
+}
+
+.profile-delete-confirm-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  border-radius: 1.25rem 1.25rem 0 0;
+  animation: fadeIn 0.2s ease;
+}
+
+.profile-delete-confirm-modal {
+  background: var(--card);
+  padding: 1.5rem;
+  border-radius: 1rem;
+  width: 90%;
+  max-width: 20rem;
+  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3);
+  text-align: center;
+  border: 1px solid var(--border);
+  animation: scaleIn 0.2s ease;
+}
+
+.profile-delete-confirm-modal h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+  font-size: 1.1rem;
+}
+
+.profile-delete-confirm-modal p {
+  margin: 0 0 1.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.profile-delete-confirm-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.profile-delete-confirm-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: transform 0.1s;
+}
+
+.profile-delete-confirm-btn.cancel {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+
+.profile-delete-confirm-btn.confirm {
+  background: #ff4b4b;
+  color: #ffffff;
+}
+
+.profile-delete-confirm-btn:hover {
+  transform: scale(1.05);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes scaleIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }

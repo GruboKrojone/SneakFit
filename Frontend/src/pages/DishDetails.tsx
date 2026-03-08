@@ -1,74 +1,80 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import DishesService, { Dish } from "../services/DishesService";
+import DishesService, { Dish, Category } from "../services/DishesService";
+import {
+  addFavouriteRecipe,
+  removeFavouriteRecipe,
+  getFavouriteRecipeIds,
+} from "../utils/recipeStorage";
 import CommentsService, { Comment } from "../services/CommentsService";
-import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import SettingsIcon from "@mui/icons-material/Settings";
 import DishSettingsModal from "../components/DishSettingsModal";
 import Undo from "@mui/icons-material/Undo";
 import PlayCircle from "@mui/icons-material/PlayCircle";
-import ChevronLeft from "@mui/icons-material/ChevronLeft";
-import ChevronRight from "@mui/icons-material/ChevronRight";
 import ChatBubbleOutline from "@mui/icons-material/ChatBubbleOutline";
+import ContentCopy from "@mui/icons-material/ContentCopy";
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
+import AddShoppingCartIcon from "@mui/icons-material/AddShoppingCart";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import MacroCircle from "../components/MacroCircle";
+import DishRatingSection from "../components/DishRatingSection";
+import DishImageCarousel from "../components/DishImageCarousel";
 import CommentsModal from "../components/CommentsModal";
+import ImagesService from "../services/ImagesService";
 import "./styles/DishDetails.css";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
+
+const getSortedImages = (
+  allImages: { id: number; url: string }[],
+  dish: Dish,
+) => {
+  const priorityIds = [
+    dish.mainImageId,
+    dish.secondaryImageId,
+    dish.thirdImageId,
+  ];
+  const sorted: { id: number; url: string }[] = [];
+
+  for (const id of priorityIds) {
+    if (!id) continue;
+    const found = allImages.find((img) => String(img.id) === String(id));
+    if (found && !sorted.some((s) => s.id === found.id)) sorted.push(found);
+  }
+
+  for (const img of allImages) {
+    if (!sorted.some((s) => s.id === img.id)) sorted.push(img);
+  }
+  return sorted;
+};
+
+const getCategoryName = (category: Category, language: string) => {
+  if (language === "pl") return category.namePl;
+  if (language === "de") return category.nameDe;
+  if (language === "es") return category.nameEs;
+  return category.nameEn;
+};
 
 export default function DishDetails() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const [dish, setDish] = useState<Dish | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [servings, setServings] = useState(1);
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isCommentsModalOpen, setIsCommentsModalOpen] = useState(false);
+  const [checkedIngredients, setCheckedIngredients] = useState<Set<number>>(
+    new Set(),
+  );
   const hasFetched = useRef<number | null>(null);
-  const totalImages = 5;
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+
   const emptyCategories = t("no_categories");
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const [isPublic, setIsPublic] = useState(false);
-
-  const getImageStyle = (index: number) => {
-    let offset = index - currentImageIndex;
-
-    if (offset > totalImages / 2) {
-      offset -= totalImages;
-    } else if (offset < -totalImages / 2) {
-      offset += totalImages;
-    }
-
-    const absOffset = Math.abs(offset);
-    const direction = offset > 0 ? 1 : -1;
-
-    let scale = 0.6;
-    let opacity = 0;
-    let zIndex = 1;
-    let translateX = direction * absOffset * 100;
-
-    switch (absOffset) {
-      case 0:
-        scale = 0.9;
-        opacity = 1;
-        zIndex = 10;
-        translateX = 0;
-        break;
-      case 1:
-        scale = 0.7;
-        opacity = 0.5;
-        zIndex = 5;
-        break;
-      case 2:
-        scale = 0.5;
-        opacity = 0.25;
-        zIndex = 3;
-        break;
-    }
-
-    return { scale, opacity, zIndex, translateX };
-  };
+  const [isFavourite, setIsFavourite] = useState(false);
 
   useEffect(() => {
     if (!id) return;
@@ -78,19 +84,138 @@ export default function DishDetails() {
 
     const load = async () => {
       setIsLoading(true);
-      const data = await DishesService.getDishById(dishId);
-      setDish(data);
+      try {
+        const data = await DishesService.getDishById(dishId);
+        if (data) {
+          setDish(data);
+          setServings(1);
 
-      const commentsData = await CommentsService.getCommentsByDishId(dishId);
-      setComments(commentsData);
+          const commentsData =
+            await CommentsService.getCommentsByDishId(dishId);
+          setComments(commentsData);
 
+          try {
+            const allImages = await ImagesService.getAllImages(dishId);
+
+            const sorted = getSortedImages(allImages, data);
+
+            setImageUrls(sorted.map((s) => s.url));
+          } catch (imgError) {
+            toast.error(t("error_loading_dish\n" + imgError));
+          }
+
+          const favouriteIds = getFavouriteRecipeIds();
+          setIsFavourite(favouriteIds.includes(dishId));
+        }
+      } catch (error) {
+        toast.error(t("error_loading_dish\n" + error));
+      }
       setIsLoading(false);
     };
     load();
-  }, [id]);
+  }, [id, t]);
 
   const handleCommentAdded = (comment: Comment) => {
     setComments((prevComments) => [...prevComments, comment]);
+  };
+
+  const toggleIngredientCheck = (ingredientId: number) => {
+    setCheckedIngredients((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(ingredientId)) {
+        newSet.delete(ingredientId);
+      } else {
+        newSet.add(ingredientId);
+      }
+      return newSet;
+    });
+  };
+
+  const scaleIngredientQuantity = (
+    description: string | null | undefined,
+  ): string => {
+    if (!description) return "";
+
+    const quantityRegex = /^(\d+(?:[.,]\d+)?)/;
+    const match = quantityRegex.exec(description);
+    
+    if (match) {
+      const quantityStr = match[1];
+      const quantity = Number.parseFloat(quantityStr.replace(",", "."));
+      const rest = description.slice(quantityStr.length).trim();
+      const scaledQuantity = quantity * servings;
+
+      const formattedQuantity =
+        scaledQuantity % 1 === 0
+          ? scaledQuantity.toString()
+          : scaledQuantity.toFixed(1).replace(".", ",");
+
+      return `${formattedQuantity}${rest ? " " + rest : ""}`;
+    }
+
+    return description;
+  };
+
+  const copyIngredientsToClipboard = () => {
+    if (!dish?.ingredients || dish.ingredients.length === 0) {
+      toast.warning(t("dish_details_page_no_ingredients_to_copy"));
+      return;
+    }
+
+    const ingredientsText = dish.ingredients
+      .map((ing) => {
+        const scaledQuantity = scaleIngredientQuantity(ing.description);
+        return `${ing.name} ${scaledQuantity}`.trim();
+      })
+      .join("\n");
+
+    navigator.clipboard
+      .writeText(ingredientsText)
+      .then(() => {
+        toast.success(t("dish_details_page_ingredients_copied"));
+      })
+      .catch(() => {
+        toast.error(t("dish_details_page_copy_failed"));
+      });
+  };
+
+  const addToShoppingList = () => {
+    if (!dish?.ingredients || dish.ingredients.length === 0) {
+      toast.warning(t("dish_details_page_no_ingredients_to_copy"));
+      return;
+    }
+
+    const currentList = JSON.parse(
+      localStorage.getItem("sneakfit_shopping_list_v3") || "[]",
+    );
+    const newItems = dish.ingredients.map((ing, index) => ({
+      id: `${Date.now()}-${index}`,
+      name: `${ing.name} ${scaleIngredientQuantity(ing.description)}`.trim(),
+      completed: false,
+    }));
+
+    localStorage.setItem(
+      "sneakfit_shopping_list_v3",
+      JSON.stringify([...newItems, ...currentList]),
+    );
+    toast.success(t("shopping_list_added_success"));
+  };
+
+  const handleRatingUpdated = (newRating: number) => {
+    setDish((prev) => (prev ? { ...prev, rates: newRating } : null));
+  };
+
+  const handleToggleFavourite = () => {
+    if (!dish) return;
+    if (isFavourite) {
+      removeFavouriteRecipe(dish.id);
+      setIsFavourite(false);
+      toast.success(t("remove_from_favourites"));
+    } else {
+      addFavouriteRecipe(dish.id);
+      setIsFavourite(true);
+      toast.success(t("add_to_favourites"));
+    }
   };
 
   if (isLoading)
@@ -118,78 +243,27 @@ export default function DishDetails() {
       <div className="dish-grid">
         <div className="grid-item grid-1">
           <div className="dish-image-box">
-            <div className="carousel-container">
-              <button
-                className="carousel-arrow carousel-arrow-left"
-                onClick={() =>
-                  setCurrentImageIndex((prev) =>
-                    prev === 0 ? totalImages - 1 : prev - 1,
-                  )
-                }
-                aria-label={t("carousel_previous_image")}
-              >
-                <ChevronLeft className="carousel-arrow-icon" />
-              </button>
-
-              <div className="center-mode-slider">
-                <div className="center-mode-container">
-                  {Array.from({ length: totalImages }).map((_, index) => {
-                    const { scale, opacity, zIndex, translateX } =
-                      getImageStyle(index);
-
-                    return (
-                      <div
-                        key={`carousel-image-${dish.id}-${index}`}
-                        className="center-mode-item"
-                        style={{
-                          transform: `translateX(${translateX}px) scale(${scale})`,
-                          opacity: opacity,
-                          zIndex: zIndex,
-                        }}
-                      >
-                        {!dish.mainImageId || dish.mainImageId <= 1 ? (
-                          <RestaurantMenu className="carousel-placeholder-icon" />
-                        ) : (
-                          <img alt={`${dish.name} view ${index + 1}`} />
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <button
-                className="carousel-arrow carousel-arrow-right"
-                onClick={() =>
-                  setCurrentImageIndex((prev) =>
-                    prev === totalImages - 1 ? 0 : prev + 1,
-                  )
-                }
-                aria-label={t("carousel_next_image")}
-              >
-                <ChevronRight className="carousel-arrow-icon" />
-              </button>
-            </div>
-
-            <div className="carousel-indicators">
-              {Array.from({ length: totalImages }).map((_, index) => (
-                <button
-                  key={`carousel-indicator-${dish.id}-${index}`}
-                  className={`indicator ${
-                    index === currentImageIndex ? "active" : ""
-                  }`}
-                  onClick={() => setCurrentImageIndex(index)}
-                  aria-label={`${t("carousel_go_to_image")} ${index + 1}`}
-                  type="button"
-                />
-              ))}
-            </div>
+            <DishImageCarousel imageUrls={imageUrls} dishName={dish.name} />
           </div>
           <div className="categories-box">
             <div className="categories-content">
-              {dish.categories && dish.categories.length > 0
-                ? dish.categories.map((c) => c.name).join(", ")
-                : emptyCategories}
+              {dish.categories && dish.categories.length > 0 ? (
+                dish.categories.map((c) => (
+                  <span
+                    key={c.id}
+                    className="category-detail-tag"
+                    style={{
+                      background: `${c.color}15`,
+                      color: c.color,
+                      borderColor: `${c.color}40`,
+                    }}
+                  >
+                    {getCategoryName(c, i18n.language)}
+                  </span>
+                ))
+              ) : (
+                <span className="no-categories-text">{emptyCategories}</span>
+              )}
             </div>
           </div>
         </div>
@@ -208,17 +282,74 @@ export default function DishDetails() {
         <div className="grid-item grid-3">
           <div className="grid-3-left">
             <div className="ingredients-box">
-              <h3 className="section-title">
-                {t("dish_details_page_ingredients")}
-              </h3>
+              {dish.ingredients && dish.ingredients.length > 0 && (
+                <div className="ingredients-actions">
+                  <button
+                    className="copy-ingredients-btn icon-only"
+                    onClick={copyIngredientsToClipboard}
+                    title={t("dish_details_page_copy_ingredients")}
+                  >
+                    <ContentCopy className="copy-icon" />
+                  </button>
+                  <button
+                    className="copy-ingredients-btn icon-only"
+                    onClick={addToShoppingList}
+                    title={t("add_to_shopping_list")}
+                  >
+                    <AddShoppingCartIcon className="copy-icon" />
+                  </button>
+                </div>
+              )}
+              <div className="ingredients-header">
+                <h3 className="section-title">
+                  {t("dish_details_page_ingredients")}
+                </h3>
+              </div>
               <div className="ingredients-list">
                 {dish.ingredients && dish.ingredients.length > 0 ? (
                   <ul className="ingredients-ul">
-                    {dish.ingredients.map((ing) => (
-                      <li key={ing.id}>
-                        {ing.name}: {ing.quantity}
-                      </li>
-                    ))}
+                    {dish.ingredients.map((ing) => {
+                      const scaledQuantity = scaleIngredientQuantity(
+                        ing.description,
+                      );
+                      return (
+                        <li key={ing.id} className="ingredient-item">
+                          <button
+                            className="ingredient-label"
+                            onClick={() => toggleIngredientCheck(ing.id)}
+                            aria-label={
+                              checkedIngredients.has(ing.id)
+                                ? `Mark ${ing.name} as incomplete`
+                                : `Mark ${ing.name} as complete`
+                            }
+                          >
+                            {checkedIngredients.has(ing.id) ? (
+                              <CheckCircleIcon className="ingredient-checked-icon" />
+                            ) : (
+                              <RadioButtonUncheckedIcon className="ingredient-unchecked-icon" />
+                            )}
+                            <span
+                              className={
+                                checkedIngredients.has(ing.id)
+                                  ? "ingredient-name checked"
+                                  : "ingredient-name"
+                              }
+                            >
+                              {ing.name}
+                            </span>
+                            <span
+                              className={
+                                checkedIngredients.has(ing.id)
+                                  ? "ingredient-quantity checked"
+                                  : "ingredient-quantity"
+                              }
+                            >
+                              {scaledQuantity}
+                            </span>
+                          </button>
+                        </li>
+                      );
+                    })}
                   </ul>
                 ) : (
                   <p>{t("dish_details_page_empty_ingredients")}</p>
@@ -290,15 +421,41 @@ export default function DishDetails() {
         </div>
 
         <div className="grid-item grid-4">
-          <div className="action-buttons">
-            <button className="btn btn-decline" onClick={() => navigate(-1)}>
-              <Undo className="undo-icon" />
-              {t("dish_details_page_back_button")}
-            </button>
-            <button className="btn btn-accept">
-              <PlayCircle className="play-circle-icon" />
-              {t("dish_details_page_start_button")}
-            </button>
+          <button
+            className={`favourite-btn ${isFavourite ? "favourite-btn--active" : ""}`}
+            onClick={handleToggleFavourite}
+            type="button"
+          >
+            {isFavourite ? (
+              <FavoriteIcon className="favourite-btn-icon" />
+            ) : (
+              <FavoriteBorderIcon className="favourite-btn-icon" />
+            )}
+            {isFavourite ? t("remove_from_favourites") : t("add_to_favourites")}
+          </button>
+          <div className="grid-4-row">
+            <div className="grid-4-left">
+              <div className="rating-container-inner">
+                <DishRatingSection 
+                  dishId={dish.id} 
+                  initialRating={dish.rates || 0} 
+                  onRatingUpdated={handleRatingUpdated} 
+                />
+              </div>
+            </div>
+            <div className="grid-4-right action-buttons">
+              <button className="btn btn-decline" onClick={() => navigate(-1)}>
+                <Undo className="undo-icon" />
+                {t("dish_details_page_back_button")}
+              </button>
+              <button
+                className="btn btn-accept"
+                onClick={() => navigate(`preparation?step=1`)}
+              >
+                <PlayCircle className="play-circle-icon" />
+                {t("dish_details_page_start_button")}
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -316,9 +473,26 @@ export default function DishDetails() {
       <DishSettingsModal
         isOpen={settingsOpen}
         onClose={() => setSettingsOpen(false)}
-        isPublic={isPublic}
-        onChangePublic={setIsPublic}
         dishId={dish.id}
+        onUpdate={() => {
+          hasFetched.current = null;
+          const load = async () => {
+            setIsLoading(true);
+            const data = await DishesService.getDishById(dish.id);
+            if (data) {
+              setDish(data);
+              try {
+                const allImages = await ImagesService.getAllImages(dish.id);
+                const sorted = getSortedImages(allImages, data);
+                setImageUrls(sorted.map((s) => s.url));
+              } catch (e) {
+                console.error("Failed to reload images", e);
+              }
+            }
+            setIsLoading(false);
+          };
+          load();
+        }}
       />
     </div>
   );

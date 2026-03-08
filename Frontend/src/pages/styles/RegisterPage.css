@@ -65,7 +65,7 @@
 
 .buttons :hover {
   transform: translateY(-0.125rem);
-  box-shadow: 0 0.375rem 1.5rem #ff6b3566;
+  box-shadow: 0 0.375rem 1.5rem var(--shadow);
   transition: all 0.3s ease;
 }
 

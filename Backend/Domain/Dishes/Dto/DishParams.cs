@@ -6,4 +6,5 @@ public record DishParams(
     int? Calories,
     int? Protein,
     int? Carbs,
-    int? Fat);
+    int? Fat,
+    bool IsPublic);

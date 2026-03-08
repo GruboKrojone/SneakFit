@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import Close from "@mui/icons-material/Close";
-import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import { useTranslation } from "react-i18next";
+import DishImage from "./DishImage";
 import { useNavigate, useParams } from "react-router-dom";
 import { getFavouriteRecipeIds, removeFavouriteRecipe } from "../utils/recipeStorage";
 import { useFetchDishes } from "../hooks/useFetchDishes";
 import type { Dish } from "../services/DishesService";
-import "./styles/CreateDishModal.css";
 import "./styles/FavouritesModal.css";
 
 interface FavouriteModalProps {
@@ -18,13 +17,22 @@ export default function FavouriteModal({
   isOpen,
   onClose,
 }: FavouriteModalProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { locale } = useParams<{ locale: string }>();
   const { dishes } = useFetchDishes();
   const [selectionMode, setSelectionMode] = useState(false);
   const [selectedDishes, setSelectedDishes] = useState<Set<number>>(new Set());
   const [favouriteDishes, setFavouriteDishes] = useState<Dish[]>([]);
+
+  const getCategoryName = (category: any) => {
+    switch (i18n.language) {
+      case "pl": return category.namePl;
+      case "de": return category.nameDe;
+      case "es": return category.nameEs;
+      default: return category.nameEn;
+    }
+  };
 
   useEffect(() => {
     const favouriteIds = getFavouriteRecipeIds();
@@ -132,11 +140,11 @@ export default function FavouriteModal({
                 )}
 
                 <div className="favourite-dish-image">
-                  {!dish.mainImageId || dish.mainImageId <= 1 ? (
-                    <RestaurantMenu className="favourite-restaurant-icon" />
-                  ) : (
-                    <img src={`/dish-image/${dish.mainImageId}`} alt={dish.name} />
-                  )}
+                  <DishImage 
+                    dishId={dish.id} 
+                    alt={dish.name} 
+                    placeholderClassName="favourite-restaurant-icon"
+                  />
                 </div>
 
                 <div className="favourite-dish-info">
@@ -145,7 +153,7 @@ export default function FavouriteModal({
                     <div className="favourite-dish-categories">
                       {dish.categories.slice(0, 2).map(cat => (
                         <span key={cat.id} className="favourite-category-tag">
-                          {cat.name}
+                          {getCategoryName(cat)}
                         </span>
                       ))}
                     </div>

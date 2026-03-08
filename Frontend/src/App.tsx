@@ -3,6 +3,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import ProtectedLayout from "./components/ProtectedLayout";
+import AdminPanel from "./pages/AdminPanel";
 import DishDetails from "./pages/DishDetails";
 import DishesPage from "./pages/DishesPage";
 import HomePage from "./pages/HomePage";
@@ -10,17 +11,19 @@ import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
 import RegisterPage from "./pages/RegisterPage";
 import ShoppingListPage from "./pages/ShoppingListPage";
+import DishPreparation from "./pages/DishPreparation";
 import I18nProvider from "./translations/components/i18nProvider";
 import NotFoundRedirect from "./services/NotFoundRedirect";
 import LocaleValidator from "./translations/service/LocaleValidator";
+
+import AiDishDetails from "./components/AiDishDetails";
 
 function App() {
   return (
     <BrowserRouter>
       <ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar
+        position="top-right"
+        autoClose={2000}
         newestOnTop={false}
         closeOnClick
         rtl={false}
@@ -63,10 +66,34 @@ function App() {
                     }
                   />
                   <Route
+                    path="dish/:id/preparation"
+                    element={
+                      <ProtectedLayout>
+                        <DishPreparation />
+                      </ProtectedLayout>
+                    }
+                  />
+                  <Route
                     path="profile"
                     element={
                       <ProtectedLayout>
                         <ProfilePage />
+                      </ProtectedLayout>
+                    }
+                  />
+                  <Route
+                    path="admin"
+                    element={
+                      <ProtectedLayout>
+                        <AdminPanel />
+                      </ProtectedLayout>
+                    }
+                  />
+                  <Route
+                    path="ai-dish"
+                    element={
+                      <ProtectedLayout>
+                        <AiDishDetails />
                       </ProtectedLayout>
                     }
                   />

@@ -6,7 +6,6 @@ using Domain.Dishes.Dto;
 using Domain.Dishes.Entities;
 using Domain.Dishes.Repositories;
 using FluentAssertions;
-using MediatR;
 using Moq;
 
 namespace Domain.Tests.Dishes;
@@ -24,11 +23,17 @@ public class AddDishCommandTests
         _userContext = new Mock<IUserContext>();
         _unitOfWork = new Mock<IUnitOfWork>();
         _handler = new AddDishCommandHandler(_dishRepository.Object, _userContext.Object, _unitOfWork.Object);
+
+        _dishRepository.Setup(x => x.Add(It.IsAny<Dish>()))
+            .Callback<Dish>(d =>
+            {
+                typeof(EntityBase).GetProperty("Id")?.SetValue(d, 1);
+            });
     }
 
 
     [Fact]
-    public async Task ValidCommand_ShouldAddDishAndReturnUnit()
+    public async Task ValidCommand_ShouldAddDishAndReturnDishId()
     {
         // Arrange
         var userId = 1;
@@ -38,7 +43,8 @@ public class AddDishCommandTests
             Calories: 165,
             Protein: 31,
             Carbs: 0,
-            Fat: 4
+            Fat: 4,
+            IsPublic: true
         );
         var command = new AddDishCommand(dishParams);
 
@@ -48,7 +54,7 @@ public class AddDishCommandTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.Should().Be(Unit.Value);
+        result.Should().BeGreaterThan(0);
         _dishRepository.Verify(x => x.Add(It.Is<Dish>(d =>
             d.Name == dishParams.Name &&
             d.Description == dishParams.Description &&
@@ -71,7 +77,8 @@ public class AddDishCommandTests
             Calories: 100,
             Protein: 10,
             Carbs: 20,
-            Fat: 5
+            Fat: 5,
+            IsPublic: true
         );
         var command = new AddDishCommand(dishParams);
 
@@ -100,7 +107,8 @@ public class AddDishCommandTests
             Calories: null,
             Protein: null,
             Carbs: null,
-            Fat: null
+            Fat: null,
+            IsPublic: true
         );
         var command = new AddDishCommand(dishParams);
 
@@ -110,7 +118,7 @@ public class AddDishCommandTests
         var result = await _handler.Handle(command, CancellationToken.None);
 
         // Assert
-        result.Should().Be(Unit.Value);
+        result.Should().BeGreaterThan(0);
         _dishRepository.Verify(x => x.Add(It.Is<Dish>(d => d.Name == "Oatmeal")), Times.Once);
         _unitOfWork.Verify(x => x.SaveChangesAsync(CancellationToken.None), Times.Once);
     }
@@ -126,7 +134,8 @@ public class AddDishCommandTests
             Calories: 200,
             Protein: 40,
             Carbs: 10,
-            Fat: 2
+            Fat: 2,
+            IsPublic: true
         );
         var command = new AddDishCommand(dishParams);
 

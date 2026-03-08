@@ -1,4 +1,5 @@
-﻿using Core.CQRS;
+﻿using Core.Authentication;
+using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
 using Domain.Categories.Repositories;
@@ -10,11 +11,15 @@ public record DeleteCategoryCommand(int Id) : ICommand<Unit>;
 
 internal class DeleteCategoryCommandHandler(
     ICategoryRepository categoryRepository,
+    IUserContext userContext,
     IUnitOfWork unitOfWork
 ) : ICommandHandler<DeleteCategoryCommand, Unit>
 {
     public async Task<Unit> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
     {
+        var userId = userContext.UserId
+            ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
+
         if (request is null)
             throw new DomainException("Request is empty", (int)CommonErrorCode.InvalidOperation);
 

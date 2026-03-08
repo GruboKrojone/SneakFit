@@ -15,7 +15,7 @@ public class CommentController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Route("{dishId}/add")]
-    public async Task<Unit> AddComment(int dishId, [FromBody] string content, CancellationToken cancellationToken)
+    public async Task<CommentDto> AddComment(int dishId, [FromBody] string content, CancellationToken cancellationToken)
         => await mediator.Send(new AddCommentCommand(dishId, content), cancellationToken);
 
     [HttpPut]

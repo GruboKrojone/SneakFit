@@ -98,7 +98,20 @@ class AuthService {
     return token ? { Authorization: `Bearer ${token}` } : {};
   }
 
-  static getCurrentUser(): { id: number; email: string; name: string } | null {
+  static isTokenExpired(): boolean {
+    const token = this.getToken();
+    if (!token) return true;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      const exp: number | undefined = payload.exp;
+      if (exp === undefined) return false;
+      return Date.now() >= exp * 1000;
+    } catch {
+      return true;
+    }
+  }
+
+  static getCurrentUser(): { id: number; email: string; name: string; role: string } | null {
     const token = this.getToken();
     if (!token) return null;
 
@@ -108,16 +121,23 @@ class AuthService {
       const nameIdentifierClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier";
       const emailClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress";
       const nameClaim = "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name";
+      const roleClaim = "http://schemas.microsoft.com/ws/2008/06/identity/claims/role";
       
       return {
         id: Number.parseInt(payload[nameIdentifierClaim] || payload.sub || payload.id || payload.userId),
         email: payload[emailClaim] || payload.email || '',
-        name: payload[nameClaim] || payload.name || payload.unique_name || ''
+        name: payload[nameClaim] || payload.name || payload.unique_name || '',
+        role: payload[roleClaim] || payload.role || ''
       };
     } catch (error) {
       console.error('Failed to decode token:', error);
       return null;
     }
+  }
+
+  static isAdmin(): boolean {
+    const user = this.getCurrentUser();
+    return user?.role === "Admin";
   }
 }
 

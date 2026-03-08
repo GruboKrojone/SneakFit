@@ -1,47 +1,36 @@
-﻿using Core.CQRS;
+using Core.Authentication;
+using Core.CQRS;
 using Core.Database;
 using Core.Middlewares;
+using Domain.Categories.Repositories;
+using Domain.Dishes.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace Domain.Categories.Commands;
 
 public record AssignCategoryToDishCommand(int CategoryId, int DishId) : ICommand<Unit>;
 
 internal class AssignCategoryToDishCommandHandler(
-    IUnitOfWork unitOfWork,
-    SneakFitDbContext dbContext) : ICommandHandler<AssignCategoryToDishCommand, Unit>
+    IDishRepository dishRepository,
+    ICategoryRepository categoryRepository,
+    IUserContext userContext,
+    IUnitOfWork unitOfWork) : ICommandHandler<AssignCategoryToDishCommand, Unit>
 {
     public async Task<Unit> Handle(AssignCategoryToDishCommand command, CancellationToken cancellationToken)
     {
-        var dishExists = await dbContext.Dishes
-            .AnyAsync(d => d.Id == command.DishId, cancellationToken);
+        var userId = userContext.UserId
+            ?? throw new DomainException("Nobody is authenticated", (int)CommonErrorCode.Unauthorized);
 
-        if (!dishExists)
-            throw new DomainException("Dish not found", (int)CommonErrorCode.EntityNotFound);
+        var dish = await dishRepository.FindAsync(command.DishId, cancellationToken)
+            ?? throw new DomainException("Dish not found", (int)CommonErrorCode.EntityNotFound);
 
-        var categoryExists = await dbContext.Categories
-            .AnyAsync(c => c.Id == command.CategoryId, cancellationToken);
+        var category = await categoryRepository.FindAsync(command.CategoryId, cancellationToken)
+            ?? throw new DomainException("Category not found", (int)CommonErrorCode.EntityNotFound);
 
-        if (!categoryExists)
-            throw new DomainException("Category not found", (int)CommonErrorCode.EntityNotFound);
+        if (!dish.Categories.Contains(category))
+            dish.Categories.Add(category);
 
-        var relationshipExists = await dbContext.Dishes
-            .Where(d => d.Id == command.DishId)
-            .SelectMany(d => d.Categories)
-            .AnyAsync(c => c.Id == command.CategoryId, cancellationToken);
-
-        if (relationshipExists)
-            return Unit.Value;
-
-        var dish = await dbContext.Dishes
-            .Include(d => d.Categories)
-            .FirstAsync(d => d.Id == command.DishId, cancellationToken);
-
-        var category = await dbContext.Categories
-            .FirstAsync(c => c.Id == command.CategoryId, cancellationToken);
-
-        dish.Categories.Add(category);
+        dishRepository.Update(dish);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Unit.Value;

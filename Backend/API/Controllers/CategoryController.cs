@@ -1,4 +1,6 @@
 ﻿using Domain.Categories.Commands;
+using Domain.Categories.Dto;
+using Domain.Categories.Queries;
 using Domain.Dishes.Dto;
 using Domain.Users.Enums;
 using MediatR;
@@ -11,6 +13,11 @@ namespace API.Controllers;
 [Route("category")]
 public class CategoryController(IMediator mediator) : ControllerBase
 {
+    [HttpGet]
+    [Route("/categories")]
+    public async Task<IEnumerable<CategoryDto>> GetAllCategories(CancellationToken cancellationToken)
+        => await mediator.Send(new GetAllCategoriesQuery(), cancellationToken);
+
     [HttpPost]
     [Route("add")]
     [Authorize(Roles = $"{nameof(UserRole.Admin)},{nameof(UserRole.Employee)}")]

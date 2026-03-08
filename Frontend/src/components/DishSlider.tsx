@@ -3,28 +3,40 @@ import { useNavigate, useParams } from "react-router-dom";
 import ThumbDown from "@mui/icons-material/ThumbDown";
 import Favorite from "@mui/icons-material/Favorite";
 import ThumbUp from "@mui/icons-material/ThumbUp";
-import RestaurantMenu from "@mui/icons-material/RestaurantMenu";
 import AddCircleOutline from "@mui/icons-material/AddCircleOutline";
+import Star from "@mui/icons-material/Star";
+import StarBorder from "@mui/icons-material/StarBorder";
+import StarHalf from "@mui/icons-material/StarHalf";
 import { ClipLoader } from "react-spinners";
 import CreateDishModal from "./CreateDishModal";
+import DishImage from "./DishImage";
+import AuthService from "../services/AuthService";
 import "./styles/DishSlider.css";
 import { useTranslation } from "react-i18next";
-import { useFetchDishes } from "../hooks/useFetchDishes";
+import { useRecommendedDishes } from "../hooks/useRecommendedDishes";
 import { useCleanTempLists } from "../hooks/useCleanTempLists";
 import {
   addLikedRecipe,
   addNotLikedRecipe,
   addFavouriteRecipe,
   getAllRatedRecipeIds,
+  addToHistory,
 } from "../utils/recipeStorage";
 import DishesService from "../services/DishesService";
+
+const getCategoryName = (category: any, language: string) => {
+  if (language === "pl") return category.namePl;
+  if (language === "de") return category.nameDe;
+  if (language === "es") return category.nameEs;
+  return category.nameEn;
+};
 
 type ActionType = "pass" | "loved" | "smash" | null;
 
 export default function DishSlider() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { locale } = useParams<{ locale: string }>();
-  const { dishes, isLoading, refetchDishes } = useFetchDishes();
+  const { dishes, isLoading, refetchDishes } = useRecommendedDishes(20);
   const [usedIndices, setUsedIndices] = useState<Set<number>>(new Set());
   const [passedCards, setPassedCards] = useState<number[]>([]);
   const [newlyPassedCard, setNewlyPassedCard] = useState<number | null>(null);
@@ -46,12 +58,18 @@ export default function DishSlider() {
 
   useCleanTempLists();
 
+  const currentUser = AuthService.getCurrentUser();
+  const currentUserId = currentUser?.id;
+
   const ratedRecipeIds = getAllRatedRecipeIds();
   const visibleCards = dishes
     .map((dish, index) => ({ dish, originalIndex: index }))
-    .filter(({ originalIndex, dish }) => 
-      !usedIndices.has(originalIndex) && !ratedRecipeIds.includes(dish.id)
-    );
+    .filter(({ originalIndex, dish }) => {
+        const isPublicOrOwner = dish.isPublic || (currentUserId && dish.ownerId === currentUserId);
+        return !usedIndices.has(originalIndex) && 
+               !ratedRecipeIds.includes(dish.id) && 
+               isPublicOrOwner;
+    });
 
   useEffect(() => {
     if (visibleCards.length === 0 && !showAddRecipeCard) {
@@ -100,6 +118,9 @@ export default function DishSlider() {
             addFavouriteRecipe(currentDish.id);
             DishesService.addDishToFavorites(currentDish.id);
             break;
+        }
+        if (animationType) {
+          addToHistory(currentDish, animationType);
         }
       }
       
@@ -393,13 +414,13 @@ export default function DishSlider() {
     </div>
   );
 
-  const renderDishImage = (dish: { mainImageId?: number; name: string }) => (
+  const renderDishImage = (dish: { id: number; name: string }) => (
     <div className="dish-image">
-      {!dish.mainImageId || dish.mainImageId <= 1 ? (
-        <RestaurantMenu className="restaurant-menu-icon" />
-      ) : (
-        <img alt={dish.name} />
-      )}
+      <DishImage 
+        dishId={dish.id} 
+        alt={dish.name} 
+        placeholderClassName="restaurant-menu-icon"
+      />
     </div>
   );
 
@@ -471,6 +492,22 @@ export default function DishSlider() {
     );
   };
 
+  const renderRating = (rating: number = 0) => {
+    return (
+      <div className="dish-rating">
+        {[1, 2, 3, 4, 5].map((starValue) => {
+          if (rating >= starValue) {
+            return <Star key={starValue} className="star-icon filled" />;
+          } else if (rating >= starValue - 0.5) {
+            return <StarHalf key={starValue} className="star-icon half" />;
+          } else {
+            return <StarBorder key={starValue} className="star-icon empty" />;
+          }
+        })}
+      </div>
+    );
+  };
+
   const renderContent = () => {
     if (isLoading) {
       return (
@@ -508,17 +545,26 @@ export default function DishSlider() {
           <div className="dish-info">
             <div className="dish-header">
               <h2 className="dish-name">{dish.name}</h2>
+              {renderRating(dish.rates)}
+            </div>
+            <div className="dish-categories">
+              {dish.categories?.map((cat) => (
+                <span 
+                  key={cat.id} 
+                  className="slider-category-tag"
+                  style={{ 
+                    background: `${cat.color}15`,
+                    color: cat.color,
+                    borderColor: `${cat.color}40`
+                  }}
+                >
+                  {getCategoryName(cat, i18n.language)}
+                </span>
+              ))}
             </div>
             <p className="dish-description">
               {dish.description || t("empty_description")}
             </p>
-            <div className="dish-categories">
-              {dish.categories.map((cat) => (
-                <span key={cat.id} className="category-tag">
-                  {cat.name}
-                </span>
-              ))}
-            </div>
             {renderActionButtons(true)}
           </div>
         </div>,
@@ -590,17 +636,37 @@ export default function DishSlider() {
             <div className="dish-info">
               <div className="dish-header">
                 <h2 className="dish-name">{dish.name}</h2>
+                {renderRating(dish.rates)}
+              </div>
+              <div className="dish-categories">
+                {dish.categories && dish.categories.length > 0 && (
+                  <>
+                    {dish.categories.map((cat) => {
+                      let localizedName = cat.nameEn;
+                      if (i18n.language === "pl") localizedName = cat.namePl || cat.nameEn;
+                      else if (i18n.language === "de") localizedName = cat.nameDe || cat.nameEn;
+                      else if (i18n.language === "es") localizedName = cat.nameEs || cat.nameEn;
+
+                      return (
+                        <span 
+                          key={cat.id} 
+                          className="slider-category-tag"
+                          style={{ 
+                            borderColor: cat.color,
+                            color: cat.color,
+                            background: `${cat.color}15`
+                          }}
+                        >
+                          {localizedName}
+                        </span>
+                      );
+                    })}
+                  </>
+                )}
               </div>
               <p className="dish-description">
                 {dish.description || t("empty_description")}
               </p>
-              <div className="dish-categories">
-                {dish.categories.map((cat) => (
-                  <span key={cat.id} className="category-tag">
-                    {cat.name}
-                  </span>
-                ))}
-              </div>
               {renderActionButtons(false)}
             </div>
           </div>

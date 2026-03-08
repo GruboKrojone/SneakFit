@@ -1,4 +1,4 @@
-﻿using Core.Database;
+using Core.Database;
 
 namespace Domain.Dishes.Entities;
 
@@ -16,7 +16,7 @@ public sealed class Step(string name, string description, int order, int dishId)
         string? description)
     {
         Name = name;
-        Description = description;
+        Description = description ?? string.Empty;
         MarkAsUpdated();
     }
 }
